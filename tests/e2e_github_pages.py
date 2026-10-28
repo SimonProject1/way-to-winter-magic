@@ -145,7 +145,7 @@ async def main():
             await page.route("https://api.transitous.org/**", api)
             await page.goto(base, wait_until="networkidle")
             assert await page.locator("text=Way to Winter Magic").count() >= 1
-            assert await page.locator("text=V3.0.0").count() >= 1
+            assert await page.locator("text=V3.1.0").count() >= 1
             assert await page.locator("#marketCount").inner_text() == "39"
             overflow = await page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
             assert overflow <= 1, f"Mobiles horizontales Überlaufen: {overflow}px"
@@ -271,6 +271,8 @@ async def main():
             for _ in range(2):
                 await page.locator("#unlockCelebration").wait_for(state="visible")
                 unlocked_titles.append(await page.locator("#unlockTitle").inner_text())
+                assert await page.locator('#unlockMedal img[src*="-new.svg"]').count() == 1
+                assert await page.locator('#unlockEffectScene .effect-particle').count() > 0
                 await page.click("#closeUnlock")
                 await page.wait_for_timeout(250)
             assert set(unlocked_titles) == {"Der erste Zauber", "Night Magic"}, unlocked_titles
@@ -278,13 +280,61 @@ async def main():
             assert await page.locator(".album-area").count() == 4
             assert await page.locator(".sticker-card").count() == 16
             assert await page.locator(".sticker-card.unlocked").count() == 2
+            assert await page.locator('.sticker-card img.sticker-art').count() == 16
+            assert await page.locator('.sticker-card.unlocked img[src*="-small.svg"]').count() == 2
+            assert await page.locator('.sticker-card.locked img[src*="-locked.svg"]').count() == 14
+            await page.locator('.sticker-card.unlocked').first.click()
+            assert await page.locator('#stickerDialog img[src*="-large.svg"]').count() == 1
+            assert await page.locator('[data-share-sticker]').is_enabled()
+            with tempfile.TemporaryDirectory() as tmp:
+                async with page.expect_download() as download_info:
+                    await page.click('[data-share-sticker]')
+                share_download = await download_info.value
+                share_path = pathlib.Path(tmp) / share_download.suggested_filename
+                await share_download.save_as(share_path)
+                assert share_path.suffix == '.png' and share_path.stat().st_size > 50_000
+                assert share_path.read_bytes()[:8] == b'\x89PNG\r\n\x1a\n'
+            await page.click('#stickerDialog .close')
             await page.click("#showJournal")
             assert await page.locator(".journal-card").count() == 1
+            assert await page.locator('.journal-sticker img[src*="-small.svg"]').count() >= 2
+            assert await page.locator('[data-share-journal]').count() == 1
             journal_text = await page.locator(".journal-card").inner_text()
             for expected in ["Steeler Weihnachtsmarkt", "Goldene Lichter", "Kakao", "Night Magic"]:
                 assert expected in journal_text, f"Tagebuch fehlt: {expected}"
             stored = await page.evaluate("JSON.parse(localStorage.getItem('wtwm:v2:journal'))")
             assert len(stored) == 1 and stored[0]["night"] is True
+
+            # Stickerhaltige Tagebuch-Teilengrafik sowie vollständige Sicherung und Wiederherstellung.
+            with tempfile.TemporaryDirectory() as tmp:
+                async with page.expect_download() as download_info:
+                    await page.click('[data-share-journal]')
+                journal_download = await download_info.value
+                journal_share_path = pathlib.Path(tmp) / journal_download.suggested_filename
+                await journal_download.save_as(journal_share_path)
+                assert journal_share_path.suffix == '.png' and journal_share_path.stat().st_size > 50_000
+                assert journal_share_path.read_bytes()[:8] == b'\x89PNG\r\n\x1a\n'
+
+                await page.click('[data-view="settings"]')
+                async with page.expect_download() as backup_info:
+                    await page.click('#exportData')
+                backup_download = await backup_info.value
+                backup_path = pathlib.Path(tmp) / backup_download.suggested_filename
+                await backup_download.save_as(backup_path)
+                backup = json.loads(backup_path.read_text(encoding='utf-8'))
+                assert backup['version'] == '3.1.0'
+                assert len(backup['state']['journal']) == 1 and len(backup['state']['trips']) == 1
+                assert len(backup['state']['rewardMeta']) >= 2
+                await page.evaluate("localStorage.setItem('wtwm:v2:journal','[]'); localStorage.setItem('wtwm:v2:trips','[]'); localStorage.setItem('wtwm:v2:rewardMeta','{}')")
+                await page.reload(wait_until='networkidle')
+                await page.click('[data-view="settings"]')
+                page.once('dialog', lambda dialog: asyncio.create_task(dialog.accept()))
+                await page.set_input_files('#importData', str(backup_path))
+                await page.wait_for_timeout(300)
+                await page.click('[data-view="wintermagic"]')
+                await page.click('#showJournal')
+                assert await page.locator('.journal-card').count() == 1
+                assert await page.locator('.sticker-card.unlocked').count() == 2
 
             # Persistenz nach Reload und bestehende Recherchebereiche.
             await page.reload(wait_until="networkidle")
@@ -316,8 +366,11 @@ async def main():
             assert await page.evaluate("async () => { await navigator.serviceWorker.ready; return true; }")
             await context.set_offline(True)
             await page.reload(wait_until="domcontentloaded")
-            assert await page.locator("text=V3.0.0").count() >= 1
+            assert await page.locator("text=V3.1.0").count() >= 1
             assert await page.locator("#marketCount").inner_text() == "39"
+            await page.click('[data-view="wintermagic"]')
+            await page.locator('.sticker-card img.sticker-art').first.wait_for()
+            assert await page.locator('.sticker-card img.sticker-art').evaluate_all("els => els.every(img => img.complete && img.naturalWidth > 0)")
             await context.set_offline(False)
             assert not console_errors, "Browserfehler: " + " | ".join(console_errors)
             await browser.close()
@@ -325,7 +378,7 @@ async def main():
         server.shutdown()
         server.server_close()
 
-    print("V3.0.0 E2E bestanden: kompletter 6-Schritt-Planer mobil, Filter, Abwahl, Transitous, Bearbeitung, ICS, Persistenz, Offline-Start und GitHub-Pages-Unterpfad.")
+    print("V3.1.0 E2E bestanden: kompletter Planer mobil/desktop, sechs Sticker-Grafikvarianten, individuelle Freischalteffekte, Teilen, Persistenz, Wiederherstellung, Offline-Start und GitHub-Pages-Unterpfad.")
 
 
 if __name__ == "__main__":

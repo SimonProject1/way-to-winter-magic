@@ -41,7 +41,7 @@ const html = fs.readFileSync(new URL('index.html', root), 'utf8');
 for (const id of ['marketSearch', 'cityFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'dateFilter', 'timelineBody', 'peopleList', 'stopResults', 'cardView', 'listView', 'connectionFrom', 'connectionTo', 'connectionMarket', 'connectionDate', 'connectionTime', 'connectionMode', 'searchConnections', 'connectionResults', 'savedConnections', 'clearSavedConnections', 'albumAreas', 'albumUnlockedCount', 'journalEntries', 'completionDialog', 'stickerDialog', 'unlockCelebration', 'reducedMotion', 'plannerPersonCount', 'plannerDate', 'plannerAvailability', 'plannerMarkets', 'plannerMarketSearch', 'plannerCityFilter', 'plannerTravelFilter', 'plannerFeatureFilter', 'plannerSortFilter', 'resetPlannerFilters', 'plannerSelectedMarket', 'plannerFilterSummary', 'plannerArrival', 'plannerReturnEnabled', 'plannerBudgetLevel', 'plannerOutbound', 'plannerReturn', 'plannerSummary', 'savePlannedTrip']) {
   assert.ok(html.includes(`id="${id}"`), `UI-Element fehlt: ${id}`);
 }
-assert.ok(html.includes('V3.0.0'), 'Versionshinweis fehlt');
+assert.ok(html.includes('V3.1.0'), 'Versionshinweis fehlt');
 assert.ok(html.includes('Transitous'), 'Transitous-Hinweis fehlt');
 assert.ok(html.includes('Way to Winter Magic'), 'App-Name fehlt');
 
@@ -62,7 +62,7 @@ assert.ok(sw.includes("event.request.mode === 'navigate'"), 'Offline-Navigation-
 
 const appSource = fs.readFileSync(new URL('app.js', root), 'utf8');
 assert.ok(appSource.includes("const STORAGE_PREFIX = 'wtwm:v2:'"), 'Eigener Speicherbereich fehlt');
-assert.ok(appSource.includes("const VERSION = '3.0.0'"), 'JS-Version ist nicht aktuell');
+assert.ok(appSource.includes("const VERSION = '3.1.0'"), 'JS-Version ist nicht aktuell');
 assert.ok(appSource.includes("state.tripDraft.marketId = selected ? '' : marketId"), 'Marktauswahl kann nicht wieder aufgehoben werden');
 assert.ok(appSource.includes("S.set('plannerMarketFilters', state.plannerFilters)"), 'Planerfilter werden nicht lokal gespeichert');
 assert.ok(appSource.includes("const API = 'https://api.transitous.org/api'"), 'Transitous-Endpunkt fehlt');
@@ -93,14 +93,37 @@ assert.equal(new Set(logic.STICKERS.map(sticker => sticker.area)).size, 4, 'Albu
 for (const sticker of logic.STICKERS) {
   assert.ok(sticker.target > 0 && sticker.motif && sticker.material && sticker.ribbon && sticker.frame && sticker.effectLabel, `Premiumdefinition unvollständig: ${sticker.name}`);
   assert.equal(sticker.colors.length, 3, `Farbwelt unvollständig: ${sticker.name}`);
+  for (const key of ['image', 'imageLocked', 'imageNew', 'imageSmall', 'imageLarge', 'imageShare']) {
+    assert.ok(sticker[key]?.startsWith('./assets/stickers/'), `Grafikpfad fehlt: ${sticker.name} ${key}`);
+    const path = new URL(sticker[key], root);
+    assert.ok(fs.existsSync(path), `Grafikdatei fehlt: ${sticker[key]}`);
+    const svg = fs.readFileSync(path, 'utf8');
+    assert.ok(svg.length > 4000 && svg.includes('<svg') && svg.includes('<title') && svg.includes('nameArc') && svg.includes('snowgrain'), `Grafikdatei unvollständig: ${sticker[key]}`);
+    assert.ok(sw.includes(sticker[key]), `Grafik fehlt im Offline-Cache: ${sticker[key]}`);
+  }
 }
+assert.deepEqual(logic.STICKERS.slice(0, 6).map(sticker => sticker.target), [1, 5, 10, 20, 30, 39], 'Besuchs-Meilensteine müssen 1/5/10/20/30/39 sein');
+assert.deepEqual(logic.STICKERS.slice(6).map(sticker => sticker.target), [1, 1, 3, 3, 5, 3, 5, 1, 3, 1], 'Kategorie-Ziele wurden verändert');
+assert.equal(new Set(logic.STICKERS.flatMap(sticker => [sticker.image, sticker.imageLocked, sticker.imageNew, sticker.imageSmall, sticker.imageLarge, sticker.imageShare])).size, 96, 'Jeder Sticker braucht sechs eigene Grafikdateien');
+assert.equal(fs.readdirSync(new URL('../assets/stickers/', import.meta.url)).filter(file => file.endsWith('.svg')).length, 96, 'Stickerordner muss genau 96 SVG-Dateien enthalten');
+for (const marker of ['shareSticker', 'shareJournalEntry', 'data-share-sticker', 'data-share-journal', 'rewardIdsEarnedOnTrip', 'imageShare', 'unlockEffectScene', 'medal-progress']) assert.ok(appSource.includes(marker) || html.includes(marker), `Grafik-Integration fehlt: ${marker}`);
 const rewardTrips = [
   { id:'t1', status:'Besucht', marketId:'benrath', market:'Schloss', city:'Düsseldorf', date:'2026-11-21', outbound:{ journey:{} }, returnTime:'21:00' },
   { id:'t2', status:'Besucht', marketId:'muengsten', market:'Wald', city:'Solingen', date:'2026-11-22', outbound:{ journey:{} } },
   { id:'t3', status:'Besucht', marketId:'hattingen', market:'Licht', city:'Hattingen', date:'2026-11-23', outbound:{ journey:{} } }
 ];
 const rewardResult = logic.evaluateRewards(rewardTrips, [{ tripId:'t1', night:true }], markets, {});
-for (const id of ['first-magic','winter-bronze','castle-magic','forest-christmas','de-ticket-pro','night-magic']) assert.equal(rewardResult.find(item => item.id === id).unlocked, true, `Sticker hätte entsperrt sein müssen: ${id}`);
+for (const id of ['first-magic','castle-magic','forest-christmas','de-ticket-pro','night-magic']) assert.equal(rewardResult.find(item => item.id === id).unlocked, true, `Sticker hätte entsperrt sein müssen: ${id}`);
+for (const id of ['five-moments','winter-bronze','winter-silver','winter-gold','winter-master']) assert.equal(rewardResult.find(item => item.id === id).unlocked, false, `Besuchs-Meilenstein zu früh entsperrt: ${id}`);
+for (const count of [1, 5, 10, 20, 30, 39]) {
+  const trips = markets.slice(0, count).map((market, index) => ({ id:`visit-${index}`, status:'Besucht', marketId:market.id, market:market.name, city:market.city, date:'2026-12-05' }));
+  const result = logic.evaluateRewards(trips, [], markets, {});
+  for (const sticker of result.slice(0, 6)) assert.equal(sticker.unlocked, sticker.target <= count, `Meilenstein ${sticker.id} bei ${count} Märkten falsch`);
+}
+const duplicateMarketTrips = Array.from({ length:39 }, (_, index) => ({ id:`duplicate-${index}`, status:'Besucht', marketId:markets[0].id, market:markets[0].name, city:markets[0].city, date:'2026-12-05' }));
+const duplicateRewards = logic.evaluateRewards(duplicateMarketTrips, [], markets, {});
+assert.equal(duplicateRewards.find(sticker => sticker.id === 'first-magic').unlocked, true);
+for (const id of ['five-moments','winter-bronze','winter-silver','winter-gold','winter-master']) assert.equal(duplicateRewards.find(sticker => sticker.id === id).unlocked, false, `Doppelter Markt zählt mehrfach: ${id}`);
 
 
 for (const iso of ['2026-03-29', '2026-10-25', '2026-12-24']) {
@@ -194,4 +217,4 @@ assert.equal(logic.score(markets.find(market => market.id === 'steele')).toFixed
 assert.equal(logic.marketOpeningHours({}, '2026-12-05'), 'Noch nicht veröffentlicht – Marktlink prüfen');
 assert.ok(ics.includes('Namen: Alex (Ja)') && ics.includes('Ticketstatus: Nicht nötig'), 'Erweiterte ICS-Angaben fehlen');
 
-console.log(`V3.0.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, ${markets.filter(market => market.new).length} neu, Planerfilter und DB-Verbindungssuche geprüft.`);
+console.log(`V3.1.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, 16 Premium-Sticker mit 96 Grafikvarianten, Planerfilter und DB-Verbindungssuche geprüft.`);

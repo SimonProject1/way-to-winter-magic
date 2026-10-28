@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1440" viewBox="0 0 800 960" role="img" aria-labelledby="title desc" data-sticker="first-magic" data-variant="large">
+<title id="title">Der erste Zauber – freigeschaltet</title><desc id="desc">Der erste Zauber – Große Detaildarstellung. Detailreiche Way-to-Winter-Magic-Premiummedaille: Leuchtender Weihnachtsbaum, goldener Stern, Laterne und erster Fußabdruck.</desc>
+<defs>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7b5416"/><stop offset=".16" stop-color="#fff0ad"/><stop offset=".34" stop-color="#f3ca78"/><stop offset=".55" stop-color="#fff6c9"/><stop offset=".74" stop-color="#a06c1d"/><stop offset="1" stop-color="#f3ce76"/></linearGradient>
+<linearGradient id="bronze" x1="0" x2="1"><stop stop-color="#59331f"/><stop offset=".25" stop-color="#d89355"/><stop offset=".55" stop-color="#8f512e"/><stop offset=".8" stop-color="#e6a76c"/><stop offset="1" stop-color="#52301f"/></linearGradient>
+<linearGradient id="silver" x1="0" x2="1"><stop stop-color="#788581"/><stop offset=".23" stop-color="#eff8f6"/><stop offset=".5" stop-color="#abb8b5"/><stop offset=".77" stop-color="#f8ffff"/><stop offset="1" stop-color="#77827f"/></linearGradient>
+<linearGradient id="metal" x1=".08" y1="0" x2=".92" y2="1"><stop stop-color="#745015"/><stop offset=".16" stop-color="#fff0ad"/><stop offset=".34" stop-color="#f3ca78"/><stop offset=".52" stop-color="#fff9d3"/><stop offset=".7" stop-color="#f3ca78"/><stop offset=".88" stop-color="#745015"/><stop offset="1" stop-color="#fff0ad"/></linearGradient>
+<radialGradient id="enamel" cx="32%" cy="23%" r="82%"><stop stop-color="#ffffff" stop-opacity=".22"/><stop offset=".18" stop-color="#0b3026"/><stop offset=".72" stop-color="#0b3026"/><stop offset="1" stop-color="#061914"/></radialGradient>
+<linearGradient id="ribbon" x1="0" x2="1"><stop stop-color="#171e1b" stop-opacity=".28"/><stop offset=".15" stop-color="#f6edda"/><stop offset=".43" stop-color="#f6edda"/><stop offset=".5" stop-color="#f3ca78"/><stop offset=".57" stop-color="#f6edda"/><stop offset=".85" stop-color="#f6edda"/><stop offset="1" stop-color="#171e1b" stop-opacity=".28"/></linearGradient>
+<pattern id="snowgrain" width="37" height="37" patternUnits="userSpaceOnUse"><circle cx="5" cy="9" r="1.5" fill="#fff" opacity=".22"/><circle cx="27" cy="24" r="1" fill="#fff" opacity=".14"/><path d="M14 29l5-5m-5 0l5 5" stroke="#fff" stroke-width=".7" opacity=".14"/></pattern>
+<filter id="shadow" x="-35%" y="-35%" width="170%" height="190%"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#04100c" flood-opacity=".48"/></filter>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+<filter id="desat"><feColorMatrix type="saturate" values=".08"/><feComponentTransfer><feFuncR type="linear" slope=".7"/><feFuncG type="linear" slope=".75"/><feFuncB type="linear" slope=".72"/></feComponentTransfer></filter>
+<clipPath id="disc"><circle cx="400" cy="442" r="245"/></clipPath>
+<path id="nameArc" d="M214 696 Q400 758 586 696"/>
+<path id="brandArc" d="M236 273 Q400 220 564 273"/>
+</defs>
+<g filter="url(#shadow)">
+  <path d="M212 40h145l43 214-146 56z" fill="url(#ribbon)" stroke="url(#metal)" stroke-width="9"/>
+  <path d="M588 40H443L400 254l146 56z" fill="url(#ribbon)" stroke="url(#metal)" stroke-width="9"/>
+  <path d="M233 50h334" stroke="#fff" stroke-opacity=".24" stroke-width="7"/>
+  
+  <circle cx="400" cy="442" r="306" fill="url(#metal)" stroke="#4c350f" stroke-width="8"/>
+  <circle cx="400" cy="442" r="286" fill="#0b3026" stroke="#fff0ad" stroke-opacity="0.86" stroke-width="7"/>
+  <circle cx="400" cy="442" r="269" fill="url(#metal)" stroke="#5c3e10" stroke-width="6"/>
+  <circle cx="400" cy="442" r="250" fill="url(#enamel)" stroke="#fff0ad" stroke-opacity="0.9" stroke-width="6"/>
+  <g clip-path="url(#disc)"><circle cx="316" cy="338" r="190" fill="#fff" opacity=".055"/><path d="M150 560q250-115 500 18v150H150z" fill="#020806" opacity=".2"/><rect x="145" y="185" width="510" height="530" fill="url(#snowgrain)" clip-path="url(#disc)"/></g>
+  <g ><g><g><path d="M400 320.7l-39.099999999999994 58.65h20.7l-39.099999999999994 56.349999999999994h35.65l-44.849999999999994 64.39999999999999h133.39999999999998l-44.849999999999994-64.39999999999999h35.65l-39.099999999999994-56.349999999999994h20.7z" fill="#14543d" stroke="#e2b65e" stroke-width="3.4499999999999997"/><rect x="391.95" y="520.8" width="16.099999999999998" height="27.599999999999998" rx="3" fill="#7a4b2c"/><path d="M367.8 362.1q32.199999999999996 11.5 64.39999999999999 0M356.3 394.3q43.699999999999996 13.799999999999999 87.39999999999999 0" fill="none" stroke="#fff7e5" stroke-width="5.75" stroke-linecap="round"/></g> <circle cx="357" cy="367" r="5" fill="#efc567" filter="url(#glow)"/><circle cx="401" cy="391" r="5" fill="#efc567" filter="url(#glow)"/><circle cx="443" cy="363" r="5" fill="#efc567" filter="url(#glow)"/><circle cx="382" cy="428" r="5" fill="#efc567" filter="url(#glow)"/><circle cx="425" cy="446" r="5" fill="#efc567" filter="url(#glow)"/><polygon points="400.0,246.0 408.8,267.9 432.3,269.5 414.2,284.6 420.0,307.5 400.0,295.0 380.0,307.5 385.8,284.6 367.7,269.5 391.2,267.9" fill="#fff0ad" stroke="#95691f" stroke-width="3" opacity="1"/><g transform="translate(240 425)"><path d="M-24 16h48l-7 83h-34z" fill="#be8a32" stroke="#fff0ad" stroke-width="5"/><rect x="-15" y="29" width="30" height="48" rx="5" fill="#ffdfa0"/><path d="M-17 15q17-38 34 0" fill="none" stroke="#e2b65e" stroke-width="7"/><path d="M0 31v43M-13 53h26" stroke="#9b6a20" stroke-width="3"/></g><ellipse cx="500" cy="525" rx="7" ry="13" transform="rotate(-24 500 525)" fill="#f5ead6" opacity="0.95"/><ellipse cx="517" cy="538" rx="7" ry="13" transform="rotate(-20 517 538)" fill="#f5ead6" opacity="0.85"/><ellipse cx="534" cy="551" rx="7" ry="13" transform="rotate(-16 534 551)" fill="#f5ead6" opacity="0.75"/><ellipse cx="551" cy="564" rx="7" ry="13" transform="rotate(-12 551 564)" fill="#f5ead6" opacity="0.6499999999999999"/><path d="M212 554q150-45 367 28" fill="none" stroke="#fff7e5" stroke-width="9" stroke-linecap="round" opacity=".8"/></g></g>
+  <path d="M213 351a250 250 0 0 1 300-136" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round" opacity=".13"/>
+  <circle cx="400" cy="442" r="291" fill="none" stroke="#fff8d2" stroke-width="3" opacity=".68"/>
+  <text font-family="Georgia,serif" font-size="17" font-weight="700" letter-spacing="4" fill="#fff2bb"><textPath href="#brandArc" startOffset="50%" text-anchor="middle">WAY TO WINTER MAGIC</textPath></text>
+  <path d="M181 672q219 103 438 0l-5 91q-214 76-428 0z" fill="url(#metal)" stroke="#5c3e10" stroke-width="6"/>
+  <path d="M198 689q202 78 404 0l-4 55q-198 62-396 0z" fill="#0b3026" stroke="#fff0ad" stroke-opacity=".72" stroke-width="3"/>
+  <text font-family="Georgia,serif" font-size="31" font-style="italic" font-weight="700" letter-spacing=".5" fill="#fff7e5"><textPath href="#nameArc" startOffset="50%" text-anchor="middle">Der erste Zauber</textPath></text>
+  <circle cx="400" cy="442" r="314" fill="none" stroke="#1a2a24" stroke-width="4" opacity=".55"/>
+  
+  
+</g>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1920" viewBox="0 0 800 960" role="img" aria-labelledby="title desc" data-sticker="forest-christmas" data-variant="share">
+<title id="title">Waldweihnacht – freigeschaltet</title><desc id="desc">Waldweihnacht – Hochauflösende Teilen-Variante. Detailreiche Way-to-Winter-Magic-Premiummedaille: Verschneite Tannen, Holzhütte, Lichterketten, Feuerkorb und Waldtiere.</desc>
+<defs>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7b5416"/><stop offset=".16" stop-color="#fff0ad"/><stop offset=".34" stop-color="#d6b66d"/><stop offset=".55" stop-color="#fff6c9"/><stop offset=".74" stop-color="#a06c1d"/><stop offset="1" stop-color="#f3ce76"/></linearGradient>
+<linearGradient id="bronze" x1="0" x2="1"><stop stop-color="#59331f"/><stop offset=".25" stop-color="#d89355"/><stop offset=".55" stop-color="#8f512e"/><stop offset=".8" stop-color="#e6a76c"/><stop offset="1" stop-color="#52301f"/></linearGradient>
+<linearGradient id="silver" x1="0" x2="1"><stop stop-color="#788581"/><stop offset=".23" stop-color="#eff8f6"/><stop offset=".5" stop-color="#abb8b5"/><stop offset=".77" stop-color="#f8ffff"/><stop offset="1" stop-color="#77827f"/></linearGradient>
+<linearGradient id="metal" x1=".08" y1="0" x2=".92" y2="1"><stop stop-color="#745015"/><stop offset=".16" stop-color="#fff0ad"/><stop offset=".34" stop-color="#d6b66d"/><stop offset=".52" stop-color="#fff9d3"/><stop offset=".7" stop-color="#d6b66d"/><stop offset=".88" stop-color="#745015"/><stop offset="1" stop-color="#fff0ad"/></linearGradient>
+<radialGradient id="enamel" cx="32%" cy="23%" r="82%"><stop stop-color="#ffffff" stop-opacity=".22"/><stop offset=".18" stop-color="#123327"/><stop offset=".72" stop-color="#123327"/><stop offset="1" stop-color="#061914"/></radialGradient>
+<linearGradient id="ribbon" x1="0" x2="1"><stop stop-color="#171e1b" stop-opacity=".28"/><stop offset=".15" stop-color="#315f45"/><stop offset=".43" stop-color="#315f45"/><stop offset=".5" stop-color="#d6b66d"/><stop offset=".57" stop-color="#315f45"/><stop offset=".85" stop-color="#315f45"/><stop offset="1" stop-color="#171e1b" stop-opacity=".28"/></linearGradient>
+<pattern id="snowgrain" width="37" height="37" patternUnits="userSpaceOnUse"><circle cx="5" cy="9" r="1.5" fill="#fff" opacity=".22"/><circle cx="27" cy="24" r="1" fill="#fff" opacity=".14"/><path d="M14 29l5-5m-5 0l5 5" stroke="#fff" stroke-width=".7" opacity=".14"/></pattern>
+<filter id="shadow" x="-35%" y="-35%" width="170%" height="190%"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#04100c" flood-opacity=".48"/></filter>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+<filter id="desat"><feColorMatrix type="saturate" values=".08"/><feComponentTransfer><feFuncR type="linear" slope=".7"/><feFuncG type="linear" slope=".75"/><feFuncB type="linear" slope=".72"/></feComponentTransfer></filter>
+<clipPath id="disc"><circle cx="400" cy="442" r="245"/></clipPath>
+<path id="nameArc" d="M214 696 Q400 758 586 696"/>
+<path id="brandArc" d="M236 273 Q400 220 564 273"/>
+</defs>
+<g filter="url(#shadow)">
+  <path d="M212 40h145l43 214-146 56z" fill="url(#ribbon)" stroke="url(#metal)" stroke-width="9"/>
+  <path d="M588 40H443L400 254l146 56z" fill="url(#ribbon)" stroke="url(#metal)" stroke-width="9"/>
+  <path d="M233 50h334" stroke="#fff" stroke-opacity=".24" stroke-width="7"/>
+  
+  <circle cx="400" cy="442" r="306" fill="url(#metal)" stroke="#4c350f" stroke-width="8"/>
+  <circle cx="400" cy="442" r="286" fill="#123327" stroke="#fff0ad" stroke-opacity="0.86" stroke-width="7"/>
+  <circle cx="400" cy="442" r="269" fill="url(#metal)" stroke="#5c3e10" stroke-width="6"/>
+  <circle cx="400" cy="442" r="250" fill="url(#enamel)" stroke="#fff0ad" stroke-opacity="0.9" stroke-width="6"/>
+  <g clip-path="url(#disc)"><circle cx="316" cy="338" r="190" fill="#fff" opacity=".055"/><path d="M150 560q250-115 500 18v150H150z" fill="#020806" opacity=".2"/><rect x="145" y="185" width="510" height="530" fill="url(#snowgrain)" clip-path="url(#disc)"/></g>
+  <g ><g><g><path d="M240 348.04l-26.52 39.78h14.040000000000001l-26.52 38.22h24.18l-30.42 43.68h90.48l-30.42-43.68h24.18l-26.52-38.22h14.040000000000001z" fill="#1d5b40" stroke="#e2b65e" stroke-width="2.34"/><rect x="234.54" y="483.76" width="10.92" height="18.72" rx="3" fill="#7a4b2c"/><path d="M218.16 376.12q21.84 7.800000000000001 43.68 0M210.36 397.96q29.64 9.36 59.28 0" fill="none" stroke="#fff7e5" stroke-width="3.9000000000000004" stroke-linecap="round"/></g><g><path d="M550 341.2l-30.6 45.9h16.2l-30.6 44.1h27.900000000000002l-35.1 50.4h104.4l-35.1-50.4h27.900000000000002l-30.6-44.1h16.2z" fill="#164d37" stroke="#e2b65e" stroke-width="2.7"/><rect x="543.7" y="497.8" width="12.6" height="21.6" rx="3" fill="#7a4b2c"/><path d="M524.8 373.6q25.2 9.0 50.4 0M515.8 398.8q34.2 10.8 68.4 0" fill="none" stroke="#fff7e5" stroke-width="4.5" stroke-linecap="round"/></g><g><path d="M182 408.9l-18.700000000000003 28.05h9.9l-18.700000000000003 26.950000000000003h17.05l-21.450000000000003 30.800000000000004h63.800000000000004l-21.450000000000003-30.800000000000004h17.05l-18.700000000000003-26.950000000000003h9.9z" fill="#255f48" stroke="#e2b65e" stroke-width="1.6500000000000001"/><rect x="178.15" y="504.6" width="7.700000000000001" height="13.200000000000001" rx="3" fill="#7a4b2c"/><path d="M166.6 428.7q15.400000000000002 5.5 30.800000000000004 0M161.1 444.1q20.900000000000002 6.6000000000000005 41.800000000000004 0" fill="none" stroke="#fff7e5" stroke-width="2.75" stroke-linecap="round"/></g><g><path d="M303 432l97-76 98 76v129H303z" fill="#845232" stroke="#e2b65e" stroke-width="6"/><path d="M284 442l116-93 116 93" fill="none" stroke="#fff7e5" stroke-width="12" stroke-linecap="round"/><rect x="342" y="448" width="43" height="52" fill="#ffdc86"/><rect x="420" y="448" width="43" height="90" fill="#562f24"/><path d="M329 418q70-35 140 0" fill="none" stroke="#fff0ad" stroke-width="4" stroke-dasharray="1 15" stroke-linecap="round"/></g><g><ellipse cx="285" cy="559" rx="38" ry="12" fill="#3e2a23"/><path d="M275 550q-8-35 10-53 5 26 15 37 10-31 22-39 7 36-10 57z" fill="#ffb43f" filter="url(#glow)"/><path d="M258 566l54-28M260 539l55 28" stroke="#6e422c" stroke-width="7"/></g><path d="M548 566q19-40 42-11l12-19 6 26 21 3-13 12h-62zM183 571q13-30 35-11l10-14 7 20 18 4-16 10h-50z" fill="#0b211a" opacity=".82"/><g stroke="#fff7e5" stroke-width="2.3" stroke-linecap="round" opacity="0.8"><path d="M503.0 285.0L537.0 285.0"/><path d="M511.5 270.3L528.5 299.7"/><path d="M528.5 270.3L511.5 299.7"/></g><g stroke="#fff7e5" stroke-width="2.3" stroke-linecap="round" opacity="0.8"><path d="M273.0 278.0L299.0 278.0"/><path d="M279.5 266.7L292.5 289.3"/><path d="M292.5 266.7L279.5 289.3"/></g></g></g>
+  <path d="M213 351a250 250 0 0 1 300-136" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round" opacity=".13"/>
+  <circle cx="400" cy="442" r="291" fill="none" stroke="#fff8d2" stroke-width="3" opacity=".68"/>
+  <text font-family="Georgia,serif" font-size="17" font-weight="700" letter-spacing="4" fill="#fff2bb"><textPath href="#brandArc" startOffset="50%" text-anchor="middle">WAY TO WINTER MAGIC</textPath></text>
+  <path d="M181 672q219 103 438 0l-5 91q-214 76-428 0z" fill="url(#metal)" stroke="#5c3e10" stroke-width="6"/>
+  <path d="M198 689q202 78 404 0l-4 55q-198 62-396 0z" fill="#123327" stroke="#fff0ad" stroke-opacity=".72" stroke-width="3"/>
+  <text font-family="Georgia,serif" font-size="31" font-style="italic" font-weight="700" letter-spacing=".5" fill="#fff7e5"><textPath href="#nameArc" startOffset="50%" text-anchor="middle">Waldweihnacht</textPath></text>
+  <circle cx="400" cy="442" r="314" fill="none" stroke="#1a2a24" stroke-width="4" opacity=".55"/>
+  
+  
+</g>
+</svg>

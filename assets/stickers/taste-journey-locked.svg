@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="960" viewBox="0 0 800 960" role="img" aria-labelledby="title desc" data-sticker="taste-journey" data-variant="locked">
+<title id="title">Genussreise – gesperrt</title><desc id="desc">Genussreise – Gesperrt. Detailreiche Way-to-Winter-Magic-Premiummedaille: Weihnachtstisch, rote Glühweintasse, Gebäck, Mandeln und Goldbesteck.</desc>
+<defs>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7b5416"/><stop offset=".16" stop-color="#fff0ad"/><stop offset=".34" stop-color="#e7b85f"/><stop offset=".55" stop-color="#fff6c9"/><stop offset=".74" stop-color="#a06c1d"/><stop offset="1" stop-color="#f3ce76"/></linearGradient>
+<linearGradient id="bronze" x1="0" x2="1"><stop stop-color="#59331f"/><stop offset=".25" stop-color="#d89355"/><stop offset=".55" stop-color="#8f512e"/><stop offset=".8" stop-color="#e6a76c"/><stop offset="1" stop-color="#52301f"/></linearGradient>
+<linearGradient id="silver" x1="0" x2="1"><stop stop-color="#788581"/><stop offset=".23" stop-color="#eff8f6"/><stop offset=".5" stop-color="#abb8b5"/><stop offset=".77" stop-color="#f8ffff"/><stop offset="1" stop-color="#77827f"/></linearGradient>
+<linearGradient id="metal" x1=".08" y1="0" x2=".92" y2="1"><stop stop-color="#373d3a"/><stop offset=".16" stop-color="#c7cfcc"/><stop offset=".34" stop-color="#8d9692"/><stop offset=".52" stop-color="#fff9d3"/><stop offset=".7" stop-color="#8d9692"/><stop offset=".88" stop-color="#373d3a"/><stop offset="1" stop-color="#c7cfcc"/></linearGradient>
+<radialGradient id="enamel" cx="32%" cy="23%" r="82%"><stop stop-color="#ffffff" stop-opacity=".22"/><stop offset=".18" stop-color="#27302d"/><stop offset=".72" stop-color="#27302d"/><stop offset="1" stop-color="#101614"/></radialGradient>
+<linearGradient id="ribbon" x1="0" x2="1"><stop stop-color="#171e1b" stop-opacity=".28"/><stop offset=".15" stop-color="#f1e3c9"/><stop offset=".43" stop-color="#f1e3c9"/><stop offset=".5" stop-color="#e7b85f"/><stop offset=".57" stop-color="#f1e3c9"/><stop offset=".85" stop-color="#f1e3c9"/><stop offset="1" stop-color="#171e1b" stop-opacity=".28"/></linearGradient>
+<pattern id="snowgrain" width="37" height="37" patternUnits="userSpaceOnUse"><circle cx="5" cy="9" r="1.5" fill="#fff" opacity=".22"/><circle cx="27" cy="24" r="1" fill="#fff" opacity=".14"/><path d="M14 29l5-5m-5 0l5 5" stroke="#fff" stroke-width=".7" opacity=".14"/></pattern>
+<filter id="shadow" x="-35%" y="-35%" width="170%" height="190%"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#04100c" flood-opacity=".48"/></filter>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+<filter id="desat"><feColorMatrix type="saturate" values=".08"/><feComponentTransfer><feFuncR type="linear" slope=".7"/><feFuncG type="linear" slope=".75"/><feFuncB type="linear" slope=".72"/></feComponentTransfer></filter>
+<clipPath id="disc"><circle cx="400" cy="442" r="245"/></clipPath>
+<path id="nameArc" d="M214 696 Q400 758 586 696"/>
+<path id="brandArc" d="M236 273 Q400 220 564 273"/>
+</defs>
+<g filter="url(#shadow)">
+  <path d="M212 40h145l43 214-146 56z" fill="url(#ribbon)" stroke="url(#metal)" stroke-width="9"/>
+  <path d="M588 40H443L400 254l146 56z" fill="url(#ribbon)" stroke="url(#metal)" stroke-width="9"/>
+  <path d="M233 50h334" stroke="#fff" stroke-opacity=".24" stroke-width="7"/>
+  
+  <circle cx="400" cy="442" r="306" fill="url(#metal)" stroke="#4c350f" stroke-width="8"/>
+  <circle cx="400" cy="442" r="286" fill="#303734" stroke="#fff0ad" stroke-opacity="0.32" stroke-width="7"/>
+  <circle cx="400" cy="442" r="269" fill="url(#metal)" stroke="#5c3e10" stroke-width="6"/>
+  <circle cx="400" cy="442" r="250" fill="url(#enamel)" stroke="#fff0ad" stroke-opacity="0.28" stroke-width="6"/>
+  <g clip-path="url(#disc)"><circle cx="316" cy="338" r="190" fill="#fff" opacity=".055"/><path d="M150 560q250-115 500 18v150H150z" fill="#020806" opacity=".2"/><rect x="145" y="185" width="510" height="530" fill="url(#snowgrain)" clip-path="url(#disc)"/></g>
+  <g filter="url(#desat)" opacity=".48"><g><path d="M205 478q195-55 390 0v113H205z" fill="#f3e1c5" stroke="#b98b42" stroke-width="6"/><path d="M205 505q195-55 390 0" fill="none" stroke="#9f2f3b" stroke-width="13" opacity=".85"/><g><path d="M318 353h151l-17 152q-7 47-59 47t-59-47z" fill="#a83232" stroke="#e2b65e" stroke-width="7"/><path d="M466 385q73 0 53 75-12 38-61 26" fill="none" stroke="#a83232" stroke-width="18"/><ellipse cx="393" cy="355" rx="75" ry="20" fill="#4a201c" stroke="#fff0ad" stroke-width="5"/><path d="M360 324q-26-44 10-72M398 320q-20-46 15-77M435 325q-21-37 11-66" fill="none" stroke="#fff0cf" stroke-width="8" stroke-linecap="round" opacity=".82"/></g><g fill="#bc7a3e" stroke="#f0cf8e" stroke-width="3"><circle cx="270" cy="519" r="34"/><path d="M247 510l46 20M259 490l22 57"/><ellipse cx="525" cy="520" rx="10" ry="21" transform="rotate(-30 525 520)"/><ellipse cx="552" cy="529" rx="10" ry="21" transform="rotate(25 552 529)"/><ellipse cx="575" cy="512" rx="10" ry="21" transform="rotate(55 575 512)"/></g><path d="M242 344v190M218 344v78M230 344v78M254 344v78M548 344v190M531 344q17 33 34 0" fill="none" stroke="{GOLD2}" stroke-width="7"/><polygon points="492.0,314.0 493.2,322.2 499.8,317.2 494.8,323.8 503.0,325.0 494.8,326.2 499.8,332.8 493.2,327.8 492.0,336.0 490.8,327.8 484.2,332.8 489.2,326.2 481.0,325.0 489.2,323.8 484.2,317.2 490.8,322.2" fill="#8c522f" stroke="none" stroke-width="0" opacity="1"/></g></g>
+  <path d="M213 351a250 250 0 0 1 300-136" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round" opacity=".13"/>
+  <circle cx="400" cy="442" r="291" fill="none" stroke="#fff8d2" stroke-width="3" opacity=".68"/>
+  <text font-family="Georgia,serif" font-size="17" font-weight="700" letter-spacing="4" fill="#fff2bb"><textPath href="#brandArc" startOffset="50%" text-anchor="middle">WAY TO WINTER MAGIC</textPath></text>
+  <path d="M181 672q219 103 438 0l-5 91q-214 76-428 0z" fill="url(#metal)" stroke="#5c3e10" stroke-width="6"/>
+  <path d="M198 689q202 78 404 0l-4 55q-198 62-396 0z" fill="#2f3533" stroke="#fff0ad" stroke-opacity=".72" stroke-width="3"/>
+  <text font-family="Georgia,serif" font-size="31" font-style="italic" font-weight="700" letter-spacing=".5" fill="#c6ceca"><textPath href="#nameArc" startOffset="50%" text-anchor="middle">Genussreise</textPath></text>
+  <circle cx="400" cy="442" r="314" fill="none" stroke="#1a2a24" stroke-width="4" opacity=".55"/>
+  <g aria-label="Schloss"><circle cx="400" cy="470" r="68" fill="#121816" opacity=".9" stroke="#9ba5a1" stroke-width="7"/><path d="M369 446v-25q0-34 31-34t31 34v25" fill="none" stroke="#c5cfcb" stroke-width="14" stroke-linecap="round"/><rect x="356" y="440" width="88" height="76" rx="15" fill="#8d9692" stroke="#d1d7d4" stroke-width="5"/><circle cx="400" cy="473" r="10" fill="#27302d"/><path d="M400 483v17" stroke="#27302d" stroke-width="8" stroke-linecap="round"/></g><circle cx="216.2" cy="222.9" r="5" fill="#aeb8b4" opacity="0.22"/><circle cx="344.9" cy="161.4" r="5" fill="#aeb8b4" opacity="0.255"/><circle cx="487.3" cy="169.7" r="5" fill="#aeb8b4" opacity="0.29000000000000004"/><circle cx="608.0" cy="245.7" r="5" fill="#aeb8b4" opacity="0.325"/><circle cx="677.0" cy="370.7" r="5" fill="#aeb8b4" opacity="0.36"/><circle cx="677.0" cy="513.3" r="5" fill="#aeb8b4" opacity="0.395"/><circle cx="608.0" cy="638.3" r="5" fill="#aeb8b4" opacity="0.43000000000000005"/><circle cx="487.3" cy="714.3" r="5" fill="#aeb8b4" opacity="0.465"/><circle cx="344.9" cy="722.6" r="5" fill="#aeb8b4" opacity="0.5"/><circle cx="216.2" cy="661.1" r="5" fill="#aeb8b4" opacity="0.535"/>
+  
+</g>
+</svg>
