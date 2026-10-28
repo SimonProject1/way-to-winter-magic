@@ -1,4 +1,4 @@
-const VERSION = '3.1.0';
+const VERSION = '4.0.0';
 const rewardEngine = typeof WTWM_REWARDS !== 'undefined' ? WTWM_REWARDS : require('./rewards.js');
 const { AREAS: REWARD_AREAS, STICKERS, evaluateRewards } = rewardEngine;
 const API = 'https://api.transitous.org/api';
@@ -1531,10 +1531,13 @@ function medalMarkup(sticker, options = {}) {
   const locked = options.locked ?? !sticker.unlocked;
   const isNew = Boolean(options.isNew ?? (sticker.unlocked && !sticker.seen));
   const progress = Math.max(0, Math.min(100, Number(options.progress ?? (sticker.target ? sticker.value / sticker.target * 100 : 0))));
+  const kind = sticker.kind === 'theme' ? 'theme' : 'milestone';
   const source = locked ? sticker.imageLocked : isNew ? sticker.imageNew : size === 'large' ? sticker.imageLarge : sticker.imageSmall;
   const responsiveSource = !locked && !isNew && size !== 'large' ? ` srcset="${esc(sticker.imageSmall)} 320w, ${esc(sticker.image)} 800w" sizes="${size === 'mini' ? '58px' : '76px'}"` : '';
-  return `<div class="premium-medal ${size} ${locked ? 'locked' : 'unlocked'} ${isNew ? 'newly-unlocked' : ''}" style="--sticker-progress:${progress}" data-variant="${locked ? 'locked' : isNew ? 'new' : size}" role="img" aria-label="${esc(sticker.name)} – ${locked ? `gesperrt, Fortschritt ${Math.round(progress)} Prozent` : isNew ? 'neu freigeschaltet' : 'freigeschaltet'}">
-    <img class="sticker-art" src="${esc(source)}"${responsiveSource} alt="" ${size === 'large' ? '' : 'loading="lazy"'} decoding="async">${locked ? '<span class="medal-progress" aria-hidden="true"></span>' : ''}${isNew ? '<span class="medal-new">Neu</span>' : ''}
+  const themeReveal = locked && kind === 'theme' ? `<span class="theme-progress-reveal" aria-hidden="true"><img class="sticker-art" src="${esc(sticker.imageSmall)}" alt="" loading="lazy" decoding="async"></span><span class="theme-progress-badge" aria-hidden="true">${Math.round(progress)}%</span>` : '';
+  const progressIndicator = locked ? (kind === 'theme' ? themeReveal : '<span class="medal-progress" aria-hidden="true"></span>') : '';
+  return `<div class="premium-medal ${kind} ${size} ${locked ? 'locked' : 'unlocked'} ${isNew ? 'newly-unlocked' : ''}" style="--sticker-progress:${progress};--theme-reveal:${progress}%" data-kind="${kind}" data-variant="${locked ? 'locked' : isNew ? 'new' : size}" role="img" aria-label="${esc(sticker.name)} – ${locked ? `gesperrt, Fortschritt ${Math.round(progress)} Prozent` : isNew ? 'neu freigeschaltet' : 'freigeschaltet'}">
+    <img class="sticker-art base-art" src="${esc(source)}"${responsiveSource} alt="" ${size === 'large' ? '' : 'loading="lazy"'} decoding="async">${progressIndicator}${isNew ? '<span class="medal-new">Neu</span>' : ''}
   </div>`;
 }
 
@@ -1654,12 +1657,13 @@ function renderWinterMagic() {
     const items = rewards.filter(sticker => sticker.area === area.id);
     const areaUnlocked = items.filter(sticker => sticker.unlocked).length;
     const areaPercent = Math.round(areaUnlocked / items.length * 100);
-    return `<section class="album-area panel" aria-labelledby="area-${esc(area.id)}">
+    const areaKind = items.every(sticker => sticker.kind === 'milestone') ? 'milestone' : 'theme';
+    return `<section class="album-area panel ${areaKind}-area" data-kind="${areaKind}" aria-labelledby="area-${esc(area.id)}">
       <div class="album-area-head"><div><p class="eyebrow dark">${areaUnlocked} von ${items.length} gesammelt</p><h2 id="area-${esc(area.id)}">${esc(area.name)}</h2><p>${esc(area.subtitle)}</p></div><div class="progress-ring" style="--progress:${areaPercent * 3.6}deg"><strong>${areaPercent}</strong><span>%</span></div></div>
-      <div class="sticker-grid">${items.map(sticker => {
+      <div class="sticker-grid ${areaKind}-grid">${items.map(sticker => {
         const ratio = Math.min(100, Math.round(sticker.value / sticker.target * 100));
         const newSticker = sticker.unlocked && !sticker.seen;
-        return `<button class="sticker-card ${sticker.unlocked ? 'unlocked' : 'locked'} ${newSticker ? 'new' : ''}" data-sticker="${esc(sticker.id)}" aria-label="${esc(sticker.name)} öffnen">
+        return `<button class="sticker-card ${sticker.kind} ${sticker.unlocked ? 'unlocked' : 'locked'} ${newSticker ? 'new' : ''}" data-sticker="${esc(sticker.id)}" aria-label="${esc(sticker.name)} öffnen">
           ${medalMarkup(sticker, { size:'small', locked:!sticker.unlocked, isNew:newSticker, progress:ratio })}
           <span class="sticker-copy"><strong>${esc(sticker.name)}</strong><small>${sticker.unlocked ? `Freigeschaltet · ${rewardDate(sticker.unlockedAt)}` : `${Math.min(sticker.value, sticker.target)} / ${sticker.target} ${esc(sticker.unit)}`}</small><span class="mini-progress"><i style="width:${ratio}%"></i></span></span>
         </button>`;
@@ -1679,9 +1683,10 @@ function showStickerDetail(id) {
     sticker = currentRewards().find(item => item.id === id);
   }
   const ratio = Math.min(100, Math.round(sticker.value / sticker.target * 100));
+  const isTheme = sticker.kind === 'theme';
   $('#stickerDetail').innerHTML = `<div class="sticker-detail-head">${medalMarkup(sticker, { size:'large', locked:!sticker.unlocked, isNew:false, progress:ratio })}<div><p class="eyebrow dark">${sticker.unlocked ? 'Freigeschaltet' : 'Noch gesperrt'}</p><h2>${esc(sticker.name)}</h2><p>${esc(sticker.description)}</p><div class="sticker-detail-actions"><button data-share-sticker="${esc(sticker.id)}" ${sticker.unlocked ? '' : 'disabled'}>${sticker.unlocked ? 'Sticker teilen' : 'Nach Freischaltung teilbar'}</button></div></div></div>
     <div class="sticker-progress-detail"><div><strong>${Math.min(sticker.value, sticker.target)} / ${sticker.target}</strong><span>${esc(sticker.unit)}</span></div><span class="mini-progress"><i style="width:${ratio}%"></i></span></div>
-    <div class="sticker-specs"><div><span>Motiv</span><strong>${esc(sticker.motif)}</strong></div><div><span>Material</span><strong>${esc(sticker.material)}</strong></div><div><span>Band</span><strong>${esc(sticker.ribbon)}</strong></div><div><span>Rahmen</span><strong>${esc(sticker.frame)}</strong></div><div><span>Freischalteffekt</span><strong>${esc(sticker.effectLabel)}</strong></div><div><span>Freischaltdatum</span><strong>${esc(rewardDate(sticker.unlockedAt))}</strong></div></div>`;
+    <div class="sticker-specs"><div><span>Motiv</span><strong>${esc(sticker.motif)}</strong></div><div><span>Material</span><strong>${esc(sticker.material)}</strong></div><div><span>${isTheme ? 'Darstellung' : 'Band'}</span><strong>${esc(sticker.ribbon)}</strong></div><div><span>${isTheme ? 'Kontur' : 'Rahmen'}</span><strong>${esc(sticker.frame)}</strong></div><div><span>Freischalteffekt</span><strong>${esc(sticker.effectLabel)}</strong></div><div><span>Freischaltdatum</span><strong>${esc(rewardDate(sticker.unlockedAt))}</strong></div></div>`;
   $('[data-share-sticker]')?.addEventListener('click', () => shareSticker(sticker.id));
   $('#stickerDialog').showModal();
   renderWinterMagic();
@@ -1811,11 +1816,25 @@ function unlockEffectMarkup(effect) {
     city:['city-rise',5], curtain:['curtain-part',2], weekend:['weekend-flake',9], moon:['moon-reflection',14]
   };
   const [kind, count] = effects[effect] || ['spark',8];
-  return Array.from({ length:count }, (_, index) => {
+  const themeProp = {
+    castle:'<span class="effect-prop prop-castle"><i></i><i></i><i></i><b></b></span>',
+    forest:'<span class="effect-prop prop-forest"><i></i><i></i><b></b></span>',
+    lantern:'<span class="effect-prop prop-lantern"><i></i></span>',
+    steam:'<span class="effect-prop prop-table"><i></i><b></b></span>',
+    cozy:'<span class="effect-prop prop-cozy"><i></i><b></b></span>',
+    train:'<span class="effect-prop prop-train"><i></i><b></b></span>',
+    city:'<span class="effect-prop prop-map"><i></i><b></b></span>',
+    curtain:'<span class="effect-prop prop-ticket"><i></i></span>',
+    weekend:'<span class="effect-prop prop-weekend"><i></i><b></b></span>',
+    moon:'<span class="effect-prop prop-moon"><i></i><b></b></span>'
+  }[effect] || '';
+  const particles = Array.from({ length:count }, (_, index) => {
     const x = 8 + (index * 37) % 84;
     const y = 9 + (index * 29) % 76;
     return `<span class="effect-particle ${kind}" data-n="${index + 1}" style="--i:${index};--count:${count};--x:${x}%;--y:${y}%" aria-hidden="true"></span>`;
   }).join('');
+  const materialLayers = `<span class="unlock-depth-shadow" aria-hidden="true"></span><span class="unlock-light-bloom" aria-hidden="true"></span><span class="unlock-material-sweep" aria-hidden="true"></span>`;
+  return materialLayers + themeProp + particles;
 }
 
 function showNextUnlock() {

@@ -145,7 +145,7 @@ async def main():
             await page.route("https://api.transitous.org/**", api)
             await page.goto(base, wait_until="networkidle")
             assert await page.locator("text=Way to Winter Magic").count() >= 1
-            assert await page.locator("text=V3.1.0").count() >= 1
+            assert await page.locator("text=V4.0.0").count() >= 1
             assert await page.locator("#marketCount").inner_text() == "39"
             overflow = await page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
             assert overflow <= 1, f"Mobiles horizontales Überlaufen: {overflow}px"
@@ -271,8 +271,11 @@ async def main():
             for _ in range(2):
                 await page.locator("#unlockCelebration").wait_for(state="visible")
                 unlocked_titles.append(await page.locator("#unlockTitle").inner_text())
-                assert await page.locator('#unlockMedal img[src*="-new.svg"]').count() == 1
+                assert await page.locator('#unlockMedal img[src*="-new.webp"]').count() == 1
                 assert await page.locator('#unlockEffectScene .effect-particle').count() > 0
+                assert await page.locator('#unlockEffectScene .unlock-depth-shadow').count() == 1
+                assert await page.locator('#unlockEffectScene .unlock-light-bloom').count() == 1
+                assert await page.locator('#unlockEffectScene .unlock-material-sweep').count() == 1
                 await page.click("#closeUnlock")
                 await page.wait_for_timeout(250)
             assert set(unlocked_titles) == {"Der erste Zauber", "Night Magic"}, unlocked_titles
@@ -280,11 +283,28 @@ async def main():
             assert await page.locator(".album-area").count() == 4
             assert await page.locator(".sticker-card").count() == 16
             assert await page.locator(".sticker-card.unlocked").count() == 2
-            assert await page.locator('.sticker-card img.sticker-art').count() == 16
-            assert await page.locator('.sticker-card.unlocked img[src*="-small.svg"]').count() == 2
-            assert await page.locator('.sticker-card.locked img[src*="-locked.svg"]').count() == 14
+            assert await page.locator('.sticker-card img.base-art').count() == 16
+            assert await page.locator('.sticker-card.milestone').count() == 6
+            assert await page.locator('.sticker-card.theme').count() == 10
+            assert await page.locator('.album-area[data-kind="milestone"]').count() == 1
+            assert await page.locator('.album-area[data-kind="theme"]').count() == 3
+            artwork_check = await page.evaluate("""async () => {
+                const keys = ['image', 'imageLocked', 'imageNew', 'imageSmall', 'imageLarge', 'imageShare'];
+                const paths = [...new Set(WTWM_REWARDS.STICKERS.flatMap(sticker => keys.map(key => sticker[key])))];
+                const failed = [];
+                await Promise.all(paths.map(src => new Promise(resolve => {
+                    const image = new Image();
+                    image.onload = () => { if (!image.naturalWidth || !image.naturalHeight) failed.push(src); resolve(); };
+                    image.onerror = () => { failed.push(src); resolve(); };
+                    image.src = src;
+                })));
+                return { count: paths.length, failed };
+            }""")
+            assert artwork_check == {"count": 96, "failed": []}, f"Artwork-Pfade fehlerhaft: {artwork_check}"
+            assert await page.locator('.sticker-card.unlocked img[src*="-small.webp"]').count() == 2
+            assert await page.locator('.sticker-card.locked img[src*="-locked.webp"]').count() == 14
             await page.locator('.sticker-card.unlocked').first.click()
-            assert await page.locator('#stickerDialog img[src*="-large.svg"]').count() == 1
+            assert await page.locator('#stickerDialog img[src*="-large.webp"]').count() == 1
             assert await page.locator('[data-share-sticker]').is_enabled()
             with tempfile.TemporaryDirectory() as tmp:
                 async with page.expect_download() as download_info:
@@ -297,7 +317,7 @@ async def main():
             await page.click('#stickerDialog .close')
             await page.click("#showJournal")
             assert await page.locator(".journal-card").count() == 1
-            assert await page.locator('.journal-sticker img[src*="-small.svg"]').count() >= 2
+            assert await page.locator('.journal-sticker img[src*="-small.webp"]').count() >= 2
             assert await page.locator('[data-share-journal]').count() == 1
             journal_text = await page.locator(".journal-card").inner_text()
             for expected in ["Steeler Weihnachtsmarkt", "Goldene Lichter", "Kakao", "Night Magic"]:
@@ -322,7 +342,7 @@ async def main():
                 backup_path = pathlib.Path(tmp) / backup_download.suggested_filename
                 await backup_download.save_as(backup_path)
                 backup = json.loads(backup_path.read_text(encoding='utf-8'))
-                assert backup['version'] == '3.1.0'
+                assert backup['version'] == '4.0.0'
                 assert len(backup['state']['journal']) == 1 and len(backup['state']['trips']) == 1
                 assert len(backup['state']['rewardMeta']) >= 2
                 await page.evaluate("localStorage.setItem('wtwm:v2:journal','[]'); localStorage.setItem('wtwm:v2:trips','[]'); localStorage.setItem('wtwm:v2:rewardMeta','{}')")
@@ -366,11 +386,19 @@ async def main():
             assert await page.evaluate("async () => { await navigator.serviceWorker.ready; return true; }")
             await context.set_offline(True)
             await page.reload(wait_until="domcontentloaded")
-            assert await page.locator("text=V3.1.0").count() >= 1
+            assert await page.locator("text=V4.0.0").count() >= 1
             assert await page.locator("#marketCount").inner_text() == "39"
             await page.click('[data-view="wintermagic"]')
             await page.locator('.sticker-card img.sticker-art').first.wait_for()
             assert await page.locator('.sticker-card img.sticker-art').evaluate_all("els => els.every(img => img.complete && img.naturalWidth > 0)")
+            offline_cache_check = await page.evaluate("""async () => {
+                const keys = ['image', 'imageLocked', 'imageNew', 'imageSmall', 'imageLarge', 'imageShare'];
+                const paths = [...new Set(WTWM_REWARDS.STICKERS.flatMap(sticker => keys.map(key => sticker[key])))];
+                const missing = [];
+                for (const src of paths) if (!(await caches.match(new URL(src, location.href)))) missing.push(src);
+                return { count: paths.length, missing };
+            }""")
+            assert offline_cache_check == {"count": 96, "missing": []}, f"Artwork fehlt offline: {offline_cache_check}"
             await context.set_offline(False)
             assert not console_errors, "Browserfehler: " + " | ".join(console_errors)
             await browser.close()
@@ -378,7 +406,7 @@ async def main():
         server.shutdown()
         server.server_close()
 
-    print("V3.1.0 E2E bestanden: kompletter Planer mobil/desktop, sechs Sticker-Grafikvarianten, individuelle Freischalteffekte, Teilen, Persistenz, Wiederherstellung, Offline-Start und GitHub-Pages-Unterpfad.")
+    print("V4.0.0 E2E bestanden: kompletter Planer mobil/desktop, sechs Meilenstein-Medaillen, zehn freie Themen-Sticker, individuelle Freischalteffekte, Teilen, Persistenz, Wiederherstellung, Offline-Start und GitHub-Pages-Unterpfad.")
 
 
 if __name__ == "__main__":

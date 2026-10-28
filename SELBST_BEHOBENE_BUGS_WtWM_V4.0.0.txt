@@ -1,0 +1,28 @@
+Way to Winter Magic V4.0.0 – selbst behobene Bugs
+
+1. Alte Sticker-SVGs und veraltete Bildpfade
+   Behoben: 96 alte Sticker-SVG-Dateien entfernt und sämtliche produktiven Stickerpfade auf echte WebP-Bilddateien umgestellt.
+
+2. Unvollständige Bildzustände
+   Behoben: Für alle 16 Sticker jeweils eigene Dateien für gesperrt, neu, klein, groß, Standard und Teilen erstellt und eingebunden.
+
+3. Veralteter Offline-Cache
+   Behoben: Service-Worker-Cache auf V4.0.0 angehoben, alte Cache-Versionen werden gelöscht und alle 96 Artwork-Dateien werden offline vorgehalten.
+
+4. Inkonsistente Versionsangaben und Tests
+   Behoben: App, Oberfläche, Backup-Metadaten, README, Transitous-Test, Smoke-Test und E2E-Test einheitlich auf V4.0.0 aktualisiert.
+
+5. Ungeprüfte Artwork-Pfade
+   Behoben: Automatische Prüfung aller 96 Bildpfade, WebP-Header, Browser-Decodierung und Offline-Cache-Einträge ergänzt.
+
+6. Artwork-Beschreibung passte nicht zu schriftfreien Illustrationen
+   Behoben: Detailansicht beschreibt die zehn Themen-Artworks jetzt als schriftfreie Motive; Titel und Status bleiben sauber in der Oberfläche.
+
+Testergebnis:
+- Smoke-/Logiktest: bestanden
+- Mobile E2E: bestanden
+- Desktop E2E: bestanden
+- GitHub-Pages-Unterpfad: bestanden
+- Offline-Start und alle 96 Cache-Einträge: bestanden
+- Teilen, Tagebuch, lokale Speicherung, Sicherung/Wiederherstellung und ICS: bestanden
+- Live-Aufruf von Transitous im Testcontainer durch dessen externe Sandbox-Netzwerkregel blockiert; die Integration selbst wurde im vollständigen E2E-Ablauf mit realitätsnahen Transitous-Antworten geprüft.
