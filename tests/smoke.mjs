@@ -49,12 +49,13 @@ for (const market of markets) {
 }
 
 const html = fs.readFileSync(new URL('index.html', root), 'utf8');
-for (const id of ['marketSearch', 'cityFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'dateFilter', 'timelineBody', 'tripMarket', 'peopleList', 'stopResults']) {
+for (const id of ['marketSearch', 'cityFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'dateFilter', 'timelineBody', 'tripMarket', 'peopleList', 'stopResults', 'marketList', 'cardViewBtn', 'listViewBtn']) {
   assert.ok(html.includes(`id="${id}"`), `UI-Element fehlt: ${id}`);
 }
 assert.ok(html.includes('<title>Way to Winter Magic</title>'), 'Browser-Titel fehlt');
-assert.ok(html.includes('V2.0.0'), 'Versionshinweis fehlt');
+assert.ok(html.includes('V2.1.0'), 'Versionshinweis fehlt');
 assert.ok(html.includes('icons/apple-touch-icon.png'), 'Apple-Touch-Icon fehlt');
+assert.ok(html.includes('class="panel compact-section"'), 'Aufklappbare kompakte Bereiche fehlen');
 
 const manifest = JSON.parse(fs.readFileSync(new URL('manifest.webmanifest', root), 'utf8'));
 assert.equal(manifest.name, 'Way to Winter Magic');
@@ -81,7 +82,7 @@ for (const file of requiredFiles) {
 }
 assert.ok(sw.includes("url.hostname.endsWith('transport.rest')"), 'DB-API muss vom Cache ausgeschlossen sein');
 assert.ok(sw.includes("event.request.mode === 'navigate'"), 'Offline-Navigation-Fallback fehlt');
-assert.ok(sw.includes("wtwm-v2.0.0"), 'WtWM-Cachekennung fehlt');
+assert.ok(sw.includes("wtwm-v2.1.0"), 'WtWM-Cachekennung fehlt');
 
 const brandedFiles = ['index.html', 'manifest.webmanifest', 'README.md', 'app.js', 'sw.js'];
 const retiredBrandTerms = ['Cozy Weihnachtsmarkt-Tripplaner', 'Cozy Christmas Trips', 'Cozy Trips', 'cozy-trips'];
@@ -139,7 +140,7 @@ const ics = logic.makeIcs({
   stop: 'Hbf',
   notes: 'Zeile 1\nZeile 2 – Glühwein 🎄 '.repeat(8)
 });
-assert.ok(ics.includes('PRODID:-//Way to Winter Magic V2.0.0//DE'));
+assert.ok(ics.includes('PRODID:-//Way to Winter Magic V2.1.0//DE'));
 assert.ok(ics.includes('DTSTART;TZID=Europe/Berlin:20261205T140000'));
 assert.ok(ics.includes('SUMMARY:Weihnachtsmarkt: Test\\, Markt'));
 assert.ok(ics.includes('LOCATION:Ort\\; Platz'));

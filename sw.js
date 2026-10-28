@@ -1,4 +1,4 @@
-const CACHE = 'wtwm-v2.0.0-r1';
+const CACHE = 'wtwm-v2.1.0-r1';
 const ASSETS = [
   './',
   './index.html',

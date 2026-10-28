@@ -1,4 +1,4 @@
-const VERSION = '2.0.0';
+const VERSION = '2.1.0';
 const APP_NAME = 'Way to Winter Magic';
 const API = 'https://v6.db.transport.rest';
 const APP_KEYS = ['people', 'availability', 'favorites', 'trips', 'stop', 'marketFilters'];
@@ -31,6 +31,11 @@ const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
 }[char]));
 const pad = value => String(value).padStart(2, '0');
 const uid = () => `p-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+const shorten = (value, max = 96) => {
+  const text = String(value ?? '').trim();
+  if (text.length <= max) return text;
+  return `${text.slice(0, Math.max(1, max - 1)).trimEnd()}…`;
+};
 
 let markets = [];
 let installPrompt = null;
@@ -160,16 +165,19 @@ function score(market) {
 
 function marketCard(market) {
   const favorite = state.favorites.includes(market.id);
-  return `<article class="card">
+  return `<article class="card market-card">
     <button class="fav ${favorite ? 'on' : ''}" data-fav="${esc(market.id)}" aria-label="${favorite ? 'Favorit entfernen' : 'Als Favorit speichern'}">♥</button>
-    ${market.new ? '<span class="badge new">Neu</span>' : ''}
-    <h3>${esc(market.name)}</h3>
-    <p>${esc(market.city)} · ${esc(market.location)}</p>
-    <span class="badge">🚆 ca. ${market.travel} Min.</span>
-    <span class="badge">↗ ca. ${market.distanceKm} km</span>
-    <span class="badge gold">${esc(market.entry)}</span>
-    <p class="muted">${esc(formatMarketDates(market))}</p>
-    <p>Gemütlichkeit ${stars(market.cozy)}<br>Licht ${stars(market.light)} · Essen ${stars(market.food)}</p>
+    <div class="market-card-main">
+      <div class="card-head">${market.new ? '<span class="badge new">Neu</span>' : ''}<span class="badge gold">${esc(market.entry)}</span></div>
+      <h3>${esc(market.name)}</h3>
+      <p class="market-place" title="${esc(`${market.city} · ${market.location}`)}">${esc(market.city)} · ${esc(market.location)}</p>
+    </div>
+    <div class="market-card-info">
+      <div class="market-meta"><span class="badge">🚆 ${market.travel} Min.</span><span class="badge">↗ ${market.distanceKm} km</span></div>
+      <p class="market-date">${esc(formatMarketDates(market))}</p>
+      <div class="market-rating"><span class="rating-score" aria-label="Gesamtwertung ${score(market).toFixed(1)} von 5">★ ${score(market).toFixed(1)}</span><span class="rating-parts" title="Gemütlichkeit ${market.cozy}, Licht ${market.light}, Essen ${market.food}" aria-label="Gemütlichkeit ${market.cozy}, Licht ${market.light}, Essen ${market.food}">G ${market.cozy} · L ${market.light} · E ${market.food}</span></div>
+      <p class="market-review" title="${esc(market.positive)}">${esc(shorten(market.positive))}</p>
+    </div>
     <div class="card-actions"><button data-detail="${esc(market.id)}">Details</button><button class="ghost" data-plan="${esc(market.id)}">Planen</button></div>
   </article>`;
 }
@@ -201,22 +209,22 @@ function showDetail(id) {
     ? `<a class="source" href="${esc(market.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(market.sourceLabel || 'Marktquelle öffnen')} ↗</a>`
     : `<span>${esc(market.sourceLabel || 'Quelle im Bestand')}</span>`;
   $('#marketDetail').innerHTML = `
-    <p class="eyebrow dark">${market.new ? 'Neu in V2' : 'Geprüfter Bestand'}</p>
+    <div class="detail-header"><p class="eyebrow dark">${market.new ? 'Neu in V2' : 'Geprüfter Bestand'}</p>
     <h2>${esc(market.name)}</h2>
-    <p><strong>${esc(market.location)}</strong></p>
+    <p><strong>${esc(market.location)}</strong></p></div>
     <div class="detail-grid">
       <div class="detail-box"><strong>ÖPNV ab Wuppertal Hbf</strong>ca. ${market.travel} Minuten</div>
       <div class="detail-box"><strong>Luftlinie</strong>ca. ${market.distanceKm} km</div>
       <div class="detail-box"><strong>Termine 2026/27</strong>${esc(formatMarketDates(market))}</div>
       <div class="detail-box"><strong>Gesamtwertung</strong>${score(market).toFixed(1)} / 5</div>
     </div>
-    <p>Licht ${stars(market.light)} · Essen ${stars(market.food)} · Gemütlichkeit ${stars(market.cozy)}</p>
-    <h3>Passt gut, weil …</h3><p>${esc(market.positive)}</p>
-    <h3>Beachten</h3><p>${esc(market.negative)}</p>
-    <h3>Trip-Tipp</h3><p>${esc(market.tip)}</p>
-    <p><strong>Budget pro Person:</strong> sparsam ${market.budget[0]} € · normal ${market.budget[1]} € · mit Aktivität ${market.budget[2]} €</p>
-    <p><strong>Quelle:</strong> ${source}<br><span class="muted">geprüft am ${formatDate(market.verifiedAt)}</span></p>
-    <div class="actions"><button data-detail-plan="${esc(market.id)}">Trip planen</button><button class="secondary" data-detail-stop="${esc(market.id)}">Zielhaltestelle suchen</button></div>`;
+    <div class="detail-rating" aria-label="Bewertungen"><span class="badge">Gemütlichkeit ${market.cozy}</span><span class="badge">Licht ${market.light}</span><span class="badge">Essen ${market.food}</span></div>
+    <div class="detail-sections">
+      <details class="detail-section" open><summary>Kurzbewertung</summary><p><strong>Passt gut:</strong> ${esc(market.positive)}<br><strong>Beachten:</strong> ${esc(market.negative)}</p></details>
+      <details class="detail-section"><summary>Trip-Tipp & Budget</summary><p>${esc(market.tip)}<br><strong>Budget pro Person:</strong> sparsam ${market.budget[0]} € · normal ${market.budget[1]} € · mit Aktivität ${market.budget[2]} €</p></details>
+      <details class="detail-section"><summary>Quelle & Prüfstand</summary><p><strong>Quelle:</strong> ${source}<br><span class="muted">geprüft am ${formatDate(market.verifiedAt)}</span></p></details>
+    </div>
+    <div class="actions"><button class="small-btn" data-detail-plan="${esc(market.id)}">Trip planen</button><button class="secondary small-btn" data-detail-stop="${esc(market.id)}">Zielhaltestelle suchen</button></div>`;
   $('[data-detail-plan]').onclick = () => {
     $('#marketDialog').close();
     setView('trip');
@@ -250,6 +258,7 @@ function hydrateFilters() {
   if (!$('#distanceFilter').value) $('#distanceFilter').value = '999';
   if (!$('#featureFilter').value) $('#featureFilter').value = 'all';
   if (!$('#sortFilter').value) $('#sortFilter').value = 'score';
+  setMarketLayout(state.filters.view === 'list' ? 'list' : 'card', false);
 }
 
 function readFilters() {
@@ -260,7 +269,8 @@ function readFilters() {
     travel: $('#travelFilter').value,
     distance: $('#distanceFilter').value,
     feature: $('#featureFilter').value,
-    sort: $('#sortFilter').value
+    sort: $('#sortFilter').value,
+    view: state.filters.view === 'list' ? 'list' : 'card'
   };
   saveAll();
   return state.filters;
@@ -310,7 +320,24 @@ function renderMarkets() {
   const list = filteredMarkets();
   $('#filterSummary').textContent = `${list.length} von ${markets.length} Märkten passen zu deiner Auswahl.`;
   $('#marketList').innerHTML = list.length ? list.map(marketCard).join('') : '<div class="empty"><strong>Keine Treffer.</strong><br>Entferne einen Filter oder wähle einen anderen Tag.</div>';
+  setMarketLayout(state.filters.view === 'list' ? 'list' : 'card', false);
   bindCards();
+}
+
+function setMarketLayout(mode, persist = true) {
+  const layout = mode === 'list' ? 'list' : 'card';
+  const list = $('#marketList');
+  if (list) {
+    list.classList.toggle('list-view', layout === 'list');
+    list.classList.toggle('card-view', layout === 'card');
+    list.classList.toggle('cards', layout === 'card');
+  }
+  $('#cardViewBtn')?.setAttribute('aria-pressed', String(layout === 'card'));
+  $('#listViewBtn')?.setAttribute('aria-pressed', String(layout === 'list'));
+  if (persist) {
+    state.filters.view = layout;
+    saveAll();
+  }
 }
 
 function availabilityKey(date, personId) {
@@ -434,7 +461,7 @@ function renderTripMarketOptions(preferredId) {
 function renderTrip() {
   renderTripMarketOptions();
   const sortedTrips = state.trips.map((trip, index) => ({ trip, index })).sort((a, b) => String(a.trip.date).localeCompare(String(b.trip.date)));
-  $('#savedTrips').innerHTML = sortedTrips.length ? sortedTrips.map(({ trip, index }) => `<article class="card"><strong>${esc(formatDate(trip.date))} · ${esc(trip.market || 'Weihnachtsmarkt')}</strong><p>${esc(trip.activity || 'Ohne Zusatzaktivität')} · ${Number(trip.budget) || 0} € p. P.</p><p class="muted">${esc(trip.stop || 'Keine Zielhaltestelle')}</p><button data-deltrip="${index}" class="danger">Löschen</button></article>`).join('') : '<p>Noch keine Trips gespeichert.</p>';
+  $('#savedTrips').innerHTML = sortedTrips.length ? sortedTrips.map(({ trip, index }) => `<article class="card"><strong>${esc(formatDate(trip.date))} · ${esc(trip.market || 'Weihnachtsmarkt')}</strong><p>${esc(trip.activity || 'Ohne Zusatzaktivität')} · ${Number(trip.budget) || 0} € p. P.</p><p class="muted">${esc(trip.stop || 'Keine Zielhaltestelle')}</p><button data-deltrip="${index}" class="danger small-btn">Löschen</button></article>`).join('') : '<p>Noch keine Trips gespeichert.</p>';
   $$('[data-deltrip]').forEach(button => button.onclick = () => {
     state.trips.splice(Number(button.dataset.deltrip), 1);
     saveAll();
@@ -580,10 +607,13 @@ function bind() {
     $(`#${id}`).addEventListener(id === 'marketSearch' ? 'input' : 'change', renderMarkets);
   });
   $('#resetFilters').onclick = () => {
-    state.filters = {};
+    const view = state.filters.view;
+    state.filters = { view };
     hydrateFilters();
     renderMarkets();
   };
+  $('#cardViewBtn').onclick = () => setMarketLayout('card');
+  $('#listViewBtn').onclick = () => setMarketLayout('list');
   $('#timelineFrom').onchange = renderTimeline;
   $('#timelineTo').onchange = renderTimeline;
   $('#onlyCommon').onchange = renderTimeline;
