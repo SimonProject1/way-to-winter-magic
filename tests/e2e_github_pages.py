@@ -145,7 +145,7 @@ async def main():
             await page.route("https://api.transitous.org/**", api)
             await page.goto(base, wait_until="networkidle")
             assert await page.locator("text=Way to Winter Magic").count() >= 1
-            assert await page.locator("text=V2.4.0").count() >= 1
+            assert await page.locator("text=V2.5.0").count() >= 1
             assert await page.locator("#marketCount").inner_text() == "39"
             overflow = await page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
             assert overflow <= 1, f"Mobiles horizontales Überlaufen: {overflow}px"
@@ -170,13 +170,26 @@ async def main():
             assert "Weihnachtsmärkte" in await page.locator("#plannerDateHint").inner_text()
             await page.click("#plannerNext")
 
-            # 3: Nur an diesem Tag geöffnete Märkte, verbindliche Auswahl.
+            # 3: Nur geöffnete Märkte, kompakte Filter und abwählbare Auswahl.
             assert await page.locator("#plannerMarkets .planner-market").count() > 0
+            await page.locator(".planner-filter summary").click()
+            await page.fill("#plannerMarketSearch", "Steeler")
+            assert await page.locator("#plannerMarkets .planner-market").count() == 1
+            assert "1 von" in await page.locator("#plannerFilterSummary").inner_text()
+            compact_card = await page.locator("#plannerMarkets .planner-market").inner_text()
+            assert "Tagestrip-Tipp" not in compact_card and "Details:" not in compact_card
             await page.click('[data-planner-market="steele"]')
-            assert await page.locator('[data-planner-market="steele"]').inner_text() == "Ausgewählt ✓"
+            assert await page.locator('[data-planner-market="steele"]').inner_text() == "Auswahl aufheben"
+            assert "Steeler Weihnachtsmarkt" in await page.locator("#plannerSelectedMarket").inner_text()
+            await page.click('[data-planner-market="steele"]')
+            assert await page.locator("#plannerMarkets .planner-market.selected").count() == 0
+            assert await page.locator("#plannerSelectedMarket").is_hidden()
+            assert "Marktauswahl aufgehoben" in await page.locator("#plannerMessage").inner_text()
+            await page.click('[data-planner-market="steele"]')
             selected_text = await page.locator("#plannerMarkets .planner-market.selected").inner_text()
-            assert "Öffnungszeiten" not in selected_text or selected_text
-            assert "Tagestrip-Tipp" in selected_text and "Ticket" in selected_text
+            assert "Ticket" in selected_text and "Tagestrip-Tipp" not in selected_text
+            await page.click("#resetPlannerFilters")
+            assert await page.locator("#plannerMarkets .planner-market").count() > 1
             await page.click("#plannerNext")
 
             # 4: Konfiguration mit Rückfahrt und Budget.
@@ -262,7 +275,7 @@ async def main():
         server.shutdown()
         server.server_close()
 
-    print("V2.4.0 E2E bestanden: kompletter 6-Schritt-Planer mobil, Transitous, Bearbeitung, ICS, Persistenz und GitHub-Pages-Unterpfad.")
+    print("V2.5.0 E2E bestanden: kompletter 6-Schritt-Planer mobil, Filter, Abwahl, Transitous, Bearbeitung, ICS, Persistenz und GitHub-Pages-Unterpfad.")
 
 
 if __name__ == "__main__":

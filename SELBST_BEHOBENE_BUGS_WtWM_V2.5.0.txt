@@ -1,0 +1,18 @@
+Way to Winter Magic V2.5.0 – selbst behobene Bugs
+Stand: 28.10.2026
+
+1. Veralteter Stadtfilter nach Datumswechsel
+   Ein am neuen Datum nicht verfügbarer Ort konnte die Ergebnisliste unbemerkt leeren.
+   Behoben: Ungültige Stadtfilter werden automatisch auf „Alle Städte“ zurückgesetzt.
+
+2. Alte Bahnoptionen nach Änderung oder Abwahl des Marktes
+   Bereits geladene Verbindungen durften nicht beim falschen oder abgewählten Markt erhalten bleiben.
+   Behoben: Marktwechsel und Marktabwahl löschen Optionen, Auswahl und aufgelöste Haltestellen gemeinsam.
+
+3. Ausgewählter Markt bei aktivem Filter nicht mehr sichtbar
+   Eine verbindliche Auswahl konnte durch einen späteren Filter aus den Karten verschwinden.
+   Behoben: Die aktuelle Auswahl bleibt oberhalb der Treffer sichtbar und kann dort jederzeit aufgehoben werden.
+
+Tests: Smoke-/Logiktest, kompletter mobiler und Desktop-E2E-Test, GitHub-Pages-Unterpfad, Offline-/Persistenzfunktionen, ICS-Export und Layout ohne horizontales Überlaufen bestanden.
+
+Hinweis: Der zusätzliche echte Live-Aufruf zu api.transitous.org erhielt in der Testumgebung HTTP 403. Die vollständige App-Integration wurde deshalb im E2E-Test mit realitätsnah simulierten Transitous-Antworten geprüft.

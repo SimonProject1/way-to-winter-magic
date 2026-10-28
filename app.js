@@ -1,7 +1,7 @@
-const VERSION = '2.4.0';
+const VERSION = '2.5.0';
 const API = 'https://api.transitous.org/api';
 const STORAGE_PREFIX = 'wtwm:v2:';
-const APP_KEYS = ['people', 'availability', 'favorites', 'trips', 'tripDraft', 'stop', 'marketFilters', 'marketView', 'connectionPrefs', 'savedConnections'];
+const APP_KEYS = ['people', 'availability', 'favorites', 'trips', 'tripDraft', 'stop', 'marketFilters', 'plannerMarketFilters', 'marketView', 'connectionPrefs', 'savedConnections'];
 const REQUEST_TIMEOUT_MS = 12000;
 const MAX_SAVED_CONNECTIONS = 8;
 const DEFAULT_PEOPLE = [
@@ -61,6 +61,7 @@ const DEFAULT_DRAFT = {
   outboundOptions: [], returnOptions: [], selectedOutbound: '', selectedReturn: '',
   resolvedStops: null, connectionsCheckedAt: ''
 };
+const DEFAULT_PLANNER_FILTERS = { query: '', city: 'all', travel: '999', feature: 'all', sort: 'score' };
 
 function parseDate(iso) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(iso))) return null;
@@ -133,6 +134,7 @@ const state = {
   tripDraft: { ...DEFAULT_DRAFT, ...(S.get('tripDraft', {}) || {}) },
   stop: S.get('stop', null),
   filters: S.get('marketFilters', {}) || {},
+  plannerFilters: { ...DEFAULT_PLANNER_FILTERS, ...(S.get('plannerMarketFilters', {}) || {}) },
   viewMode: S.get('marketView', 'cards') === 'list' ? 'list' : 'cards',
   connectionPrefs: S.get('connectionPrefs', {}) || {},
   savedConnections: Array.isArray(S.get('savedConnections', [])) ? S.get('savedConnections', []).slice(0, MAX_SAVED_CONNECTIONS) : []
@@ -146,6 +148,7 @@ function saveAll() {
   S.set('tripDraft', state.tripDraft);
   S.set('stop', state.stop);
   S.set('marketFilters', state.filters);
+  S.set('plannerMarketFilters', state.plannerFilters);
   S.set('marketView', state.viewMode);
   S.set('connectionPrefs', state.connectionPrefs);
   S.set('savedConnections', state.savedConnections);
@@ -308,6 +311,16 @@ function matchesFeature(market, feature) {
     || feature === 'favorites' && state.favorites.includes(market.id);
 }
 
+function sortMarketList(list, sort = 'score') {
+  return [...list].sort((a, b) => {
+    if (sort === 'travel') return a.travel - b.travel || score(b) - score(a);
+    if (sort === 'distance') return a.distanceKm - b.distanceKm || a.travel - b.travel;
+    if (sort === 'city') return a.city.localeCompare(b.city, 'de') || a.name.localeCompare(b.name, 'de');
+    if (sort === 'start') return firstDate(a).localeCompare(firstDate(b));
+    return score(b) - score(a) || a.travel - b.travel;
+  });
+}
+
 function filteredMarkets() {
   const filters = readFilters();
   const query = filters.query.toLocaleLowerCase('de');
@@ -323,13 +336,7 @@ function filteredMarkets() {
       && market.distanceKm <= distance
       && matchesFeature(market, filters.feature);
   });
-  return list.sort((a, b) => {
-    if (filters.sort === 'travel') return a.travel - b.travel || score(b) - score(a);
-    if (filters.sort === 'distance') return a.distanceKm - b.distanceKm || a.travel - b.travel;
-    if (filters.sort === 'city') return a.city.localeCompare(b.city, 'de') || a.name.localeCompare(b.name, 'de');
-    if (filters.sort === 'start') return firstDate(a).localeCompare(firstDate(b));
-    return score(b) - score(a) || a.travel - b.travel;
-  });
+  return sortMarketList(list, filters.sort);
 }
 
 function applyMarketView() {
@@ -903,43 +910,100 @@ function renderPlannerAvailability() {
   $('#plannerDateHint').textContent = `${openCount} Weihnachtsmärkte sind an diesem Datum geöffnet.`;
 }
 
+function hydratePlannerFilters(openMarkets = markets) {
+  const citySelect = $('#plannerCityFilter');
+  if (!citySelect) return;
+  const filters = state.plannerFilters;
+  const cities = [...new Set(openMarkets.map(market => market.city))].sort((a, b) => a.localeCompare(b, 'de'));
+  citySelect.innerHTML = '<option value="all">Alle Städte</option>' + cities.map(city => `<option value="${esc(city)}">${esc(city)}</option>`).join('');
+  if (!cities.includes(filters.city)) filters.city = 'all';
+  $('#plannerMarketSearch').value = filters.query || '';
+  citySelect.value = filters.city || 'all';
+  $('#plannerTravelFilter').value = filters.travel || '999';
+  $('#plannerFeatureFilter').value = filters.feature || 'all';
+  $('#plannerSortFilter').value = filters.sort || 'score';
+  if (!$('#plannerTravelFilter').value) $('#plannerTravelFilter').value = filters.travel = '999';
+  if (!$('#plannerFeatureFilter').value) $('#plannerFeatureFilter').value = filters.feature = 'all';
+  if (!$('#plannerSortFilter').value) $('#plannerSortFilter').value = filters.sort = 'score';
+}
+
+function readPlannerFilters() {
+  state.plannerFilters = {
+    query: $('#plannerMarketSearch').value.trim(),
+    city: $('#plannerCityFilter').value,
+    travel: $('#plannerTravelFilter').value,
+    feature: $('#plannerFeatureFilter').value,
+    sort: $('#plannerSortFilter').value
+  };
+  saveAll();
+  return state.plannerFilters;
+}
+
+function filteredPlannerMarkets(date, filters = state.plannerFilters) {
+  if (!date) return [];
+  const query = String(filters.query || '').toLocaleLowerCase('de');
+  const travel = Number(filters.travel || 999);
+  const list = markets.filter(market => {
+    const haystack = [market.name, market.city, market.location, market.tip, ...(market.tags || [])].join(' ').toLocaleLowerCase('de');
+    return openOn(market, date)
+      && (!query || haystack.includes(query))
+      && (filters.city === 'all' || !filters.city || market.city === filters.city)
+      && market.travel <= travel
+      && matchesFeature(market, filters.feature || 'all');
+  });
+  return sortMarketList(list, filters.sort);
+}
+
 function plannerMarketCard(market) {
   const selected = state.tripDraft.marketId === market.id;
   const hours = marketOpeningHours(market, state.tripDraft.date);
   return `<article class="card planner-market ${selected ? 'selected' : ''}">
-    ${selected ? '<span class="selected-ribbon">Verbindlich ausgewählt</span>' : ''}
+    ${selected ? '<span class="badge gold selected-badge">✓ Verbindlich ausgewählt</span>' : ''}
     <h3>${esc(market.name)}</h3>
     <p>${esc(market.city)} · ${esc(market.location)}</p>
     <div class="market-facts"><span class="badge">🕒 ${esc(hours)}</span><span class="badge">🚆 ca. ${market.travel} Min.</span><span class="badge gold">${esc(market.entry)}</span><span class="badge">🎟 ${esc(ticketRequirement(market))}</span></div>
-    <p>Licht ${stars(market.light)}<br>Essen ${stars(market.food)} · Cozy ${stars(market.cozy)}</p>
-    <p><strong>Details:</strong> ${esc(market.positive)} <span class="muted">${esc(market.negative)}</span></p>
-    <p><strong>Tagestrip-Tipp:</strong> ${esc(market.tip)}</p>
-    <div class="card-actions"><button data-planner-market="${esc(market.id)}">${selected ? 'Ausgewählt ✓' : 'Diesen Markt verbindlich auswählen'}</button><button class="ghost" data-detail="${esc(market.id)}">Details</button></div>
+    <p class="planner-ratings">Cozy ${stars(market.cozy)} · Licht ${stars(market.light)} · Essen ${stars(market.food)}</p>
+    <div class="card-actions"><button class="${selected ? 'ghost market-deselect' : ''}" data-planner-market="${esc(market.id)}" aria-pressed="${selected}">${selected ? 'Auswahl aufheben' : 'Verbindlich auswählen'}</button><button class="ghost" data-detail="${esc(market.id)}">Details</button></div>
   </article>`;
+}
+
+function togglePlannerMarket(marketId) {
+  const selected = state.tripDraft.marketId === marketId;
+  clearPlannerConnections();
+  state.tripDraft.marketId = selected ? '' : marketId;
+  saveAll();
+  renderPlannerMarkets();
+  renderPlannerBudget();
+  $('#plannerMessage').textContent = selected ? 'Marktauswahl aufgehoben.' : 'Markt verbindlich für diesen Tag ausgewählt.';
 }
 
 function renderPlannerMarkets() {
   const date = parseDate(state.tripDraft.date);
   const target = $('#plannerMarkets');
+  const summary = $('#plannerFilterSummary');
+  const selection = $('#plannerSelectedMarket');
   if (!date) {
     target.innerHTML = '<div class="empty">Bitte zuerst ein gültiges Datum wählen.</div>';
+    summary.textContent = '';
+    selection.hidden = true;
     return;
   }
-  const available = markets.filter(market => openOn(market, date)).sort((a, b) => score(b) - score(a) || a.travel - b.travel);
-  if (!available.some(market => market.id === state.tripDraft.marketId)) {
+  const openMarkets = markets.filter(market => openOn(market, date));
+  hydratePlannerFilters(openMarkets);
+  const available = filteredPlannerMarkets(date);
+  if (!openMarkets.some(market => market.id === state.tripDraft.marketId)) {
     state.tripDraft.marketId = '';
     clearPlannerConnections();
-  }
-  target.innerHTML = available.length ? available.map(plannerMarketCard).join('') : '<div class="empty"><strong>Kein Markt geöffnet.</strong><br>Bitte einen anderen Tag wählen.</div>';
-  $$('[data-planner-market]').forEach(button => button.onclick = () => {
-    if (state.tripDraft.marketId !== button.dataset.plannerMarket) clearPlannerConnections();
-    state.tripDraft.marketId = button.dataset.plannerMarket;
     saveAll();
-    renderPlannerMarkets();
-    renderPlannerBudget();
-    $('#plannerMessage').textContent = 'Markt verbindlich für diesen Tag ausgewählt.';
-  });
-  $$('[data-detail]').forEach(button => button.onclick = () => showDetail(button.dataset.detail));
+  }
+  const chosen = openMarkets.find(market => market.id === state.tripDraft.marketId);
+  selection.hidden = !chosen;
+  selection.innerHTML = chosen ? `<div><span>Aktuelle Auswahl</span><strong>${esc(chosen.name)}</strong></div><button type="button" class="ghost compact-button" data-clear-planner-market="${esc(chosen.id)}">Auswahl aufheben</button>` : '';
+  summary.textContent = `${available.length} von ${openMarkets.length} geöffneten Märkten passen zum Filter.`;
+  target.innerHTML = available.length ? available.map(plannerMarketCard).join('') : '<div class="empty"><strong>Keine Treffer.</strong><br>Filter zurücksetzen oder einen anderen Begriff wählen.</div>';
+  $$('[data-planner-market]').forEach(button => button.onclick = () => togglePlannerMarket(button.dataset.plannerMarket));
+  $('[data-clear-planner-market]')?.addEventListener('click', event => togglePlannerMarket(event.currentTarget.dataset.clearPlannerMarket));
+  $$('#plannerMarkets [data-detail]').forEach(button => button.onclick = () => showDetail(button.dataset.detail));
 }
 
 function syncPlannerConfigFromInputs() {
@@ -1473,6 +1537,7 @@ function sanitizeImported(payload) {
     tripDraft: source.tripDraft && typeof source.tripDraft === 'object' ? { ...DEFAULT_DRAFT, ...source.tripDraft } : { ...DEFAULT_DRAFT },
     stop: source.stop && typeof source.stop.name === 'string' ? source.stop : null,
     filters: source.filters && typeof source.filters === 'object' ? source.filters : {},
+    plannerFilters: source.plannerFilters && typeof source.plannerFilters === 'object' ? { ...DEFAULT_PLANNER_FILTERS, ...source.plannerFilters } : { ...DEFAULT_PLANNER_FILTERS },
     viewMode: source.viewMode === 'list' ? 'list' : 'cards',
     connectionPrefs: source.connectionPrefs && typeof source.connectionPrefs === 'object' ? source.connectionPrefs : {},
     savedConnections: Array.isArray(source.savedConnections) ? source.savedConnections.filter(item => item && item.query && Array.isArray(item.journeys)).slice(0, MAX_SAVED_CONNECTIONS) : []
@@ -1492,6 +1557,17 @@ function bind() {
     state.filters = {};
     hydrateFilters();
     renderMarkets();
+  };
+  ['plannerMarketSearch', 'plannerCityFilter', 'plannerTravelFilter', 'plannerFeatureFilter', 'plannerSortFilter'].forEach(id => {
+    $(`#${id}`).addEventListener(id === 'plannerMarketSearch' ? 'input' : 'change', () => {
+      readPlannerFilters();
+      renderPlannerMarkets();
+    });
+  });
+  $('#resetPlannerFilters').onclick = () => {
+    state.plannerFilters = { ...DEFAULT_PLANNER_FILTERS };
+    saveAll();
+    renderPlannerMarkets();
   };
   $('#timelineFrom').onchange = renderTimeline;
   $('#timelineTo').onchange = renderTimeline;

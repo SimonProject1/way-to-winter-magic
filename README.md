@@ -1,17 +1,19 @@
-# Way to Winter Magic V2.4.0
+# Way to Winter Magic V2.5.0
 
 Installierbare GitHub-Pages-PWA mit 39 Weihnachtsmärkten und einem zentralen Planungs-Assistenten.
 
-## Neu in V2.4.0
+## Neu in V2.5.0
 
 Der Bereich **Trip planen** führt durch sechs Schritte:
 
 1. Personenanzahl und Namen lokal speichern
 2. Datum sowie Ja / Vielleicht / Nein pro Person festlegen
-3. nur die an diesem Tag geöffneten Märkte vergleichen und einen Markt verbindlich auswählen
+3. nur die an diesem Tag geöffneten Märkte filtern, kompakt vergleichen sowie eine Marktwahl auswählen oder wieder aufheben
 4. Ankunft, optionale Rückfahrt, Budgetstufe, Aktivität, Treffpunkt, Ticketstatus, Notizen und Tripstatus festlegen
 5. über Transitous je drei sinnvolle Hin- und Rückfahrten anzeigen und auswählen
 6. Zusammenfassung prüfen, Trip lokal speichern und `.ics` teilen
+
+Die Marktfilter im Assistenten umfassen Suche, Stadt, maximale ÖPNV-Fahrzeit, Wunschfilter und Sortierung. Die kompakteren Marktkarten zeigen die wichtigsten Angaben; alle längeren Informationen bleiben über **Details** erreichbar.
 
 Die Verbindungsauswahl kennzeichnet Empfehlung, wenige Umstiege, schnellste Verbindung, Sicherheitsverbindung, die letzte sinnvolle Rückfahrt innerhalb der Suche und knappe Umstiege. Ein Button prüft die Verbindung erneut.
 
@@ -24,7 +26,7 @@ Die bisherigen Bereiche **Märkte**, **Timeline**, **Bahn** und **Mehr** bleiben
 1. Den **Inhalt** dieses Ordners in die oberste Ebene des Repositorys hochladen.
 2. **Settings → Pages** öffnen.
 3. **Deploy from a branch**, Branch **main**, Ordner **/(root)** wählen.
-4. Die Seite nach dem Deployment einmal online neu laden, damit der Service Worker V2.4.0 übernimmt.
+4. Die Seite nach dem Deployment einmal online neu laden, damit der Service Worker V2.5.0 übernimmt.
 
 Alle App-Pfade sind relativ und funktionieren auch in einem GitHub-Pages-Unterordner.
 
@@ -36,7 +38,7 @@ python3 tests/e2e_github_pages.py
 python3 tests/live_transitous.py   # optional, benötigt direkten Internetzugriff
 ```
 
-Der E2E-Test verwendet einen GitHub-Pages-typischen Unterpfad und ein Smartphone-Viewport. Er prüft den kompletten Sechs-Schritt-Ablauf, drei Hin- und Rückfahrtoptionen, Sicherheits- und Rückfahrtkennzeichnung, Umstiegswarnung, Zusammenfassung, lokale Speicherung, Bearbeitung, `.ics`, Persistenz und die bestehenden Recherchebereiche. Zusätzlich wird das Desktop-Layout geprüft.
+Der E2E-Test verwendet einen GitHub-Pages-typischen Unterpfad und ein Smartphone-Viewport. Er prüft den kompletten Sechs-Schritt-Ablauf, Marktfilter, Marktabwahl, drei Hin- und Rückfahrtoptionen, Sicherheits- und Rückfahrtkennzeichnung, Umstiegswarnung, Zusammenfassung, lokale Speicherung, Bearbeitung, `.ics`, Persistenz und die bestehenden Recherchebereiche. Zusätzlich wird das Desktop-Layout geprüft.
 
 ## Datenschutz und Datenhinweise
 

@@ -14,7 +14,7 @@
 <body>
   <header class="hero">
     <div>
-      <p class="eyebrow">Weihnachtsmarkt-Tripplaner · V2.4.0</p>
+      <p class="eyebrow">Weihnachtsmarkt-Tripplaner · V2.5.0</p>
       <h1>Way to Winter Magic</h1>
       <p>39 geprüfte Ziele ab Wuppertal – gemeinsam planen, vergleichen und die passende Verbindung finden.</p>
     </div>
@@ -38,7 +38,7 @@
         <article><span>Gemeinsame Tage</span><strong id="commonCount">0</strong></article>
       </div>
       <article class="panel intro-panel">
-        <div><p class="eyebrow dark">Neu in V2.4.0</p><h2>Der zentrale Planungs-Assistent</h2><p>Personen, Termin, Markt, Budget, Bahn und Kalenderdatei in einem geführten Ablauf.</p></div>
+        <div><p class="eyebrow dark">Neu in V2.5.0</p><h2>Der zentrale Planungs-Assistent</h2><p>Personen, Termin, Markt, Budget, Bahn und Kalenderdatei in einem geführten Ablauf.</p></div>
         <button data-jump="trip">Trip planen</button>
       </article>
       <article class="panel"><h2>Passende nächste Termine</h2><div id="nextDates" class="cards compact"></div></article>
@@ -100,6 +100,19 @@
         <div class="planner-step" data-step="3" hidden>
           <p class="eyebrow dark">Schritt 3 von 6</p><h3>Geöffneten Markt auswählen</h3>
           <p class="muted">Es erscheinen ausschließlich Märkte, die am gewählten Datum geöffnet sind.</p>
+          <details class="planner-filter">
+            <summary>Geöffnete Märkte filtern</summary>
+            <div class="planner-filter-grid">
+              <label class="wide">Suche<input id="plannerMarketSearch" type="search" placeholder="Markt, Ort oder Stichwort"></label>
+              <label>Stadt<select id="plannerCityFilter"><option value="all">Alle Städte</option></select></label>
+              <label>Max. ÖPNV-Fahrzeit<select id="plannerTravelFilter"><option value="999">Beliebig</option><option value="45">bis 45 Min.</option><option value="60">bis 1 Std.</option><option value="90">bis 1,5 Std.</option><option value="120">bis 2 Std.</option><option value="150">bis 2,5 Std.</option><option value="180">bis 3 Std.</option></select></label>
+              <label>Wunschfilter<select id="plannerFeatureFilter"><option value="all">Alle</option><option value="free">Kostenlos</option><option value="cozy">Besonders cozy</option><option value="light">Top-Beleuchtung</option><option value="food">Starkes Essen</option><option value="small">Klein & ruhig</option><option value="historic">Historische Kulisse</option><option value="craft">Kunsthandwerk</option><option value="family">Familienfreundlich</option><option value="long">Lange Saison</option><option value="new">Neu in V2</option><option value="favorites">Nur Favoriten</option></select></label>
+              <label>Sortierung<select id="plannerSortFilter"><option value="score">Empfehlung</option><option value="travel">Fahrzeit</option><option value="distance">Distanz</option><option value="city">Stadt A–Z</option></select></label>
+              <button id="resetPlannerFilters" class="ghost" type="button">Filter zurücksetzen</button>
+            </div>
+          </details>
+          <p id="plannerFilterSummary" class="status compact-status" aria-live="polite"></p>
+          <div id="plannerSelectedMarket" class="planner-selection" aria-live="polite" hidden></div>
           <div id="plannerMarkets" class="cards planner-markets"></div>
         </div>
 
@@ -184,7 +197,7 @@
   </main>
 
   <dialog id="marketDialog"><button class="close" aria-label="Schließen">×</button><div id="marketDetail"></div></dialog>
-  <footer>Offline-PWA · Transitous-Verbindungssuche · Offline-Speicher · Datenstand 28.10.2026 · V2.4.0</footer>
+  <footer>Offline-PWA · Transitous-Verbindungssuche · Offline-Speicher · Datenstand 28.10.2026 · V2.5.0</footer>
   <script src="app.js" defer></script>
 </body>
 </html>
