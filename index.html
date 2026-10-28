@@ -14,7 +14,7 @@
 <body>
   <header class="hero">
     <div>
-      <p class="eyebrow">Weihnachtsmarkt-Tripplaner · V2.2.0</p>
+      <p class="eyebrow">Weihnachtsmarkt-Tripplaner · V2.3.0</p>
       <h1>Way to Winter Magic</h1>
       <p>39 geprüfte Ziele ab Wuppertal – gemeinsam planen, vergleichen und die passende Verbindung finden.</p>
     </div>
@@ -38,7 +38,7 @@
         <article><span>Gemeinsame Tage</span><strong id="commonCount">0</strong></article>
       </div>
       <article class="panel intro-panel">
-        <div><p class="eyebrow dark">Neu in V2.2.0</p><h2>DB-Verbindungen suchen</h2><p>Wähle einen Markt, Datum und Uhrzeit. Die App zeigt passende Verbindungen ab Wuppertal.</p></div>
+        <div><p class="eyebrow dark">Neu in V2.3.0</p><h2>Verbindungen mit Transitous</h2><p>Wähle Markt, Datum und Uhrzeit. Erfolgreiche Suchen bleiben auch offline sichtbar.</p></div>
         <button data-jump="connections">Verbindung suchen</button>
       </article>
       <article class="panel"><h2>Passende nächste Termine</h2><div id="nextDates" class="cards compact"></div></article>
@@ -95,9 +95,9 @@
 
     <section id="connections" class="view">
       <article class="panel connection-search" aria-labelledby="connectionHeading">
-        <p class="eyebrow dark">Online über die DB-Fahrplanschnittstelle</p>
+        <p class="eyebrow dark">Offene Fahrplandaten über Transitous</p>
         <h2 id="connectionHeading">DB-Verbindungssuche</h2>
-        <p class="muted">Start und Ziel werden zuerst als Haltestellen aufgelöst. Danach werden aktuelle Fahrplandaten der Deutschen Bahn gesucht.</p>
+        <p class="muted">Start und Ziel werden über Transitous aufgelöst. Bei einem kurzen Ausfall folgt automatisch ein zweiter Versuch.</p>
         <div class="form-grid">
           <label>Start<input id="connectionFrom" value="Wuppertal Hbf" placeholder="z. B. Wuppertal Hbf" autocomplete="off"></label>
           <label>Ziel<input id="connectionTo" placeholder="Haltestelle oder Ort" autocomplete="off"></label>
@@ -110,13 +110,17 @@
         <p id="connectionMessage" class="status" aria-live="polite"></p>
       </article>
       <div id="connectionResults" class="connections" aria-live="polite"></div>
+      <article class="panel saved-connections-panel">
+        <div class="section-head"><div><p class="eyebrow dark">Auch ohne Internet</p><h2>Gespeicherte Verbindungen</h2></div><button id="clearSavedConnections" class="danger compact-button" hidden>Alle löschen</button></div>
+        <div id="savedConnections"></div>
+      </article>
     </section>
 
     <section id="settings" class="view">
       <article class="panel"><h2>Personen</h2><p class="muted">Jede Person erhält intern eine eigene ID. Gleiche Namen überschreiben sich nicht mehr.</p><div id="peopleList"></div><button id="addPerson">Person hinzufügen</button></article>
       <article class="panel">
         <h2>Zielhaltestelle</h2>
-        <p class="muted">Online-Suche über die DB-basierte Fahrplanschnittstelle. Die restliche App bleibt offline nutzbar.</p>
+        <p class="muted">Online-Suche über Transitous. Die restliche App und bereits gespeicherte Verbindungen bleiben offline nutzbar.</p>
         <div class="search-row"><input id="stopQuery" placeholder="Haltestelle oder Adresse" autocomplete="off"><button id="searchStop">Suchen</button></div>
         <div id="stopResults" role="listbox"></div>
         <p>Gespeichert: <strong id="savedStop">keine</strong></p>
@@ -124,13 +128,14 @@
       <article class="panel">
         <h2>Daten & Hinweise</h2>
         <p class="muted">Fahrzeiten sind gerundete Planwerte ab Wuppertal Hbf, Distanzen ungefähre Luftlinien. Verbindung und Marktseite bitte kurz vor Abfahrt prüfen. Marktquellen stehen in den Details.</p>
+        <p class="attribution">Fahrplandaten: <a href="https://transitous.org/sources/" target="_blank" rel="noopener noreferrer">Transitous-Quellen</a> · Karten-/Ortsdaten: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap-Mitwirkende</a> · Kontakt über das GitHub-Repository dieser Seite.</p>
         <div class="actions"><button id="exportData">Sicherung exportieren</button><label class="file-btn">Sicherung importieren<input type="file" id="importData" accept="application/json"></label><button id="resetData" class="danger">Lokale Daten löschen</button></div>
       </article>
     </section>
   </main>
 
   <dialog id="marketDialog"><button class="close" aria-label="Schließen">×</button><div id="marketDetail"></div></dialog>
-  <footer>Offline-PWA · lokale Speicherung · DB-Verbindungssuche online · Datenstand 28.10.2026 · V2.2.0</footer>
+  <footer>Offline-PWA · Transitous-Verbindungssuche · Offline-Speicher · Datenstand 28.10.2026 · V2.3.0</footer>
   <script src="app.js" defer></script>
 </body>
 </html>

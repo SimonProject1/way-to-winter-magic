@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Way to Winter Magic",
   "short_name": "Winter Magic",
-  "description": "Weihnachtsmarkt- und Städtetrip-Planer mit DB-Verbindungssuche ab Wuppertal",
+  "description": "Weihnachtsmarkt- und Städtetrip-Planer mit Transitous-Verbindungssuche ab Wuppertal",
   "lang": "de",
   "start_url": "./",
   "scope": "./",

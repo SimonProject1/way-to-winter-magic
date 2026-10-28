@@ -1,8 +1,9 @@
-const VERSION = '2.2.0';
-const API = 'https://v5.db.api.bahn.guru';
-const API_FALLBACK = 'https://v5.db.transport.rest';
+const VERSION = '2.3.0';
+const API = 'https://api.transitous.org/api';
 const STORAGE_PREFIX = 'wtwm:v2:';
-const APP_KEYS = ['people', 'availability', 'favorites', 'trips', 'stop', 'marketFilters', 'marketView', 'connectionPrefs'];
+const APP_KEYS = ['people', 'availability', 'favorites', 'trips', 'stop', 'marketFilters', 'marketView', 'connectionPrefs', 'savedConnections'];
+const REQUEST_TIMEOUT_MS = 12000;
+const MAX_SAVED_CONNECTIONS = 8;
 const DEFAULT_PEOPLE = [
   { id: 'p1', name: 'Person 1' },
   { id: 'p2', name: 'Person 2' }
@@ -114,7 +115,8 @@ const state = {
   stop: S.get('stop', null),
   filters: S.get('marketFilters', {}) || {},
   viewMode: S.get('marketView', 'cards') === 'list' ? 'list' : 'cards',
-  connectionPrefs: S.get('connectionPrefs', {}) || {}
+  connectionPrefs: S.get('connectionPrefs', {}) || {},
+  savedConnections: Array.isArray(S.get('savedConnections', [])) ? S.get('savedConnections', []).slice(0, MAX_SAVED_CONNECTIONS) : []
 };
 
 function saveAll() {
@@ -126,6 +128,7 @@ function saveAll() {
   S.set('marketFilters', state.filters);
   S.set('marketView', state.viewMode);
   S.set('connectionPrefs', state.connectionPrefs);
+  S.set('savedConnections', state.savedConnections);
 }
 
 function openOn(market, date) {
@@ -407,82 +410,140 @@ function renderPeople() {
 
 async function searchStops() {
   const query = $('#stopQuery').value.trim();
+  const results = $('#stopResults');
   if (query.length < 3) {
-    $('#stopResults').innerHTML = '<p class="muted">Bitte mindestens 3 Zeichen eingeben.</p>';
+    results.innerHTML = '<p class="muted">Bitte mindestens 3 Zeichen eingeben.</p>';
     return;
   }
   if (!navigator.onLine) {
-    $('#stopResults').innerHTML = '<p class="error-banner">Offline: Die Haltestellensuche braucht kurz eine Internetverbindung.</p>';
+    results.innerHTML = '<p class="error-banner">Du bist offline. Gespeicherte Verbindungen bleiben im Bereich „Bahn“ verfügbar.</p>';
     return;
   }
   stopController?.abort();
   stopController = new AbortController();
-  const timeout = setTimeout(() => stopController.abort(), 12000);
-  $('#stopResults').innerHTML = '<p>Suche …</p>';
+  const controller = stopController;
+  results.innerHTML = '<p>Suche über Transitous …</p>';
   try {
-    const url = `${API}/locations?query=${encodeURIComponent(query)}&results=8&stops=true&addresses=true&poi=false&language=de`;
-    const data = await fetchJson(url, stopController.signal);
-    if (!Array.isArray(data) || !data.length) {
-      $('#stopResults').innerHTML = '<p class="muted">Keine passende Haltestelle oder Adresse gefunden.</p>';
+    const data = await fetchJson(buildGeocodeUrl(query), { signal: controller.signal });
+    if (controller !== stopController) return;
+    const places = normalizePlaces(data);
+    if (!places.length) {
+      results.innerHTML = '<p class="muted">Keine passende Haltestelle oder Adresse gefunden. Prüfe die Schreibweise oder ergänze den Ort.</p>';
       return;
     }
-    $('#stopResults').innerHTML = data.map((item, index) => `<button class="result" data-stop="${index}" role="option">${esc(item.name || item.address || 'Unbekannt')}</button>`).join('');
+    results.innerHTML = places.map((item, index) => `<button class="result" data-stop="${index}" role="option"><strong>${esc(item.name)}</strong>${item.detail ? `<small>${esc(item.detail)}</small>` : ''}</button>`).join('');
     $$('[data-stop]').forEach(button => button.onclick = () => {
-      const item = data[Number(button.dataset.stop)];
-      state.stop = {
-        id: item.id || null,
-        name: item.name || item.address || 'Unbekannt',
-        latitude: item.location?.latitude ?? null,
-        longitude: item.location?.longitude ?? null
-      };
+      const item = places[Number(button.dataset.stop)];
+      state.stop = { id: item.id, name: item.name, latitude: item.latitude, longitude: item.longitude };
       saveAll();
       renderSettings();
-      $('#stopResults').innerHTML = '<p class="status">Zielhaltestelle gespeichert.</p>';
+      results.innerHTML = '<p class="status">Zielhaltestelle gespeichert.</p>';
     });
   } catch (error) {
-    if (error.name !== 'AbortError') $('#stopResults').innerHTML = '<p class="error-banner">Suche derzeit nicht erreichbar. Bitte später erneut versuchen.</p>';
-    else $('#stopResults').innerHTML = '<p class="error-banner">Die Suche hat zu lange gedauert. Bitte erneut versuchen.</p>';
-  } finally {
-    clearTimeout(timeout);
+    if (controller !== stopController || error.code === 'CANCELLED') return;
+    results.innerHTML = `<div class="error-banner">${esc(friendlyError(error, 'Haltestellensuche'))}<div><button id="retryStopSearch" class="retry-button">Erneut versuchen</button></div></div>`;
+    $('#retryStopSearch').onclick = searchStops;
   }
+}
+
+function buildGeocodeUrl(query) {
+  const params = new URLSearchParams({ text: String(query || ''), language: 'de', limit: '8' });
+  return `${API}/v1/geocode?${params.toString()}`;
+}
+
+function normalizePlaces(payload) {
+  const items = Array.isArray(payload) ? payload : Array.isArray(payload?.features) ? payload.features : Array.isArray(payload?.locations) ? payload.locations : [];
+  return items.map(item => {
+    const properties = item?.properties || item || {};
+    const coordinates = item?.geometry?.coordinates || [];
+    const latitude = Number(properties.lat ?? properties.latitude ?? item?.lat ?? coordinates[1]);
+    const longitude = Number(properties.lon ?? properties.longitude ?? item?.lon ?? coordinates[0]);
+    const id = properties.stopId ?? properties.id ?? item?.stopId ?? item?.id ?? null;
+    const name = properties.name ?? item?.name ?? properties.label ?? item?.label ?? properties.address ?? '';
+    const detail = [properties.locality, properties.region, properties.country].filter(Boolean).filter((value, index, all) => all.indexOf(value) === index).join(' · ');
+    const routingId = id ? String(id) : Number.isFinite(latitude) && Number.isFinite(longitude) ? `${latitude},${longitude}` : '';
+    return { id: routingId, name: String(name || 'Unbekannter Ort'), detail, latitude: Number.isFinite(latitude) ? latitude : null, longitude: Number.isFinite(longitude) ? longitude : null };
+  }).filter(item => item.id && item.name);
 }
 
 function buildJourneyUrl(fromId, toId, date, time, mode = 'departure') {
   if (!fromId || !toId || !parseDate(date) || !/^\d{2}:\d{2}$/.test(String(time))) return '';
   const params = new URLSearchParams({
-    from: String(fromId),
-    to: String(toId),
-    results: '6',
-    stopovers: 'false',
-    remarks: 'true',
-    language: 'de'
+    fromPlace: String(fromId),
+    toPlace: String(toId),
+    time: `${date}T${time}:00+01:00`,
+    arriveBy: String(mode === 'arrival'),
+    numItineraries: '6'
   });
-  params.set(mode === 'arrival' ? 'arrival' : 'departure', `${date}T${time}:00+01:00`);
-  return `${API}/journeys?${params.toString()}`;
+  return `${API}/v6/plan?${params.toString()}`;
 }
 
-async function fetchJson(url, signal) {
-  const candidates = [url, url.startsWith(API) ? url.replace(API, API_FALLBACK) : null].filter(Boolean);
+function requestError(code, message, status = 0) {
+  const error = new Error(message);
+  error.code = code;
+  error.status = status;
+  return error;
+}
+
+function wait(ms, signal) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(resolve, ms);
+    signal?.addEventListener('abort', () => { clearTimeout(timer); reject(requestError('CANCELLED', 'Anfrage abgebrochen')); }, { once: true });
+  });
+}
+
+async function fetchJson(url, options = {}) {
+  const { signal, timeoutMs = REQUEST_TIMEOUT_MS, retries = 1 } = options;
   let lastError = null;
-  for (const candidate of candidates) {
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    if (signal?.aborted) throw requestError('CANCELLED', 'Anfrage abgebrochen');
+    const controller = new AbortController();
+    let timedOut = false;
+    const abortFromParent = () => controller.abort();
+    signal?.addEventListener('abort', abortFromParent, { once: true });
+    const timer = setTimeout(() => { timedOut = true; controller.abort(); }, timeoutMs);
     try {
-      const response = await fetch(candidate, { signal, headers: { accept: 'application/json' } });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return await response.json();
+      const response = await fetch(url, { signal: controller.signal, headers: { accept: 'application/json' }, cache: 'no-store' });
+      if (!response.ok) {
+        const error = requestError('HTTP', `HTTP ${response.status}`, response.status);
+        if (response.status >= 500 && attempt < retries) { lastError = error; await wait(650 * (attempt + 1), signal); continue; }
+        throw error;
+      }
+      try { return await response.json(); }
+      catch { throw requestError('INVALID_RESPONSE', 'Ungültige Antwort'); }
     } catch (error) {
-      if (error.name === 'AbortError') throw error;
-      lastError = error;
+      if (signal?.aborted) throw requestError('CANCELLED', 'Anfrage abgebrochen');
+      const normalized = timedOut ? requestError('TIMEOUT', 'Zeitüberschreitung')
+        : error?.code ? error
+          : requestError('NETWORK', 'Netzwerkfehler');
+      lastError = normalized;
+      const retryable = normalized.code === 'TIMEOUT' || normalized.code === 'NETWORK' || normalized.status >= 500;
+      if (!retryable || attempt >= retries) throw normalized;
+      await wait(650 * (attempt + 1), signal);
+    } finally {
+      clearTimeout(timer);
+      signal?.removeEventListener('abort', abortFromParent);
     }
   }
-  throw lastError || new Error('Fahrplanschnittstelle nicht erreichbar');
+  throw lastError || requestError('NETWORK', 'Fahrplanschnittstelle nicht erreichbar');
+}
+
+function friendlyError(error, context = 'Verbindungssuche') {
+  if (typeof navigator !== 'undefined' && !navigator.onLine) return `Du bist offline. ${context} braucht eine Internetverbindung.`;
+  if (error?.code === 'TIMEOUT') return `${context}: Transitous hat innerhalb von 12 Sekunden nicht geantwortet. Bitte versuche es erneut.`;
+  if (error?.status === 429) return 'Transitous ist gerade stark ausgelastet. Warte bitte kurz und versuche es dann erneut.';
+  if (error?.status >= 500) return 'Transitous hat gerade ein Serverproblem. Bitte versuche es in einem Moment erneut.';
+  if (error?.code === 'INVALID_RESPONSE') return 'Transitous hat eine unerwartete Antwort gesendet. Bitte versuche es erneut.';
+  if (error?.code === 'NOT_FOUND') return error.message;
+  return `${context} konnte keine Verbindung zu Transitous aufbauen. Prüfe Internetzugang oder Browser-Schutz und versuche es erneut.`;
 }
 
 async function resolveStop(query, signal) {
-  const url = `${API}/locations?query=${encodeURIComponent(query)}&results=8&stops=true&addresses=false&poi=false&language=de`;
-  const data = await fetchJson(url, signal);
-  const stop = Array.isArray(data) ? data.find(item => item?.type === 'stop' && item.id) || data.find(item => item?.id) : null;
-  if (!stop) throw new Error(`Keine Haltestelle für „${query}“ gefunden`);
-  return { id: String(stop.id), name: String(stop.name || query) };
+  const data = await fetchJson(buildGeocodeUrl(query), { signal });
+  const places = normalizePlaces(data);
+  const place = places.find(item => item.id) || null;
+  if (!place) throw requestError('NOT_FOUND', `Keine Haltestelle für „${query}“ gefunden. Ergänze bitte den Ort.`);
+  return place;
 }
 
 function connectionTime(value) {
@@ -509,35 +570,64 @@ function delayMinutes(actual, planned) {
 }
 
 function legName(leg) {
-  if (leg.walking) return 'Fußweg';
-  return leg.line?.name || leg.line?.fahrtNr || leg.product?.name || 'ÖPNV';
+  if (leg.walking || /^(WALK|FOOT)$/i.test(leg.mode || '')) return 'Fußweg';
+  return leg.line || leg.line?.name || leg.routeShortName || leg.displayName || leg.product?.name || String(leg.mode || 'ÖPNV').replaceAll('_', ' ');
 }
 
-function journeyCard(journey, index) {
-  const legs = Array.isArray(journey?.legs) ? journey.legs.filter(leg => leg?.origin && leg?.destination) : [];
-  if (!legs.length) return '';
-  const first = legs[0];
-  const last = legs.at(-1);
-  const departure = first.departure || first.plannedDeparture;
-  const arrival = last.arrival || last.plannedArrival;
-  const depDelay = delayMinutes(first.departure, first.plannedDeparture);
-  const arrDelay = delayMinutes(last.arrival, last.plannedArrival);
+function normalizeJourney(journey) {
+  const sourceLegs = Array.isArray(journey?.legs) ? journey.legs : [];
+  const legs = sourceLegs.map(leg => {
+    const origin = leg.origin || leg.from || {};
+    const destination = leg.destination || leg.to || {};
+    const departure = leg.departure || leg.startTime || origin.departure || origin.arrival;
+    const plannedDeparture = leg.plannedDeparture || leg.scheduledStartTime || origin.scheduledDeparture || origin.scheduledArrival || departure;
+    const arrival = leg.arrival || leg.endTime || destination.arrival || destination.departure;
+    const plannedArrival = leg.plannedArrival || leg.scheduledEndTime || destination.scheduledArrival || destination.scheduledDeparture || arrival;
+    const mode = String(leg.mode || (leg.walking ? 'WALK' : 'TRANSIT'));
+    const line = leg.line?.name || leg.line?.fahrtNr || leg.routeShortName || leg.displayName || leg.routeLongName || leg.product?.name || '';
+    return {
+      origin: String(origin.name || 'Start'), destination: String(destination.name || 'Ziel'),
+      departure, plannedDeparture, arrival, plannedArrival, mode, line: String(line),
+      headsign: String(leg.headsign || ''), platform: String(leg.departurePlatform || leg.plannedDeparturePlatform || origin.track || origin.scheduledTrack || ''),
+      walking: Boolean(leg.walking) || /^(WALK|FOOT)$/i.test(mode), cancelled: Boolean(leg.cancelled || origin.cancelled || destination.cancelled)
+    };
+  }).filter(leg => leg.departure && leg.arrival);
+  if (!legs.length) return null;
+  const departure = journey.startTime || legs[0].departure;
+  const arrival = journey.endTime || legs.at(-1).arrival;
   const publicLegs = legs.filter(leg => !leg.walking);
-  const transfers = Math.max(0, publicLegs.length - 1);
+  const calculatedTransfers = Math.max(0, publicLegs.length - 1);
+  const suppliedTransfers = Number(journey.transfers);
+  return {
+    departure, arrival, duration: durationMinutes(departure, arrival) || Math.round(Number(journey.duration || 0) / 60),
+    transfers: Number.isFinite(suppliedTransfers) ? suppliedTransfers : calculatedTransfers,
+    cancelled: Boolean(journey.cancelled || legs.some(leg => leg.cancelled)), legs
+  };
+}
+
+function buildDbNavigatorUrl(query = {}) {
+  const params = new URLSearchParams({
+    sts: 'true', so: String(query.from || ''), zo: String(query.to || ''),
+    hd: `${query.date || ''}T${query.time || '14:00'}:00`, hza: query.mode === 'arrival' ? 'A' : 'D',
+    ar: String(query.mode === 'arrival'), kl: '2'
+  });
+  return `https://int.bahn.de/buchung/fahrplan/suche#${params.toString()}`;
+}
+
+function journeyCard(journey, index, query = {}) {
+  const normalized = journey?.departure && Array.isArray(journey?.legs) && typeof journey.legs[0]?.origin === 'string' ? journey : normalizeJourney(journey);
+  if (!normalized?.legs?.length) return '';
+  const first = normalized.legs[0];
+  const last = normalized.legs.at(-1);
+  const publicLegs = normalized.legs.filter(leg => !leg.walking);
   const products = [...new Set(publicLegs.map(legName))].join(' · ') || 'Fußweg';
-  const cancelled = journey.cancelled || legs.some(leg => leg.cancelled);
-  const delay = Math.max(depDelay, arrDelay);
-  const details = legs.map(leg => {
-    const dep = leg.departure || leg.plannedDeparture;
-    const arr = leg.arrival || leg.plannedArrival;
-    const platform = leg.departurePlatform || leg.plannedDeparturePlatform;
-    return `<li><span class="leg-time">${connectionTime(dep)}–${connectionTime(arr)}</span><strong>${esc(legName(leg))}</strong><span>${esc(leg.origin?.name || 'Start')} → ${esc(leg.destination?.name || 'Ziel')}${platform ? ` · Gleis ${esc(platform)}` : ''}</span></li>`;
-  }).join('');
-  return `<article class="panel connection-card ${cancelled ? 'cancelled' : ''}">
-    <div class="connection-head"><div><span class="connection-time">${connectionTime(departure)} → ${connectionTime(arrival)}</span><p>${esc(first.origin?.name || 'Start')} → ${esc(last.destination?.name || 'Ziel')}</p></div><strong>${durationLabel(durationMinutes(departure, arrival))}</strong></div>
-    <div class="connection-meta"><span class="badge">${transfers ? `${transfers}× umsteigen` : 'Direkt'}</span><span class="badge">${esc(products)}</span>${delay ? `<span class="badge delay">+${delay} Min.</span>` : '<span class="badge on-time">Planmäßig</span>'}${cancelled ? '<span class="badge cancelled-label">Fällt aus</span>' : ''}</div>
+  const delay = Math.max(delayMinutes(first.departure, first.plannedDeparture), delayMinutes(last.arrival, last.plannedArrival));
+  const details = normalized.legs.map(leg => `<li><span class="leg-time">${connectionTime(leg.departure)}–${connectionTime(leg.arrival)}</span><strong>${esc(legName(leg))}</strong><span>${esc(leg.origin)} → ${esc(leg.destination)}${leg.platform ? ` · Gleis ${esc(leg.platform)}` : ''}${leg.headsign ? ` · Richtung ${esc(leg.headsign)}` : ''}</span></li>`).join('');
+  return `<article class="panel connection-card ${normalized.cancelled ? 'cancelled' : ''}">
+    <div class="connection-head"><div><span class="connection-time">${connectionTime(normalized.departure)} → ${connectionTime(normalized.arrival)}</span><p>${esc(first.origin)} → ${esc(last.destination)}</p></div><strong>${durationLabel(normalized.duration)}</strong></div>
+    <div class="connection-meta"><span class="badge">${normalized.transfers ? `${normalized.transfers}× umsteigen` : 'Direkt'}</span><span class="badge">${esc(products)}</span>${delay ? `<span class="badge delay">+${delay} Min.</span>` : '<span class="badge on-time">Planmäßig</span>'}${normalized.cancelled ? '<span class="badge cancelled-label">Fällt aus</span>' : ''}</div>
     <details><summary>Etappen anzeigen</summary><ol class="legs">${details}</ol></details>
-    <a class="db-link" href="https://int.bahn.de/" target="_blank" rel="noopener noreferrer">Verbindung bei DB prüfen ↗</a>
+    <a class="db-link" href="${esc(buildDbNavigatorUrl(query))}" target="_blank" rel="noopener noreferrer">Im DB Navigator öffnen ↗</a>
   </article>`;
 }
 
@@ -563,56 +653,114 @@ function prepareConnection(marketId, date = '', time = '') {
   $('#connectionMessage').textContent = `${market.name} wurde als Ziel übernommen.`;
 }
 
+function connectionQueryFromForm() {
+  return {
+    from: $('#connectionFrom').value.trim(), to: $('#connectionTo').value.trim(),
+    date: $('#connectionDate').value, time: $('#connectionTime').value,
+    mode: $('#connectionMode').value === 'arrival' ? 'arrival' : 'departure', marketId: $('#connectionMarket').value
+  };
+}
+
+function connectionKey(query) {
+  return [query.from, query.to, query.date, query.time, query.mode].map(value => String(value || '').trim().toLocaleLowerCase('de')).join('|');
+}
+
+function saveConnectionSnapshot(query, resolved, journeys) {
+  const normalized = journeys.map(journey => journey?.departure && Array.isArray(journey?.legs) && typeof journey.legs[0]?.origin === 'string' ? journey : normalizeJourney(journey)).filter(Boolean).slice(0, 6);
+  if (!normalized.length) return;
+  const record = { id: `c-${Date.now().toString(36)}`, savedAt: new Date().toISOString(), query, resolved, journeys: normalized };
+  const key = connectionKey(query);
+  state.savedConnections = [record, ...state.savedConnections.filter(item => connectionKey(item.query || {}) !== key)].slice(0, MAX_SAVED_CONNECTIONS);
+  saveAll();
+  renderSavedConnections();
+}
+
+function showSavedConnection(id) {
+  const record = state.savedConnections.find(item => item.id === id);
+  if (!record) return;
+  const query = record.query || {};
+  $('#connectionFrom').value = query.from || '';
+  $('#connectionTo').value = query.to || '';
+  $('#connectionDate').value = query.date || '';
+  $('#connectionTime').value = query.time || '14:00';
+  $('#connectionMode').value = query.mode === 'arrival' ? 'arrival' : 'departure';
+  $('#connectionMessage').textContent = `Offline gespeichert am ${new Date(record.savedAt).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' })}.`;
+  $('#connectionResults').innerHTML = record.journeys.map((journey, index) => journeyCard(journey, index, query)).join('');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderSavedConnections() {
+  const target = $('#savedConnections');
+  if (!target) return;
+  const sorted = [...state.savedConnections].filter(item => item?.query && Array.isArray(item.journeys)).sort((a, b) => String(b.savedAt).localeCompare(String(a.savedAt)));
+  target.innerHTML = sorted.length ? sorted.map(item => `<article class="saved-connection">
+    <div><strong>${esc(item.query.from)} → ${esc(item.query.to)}</strong><p>${esc(formatDate(item.query.date))} · ${esc(item.query.time)} Uhr · ${item.query.mode === 'arrival' ? 'Ankunft' : 'Abfahrt'} · ${item.journeys.length} Verbindung${item.journeys.length === 1 ? '' : 'en'}</p></div>
+    <div class="saved-actions"><button data-open-saved="${esc(item.id)}">Offline ansehen</button><a class="button-link ghost" href="${esc(buildDbNavigatorUrl(item.query))}" target="_blank" rel="noopener noreferrer">DB Navigator ↗</a><button class="danger compact-button" data-delete-saved="${esc(item.id)}" aria-label="Gespeicherte Verbindung löschen">×</button></div>
+  </article>`).join('') : '<p class="muted">Noch keine Verbindung gespeichert. Erfolgreiche Suchen werden automatisch für die Offline-Anzeige gesichert.</p>';
+  $$('[data-open-saved]').forEach(button => button.onclick = () => showSavedConnection(button.dataset.openSaved));
+  $$('[data-delete-saved]').forEach(button => button.onclick = () => {
+    state.savedConnections = state.savedConnections.filter(item => item.id !== button.dataset.deleteSaved);
+    saveAll(); renderSavedConnections();
+  });
+  $('#clearSavedConnections').hidden = !sorted.length;
+}
+
+function renderCachedMatch(query) {
+  const match = state.savedConnections.find(item => connectionKey(item.query || {}) === connectionKey(query));
+  if (!match) return false;
+  $('#connectionMessage').textContent = 'Offline: passende gespeicherte Verbindung wird angezeigt.';
+  $('#connectionResults').innerHTML = match.journeys.map((journey, index) => journeyCard(journey, index, query)).join('');
+  return true;
+}
+
 async function searchConnections() {
-  const fromQuery = $('#connectionFrom').value.trim();
-  const toQuery = $('#connectionTo').value.trim();
-  const date = $('#connectionDate').value;
-  const time = $('#connectionTime').value;
-  const mode = $('#connectionMode').value === 'arrival' ? 'arrival' : 'departure';
+  const query = connectionQueryFromForm();
   const message = $('#connectionMessage');
   const results = $('#connectionResults');
-  if (fromQuery.length < 3 || toQuery.length < 3) {
+  if (query.from.length < 3 || query.to.length < 3) {
     message.textContent = 'Bitte Start und Ziel mit mindestens 3 Zeichen eingeben.';
     results.innerHTML = '';
     return;
   }
-  if (!parseDate(date) || !/^\d{2}:\d{2}$/.test(time)) {
+  if (!parseDate(query.date) || !/^\d{2}:\d{2}$/.test(query.time)) {
     message.textContent = 'Bitte ein gültiges Datum und eine Uhrzeit wählen.';
     results.innerHTML = '';
     return;
   }
+  state.connectionPrefs = query;
+  saveAll();
   if (!navigator.onLine) {
-    message.textContent = '';
-    results.innerHTML = '<p class="error-banner">Offline: Die DB-Verbindungssuche benötigt eine Internetverbindung.</p>';
+    if (!renderCachedMatch(query)) {
+      message.textContent = '';
+      results.innerHTML = '<div class="error-banner">Du bist offline. Für diese Suche ist noch keine Verbindung gespeichert. Unten kannst du andere gespeicherte Verbindungen öffnen.</div>';
+    }
     return;
   }
 
-  state.connectionPrefs = { from: fromQuery, to: toQuery, date, time, mode, marketId: $('#connectionMarket').value };
-  saveAll();
   connectionController?.abort();
   connectionController = new AbortController();
   const controller = connectionController;
-  const timeout = setTimeout(() => controller.abort(), 20000);
-  message.textContent = 'Haltestellen werden gesucht …';
+  message.textContent = 'Haltestellen werden über Transitous gesucht …';
   results.innerHTML = '<article class="panel loading-card">Verbindungen werden geladen …</article>';
   try {
-    const [from, to] = await Promise.all([resolveStop(fromQuery, controller.signal), resolveStop(toQuery, controller.signal)]);
-    message.textContent = `${from.name} → ${to.name}`;
-    const url = buildJourneyUrl(from.id, to.id, date, time, mode);
-    const data = await fetchJson(url, controller.signal);
-    const journeys = Array.isArray(data) ? data : data?.journeys;
-    const cards = Array.isArray(journeys) ? journeys.map(journeyCard).filter(Boolean) : [];
-    results.innerHTML = cards.length ? cards.join('') : '<article class="panel empty"><strong>Keine Verbindung gefunden.</strong><br>Ändere Uhrzeit, Datum oder Haltestelle.</article>';
-  } catch (error) {
+    const [from, to] = await Promise.all([resolveStop(query.from, controller.signal), resolveStop(query.to, controller.signal)]);
     if (controller !== connectionController) return;
+    message.textContent = `${from.name} → ${to.name}`;
+    const url = buildJourneyUrl(from.id, to.id, query.date, query.time, query.mode);
+    const data = await fetchJson(url, { signal: controller.signal });
+    if (controller !== connectionController) return;
+    const journeys = Array.isArray(data) ? data : Array.isArray(data?.itineraries) ? data.itineraries : Array.isArray(data?.journeys) ? data.journeys : [];
+    const normalized = journeys.map(normalizeJourney).filter(Boolean);
+    results.innerHTML = normalized.length ? normalized.map((journey, index) => journeyCard(journey, index, query)).join('') : '<article class="panel empty"><strong>Keine Verbindung gefunden.</strong><br>Ändere Uhrzeit, Datum oder Haltestelle. Noch nicht veröffentlichte Fahrpläne können ebenfalls leer sein.</article>';
+    if (normalized.length) saveConnectionSnapshot(query, { from: from.name, to: to.name }, normalized);
+  } catch (error) {
+    if (controller !== connectionController || error.code === 'CANCELLED') return;
     message.textContent = '';
-    const text = error.name === 'AbortError' ? 'Die Suche hat zu lange gedauert. Bitte erneut versuchen.' : esc(error.message || 'Die Verbindungssuche ist derzeit nicht erreichbar.');
-    results.innerHTML = `<p class="error-banner">${text}</p>`;
-  } finally {
-    clearTimeout(timeout);
+    const cached = renderCachedMatch(query);
+    if (!cached) results.innerHTML = `<div class="error-banner">${esc(friendlyError(error))}<div class="error-actions"><button id="retryConnections" class="retry-button">Erneut versuchen</button><a class="button-link ghost" href="${esc(buildDbNavigatorUrl(query))}" target="_blank" rel="noopener noreferrer">Direkt im DB Navigator öffnen ↗</a></div></div>`;
+    $('#retryConnections')?.addEventListener('click', searchConnections);
   }
 }
-
 function renderSettings() {
   renderPeople();
   $('#savedStop').textContent = state.stop?.name || 'keine';
@@ -766,6 +914,7 @@ function renderAll() {
   renderTimeline();
   renderSettings();
   renderTrip();
+  renderSavedConnections();
 }
 
 function sanitizeImported(payload) {
@@ -780,7 +929,8 @@ function sanitizeImported(payload) {
     stop: source.stop && typeof source.stop.name === 'string' ? source.stop : null,
     filters: source.filters && typeof source.filters === 'object' ? source.filters : {},
     viewMode: source.viewMode === 'list' ? 'list' : 'cards',
-    connectionPrefs: source.connectionPrefs && typeof source.connectionPrefs === 'object' ? source.connectionPrefs : {}
+    connectionPrefs: source.connectionPrefs && typeof source.connectionPrefs === 'object' ? source.connectionPrefs : {},
+    savedConnections: Array.isArray(source.savedConnections) ? source.savedConnections.filter(item => item && item.query && Array.isArray(item.journeys)).slice(0, MAX_SAVED_CONNECTIONS) : []
   };
   return imported;
 }
@@ -816,6 +966,10 @@ function bind() {
     }
   };
   $('#searchConnections').onclick = searchConnections;
+  $('#clearSavedConnections').onclick = () => {
+    if (!confirm('Alle offline gespeicherten Verbindungen löschen?')) return;
+    state.savedConnections = []; saveAll(); renderSavedConnections(); $('#connectionResults').innerHTML = '';
+  };
   ['connectionFrom', 'connectionTo'].forEach(id => $(`#${id}`).onkeydown = event => { if (event.key === 'Enter') searchConnections(); });
   $('#useSavedStop').onclick = () => {
     if (!state.stop?.name) {
@@ -905,7 +1059,7 @@ async function loadMarkets() {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { parseDate, isoLocal, dateRange, migratePeople, migrateAvailability, openOn, score, icsEscape, foldIcs, makeIcs, sanitizeImported, buildJourneyUrl, durationMinutes, durationLabel, delayMinutes, journeyCard };
+  module.exports = { parseDate, isoLocal, dateRange, migratePeople, migrateAvailability, openOn, score, icsEscape, foldIcs, makeIcs, sanitizeImported, buildGeocodeUrl, normalizePlaces, buildJourneyUrl, durationMinutes, durationLabel, delayMinutes, normalizeJourney, buildDbNavigatorUrl, journeyCard, friendlyError };
 }
 
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {

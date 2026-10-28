@@ -38,10 +38,11 @@ for (const market of markets) {
 }
 
 const html = fs.readFileSync(new URL('index.html', root), 'utf8');
-for (const id of ['marketSearch', 'cityFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'dateFilter', 'timelineBody', 'tripMarket', 'peopleList', 'stopResults', 'cardView', 'listView', 'connectionFrom', 'connectionTo', 'connectionMarket', 'connectionDate', 'connectionTime', 'connectionMode', 'searchConnections', 'connectionResults']) {
+for (const id of ['marketSearch', 'cityFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'dateFilter', 'timelineBody', 'tripMarket', 'peopleList', 'stopResults', 'cardView', 'listView', 'connectionFrom', 'connectionTo', 'connectionMarket', 'connectionDate', 'connectionTime', 'connectionMode', 'searchConnections', 'connectionResults', 'savedConnections', 'clearSavedConnections']) {
   assert.ok(html.includes(`id="${id}"`), `UI-Element fehlt: ${id}`);
 }
-assert.ok(html.includes('V2.2.0'), 'Versionshinweis fehlt');
+assert.ok(html.includes('V2.3.0'), 'Versionshinweis fehlt');
+assert.ok(html.includes('Transitous'), 'Transitous-Hinweis fehlt');
 assert.ok(html.includes('Way to Winter Magic'), 'App-Name fehlt');
 
 const manifest = JSON.parse(fs.readFileSync(new URL('manifest.webmanifest', root), 'utf8'));
@@ -55,13 +56,15 @@ for (const file of requiredFiles.filter(file => !file.startsWith('tests/'))) {
   if (file === 'sw.js') continue;
   assert.ok(sw.includes(file), `Offline-Cache enthält ${file} nicht`);
 }
-assert.ok(sw.includes("url.hostname.endsWith('transport.rest')"), 'DB-API muss vom Cache ausgeschlossen sein');
-assert.ok(sw.includes("url.hostname.endsWith('api.bahn.guru')"), 'Aktiver Bahn-API-Endpunkt muss vom Cache ausgeschlossen sein');
+assert.ok(sw.includes("url.hostname === 'api.transitous.org'"), 'Transitous-API muss vom Cache ausgeschlossen sein');
+assert.ok(!sw.includes('bahn.guru') && !sw.includes('transport.rest'), 'Alte Bahn-API ist noch im Service Worker enthalten');
 assert.ok(sw.includes("event.request.mode === 'navigate'"), 'Offline-Navigation-Fallback fehlt');
 
 const appSource = fs.readFileSync(new URL('app.js', root), 'utf8');
 assert.ok(appSource.includes("const STORAGE_PREFIX = 'wtwm:v2:'"), 'Eigener Speicherbereich fehlt');
-assert.ok(appSource.includes("const VERSION = '2.2.0'"), 'JS-Version ist nicht aktuell');
+assert.ok(appSource.includes("const VERSION = '2.3.0'"), 'JS-Version ist nicht aktuell');
+assert.ok(appSource.includes("const API = 'https://api.transitous.org/api'"), 'Transitous-Endpunkt fehlt');
+assert.ok(!appSource.includes('bahn.guru') && !appSource.includes('transport.rest'), 'Alte Bahn-API ist noch enthalten');
 
 const store = new Map();
 globalThis.localStorage = {
@@ -106,29 +109,45 @@ assert.ok(ics.split('\r\n').every(line => encoder.encode(line).length <= 75), 'I
 const umlautIcs = logic.foldIcs(`DESCRIPTION:${'🎄 Grüße aus Wuppertal · '.repeat(8)}`);
 assert.ok(umlautIcs.split('\r\n').every(line => encoder.encode(line).length <= 75), 'ICS-Faltung überschreitet 75 UTF-8-Bytes');
 
-const journeyUrl = new URL(logic.buildJourneyUrl('8000266', '8000080', '2026-12-05', '14:30', 'departure'));
-assert.equal(journeyUrl.hostname, 'v5.db.api.bahn.guru');
-assert.equal(journeyUrl.pathname, '/journeys');
-assert.equal(journeyUrl.searchParams.get('from'), '8000266');
-assert.equal(journeyUrl.searchParams.get('to'), '8000080');
-assert.equal(journeyUrl.searchParams.get('departure'), '2026-12-05T14:30:00+01:00');
-assert.equal(journeyUrl.searchParams.get('arrival'), null);
-assert.equal(logic.buildJourneyUrl('', '8000080', '2026-12-05', '14:30'), '', 'Ungültige Verbindungssuche wurde nicht abgelehnt');
+const geocodeUrl = new URL(logic.buildGeocodeUrl('Wuppertal Hbf'));
+assert.equal(geocodeUrl.hostname, 'api.transitous.org');
+assert.equal(geocodeUrl.pathname, '/api/v1/geocode');
+assert.equal(geocodeUrl.searchParams.get('text'), 'Wuppertal Hbf');
+const places = logic.normalizePlaces([{ name: 'Wuppertal Hbf', stopId: 'de:05124:01133', lat: 51.254, lon: 7.15 }]);
+assert.deepEqual(places[0], { id: 'de:05124:01133', name: 'Wuppertal Hbf', detail: '', latitude: 51.254, longitude: 7.15 });
+
+const journeyUrl = new URL(logic.buildJourneyUrl('de:05124:01133', 'de:05113:8000080', '2026-12-05', '14:30', 'departure'));
+assert.equal(journeyUrl.hostname, 'api.transitous.org');
+assert.equal(journeyUrl.pathname, '/api/v6/plan');
+assert.equal(journeyUrl.searchParams.get('fromPlace'), 'de:05124:01133');
+assert.equal(journeyUrl.searchParams.get('toPlace'), 'de:05113:8000080');
+assert.equal(journeyUrl.searchParams.get('time'), '2026-12-05T14:30:00+01:00');
+assert.equal(journeyUrl.searchParams.get('arriveBy'), 'false');
+const arrivalUrl = new URL(logic.buildJourneyUrl('a', 'b', '2026-12-05', '19:30', 'arrival'));
+assert.equal(arrivalUrl.searchParams.get('arriveBy'), 'true');
+assert.equal(logic.buildJourneyUrl('', 'de:05113:8000080', '2026-12-05', '14:30'), '', 'Ungültige Verbindungssuche wurde nicht abgelehnt');
+const dbUrl = logic.buildDbNavigatorUrl({ from: 'Wuppertal Hbf', to: 'Essen Hbf', date: '2026-12-05', time: '14:30', mode: 'departure' });
+assert.ok(dbUrl.startsWith('https://int.bahn.de/buchung/fahrplan/suche#'));
+assert.ok(dbUrl.includes('so=Wuppertal+Hbf') && dbUrl.includes('zo=Essen+Hbf'), 'DB-Navigator-Link enthält Start/Ziel nicht');
 assert.equal(logic.durationMinutes('2026-12-05T14:00:00+01:00', '2026-12-05T15:35:00+01:00'), 95);
 assert.equal(logic.durationLabel(95), '1 Std. 35 Min.');
 assert.equal(logic.delayMinutes('2026-12-05T14:08:00+01:00', '2026-12-05T14:00:00+01:00'), 8);
 
-const renderedJourney = logic.journeyCard({ legs: [
+const rawTransitousJourney = { transfers: 0, startTime: '2026-12-05T14:05:00+01:00', endTime: '2026-12-05T14:45:00+01:00', legs: [
   {
-    origin: { name: 'Wuppertal Hbf' }, destination: { name: 'Essen Hbf' },
-    plannedDeparture: '2026-12-05T14:00:00+01:00', departure: '2026-12-05T14:05:00+01:00',
-    plannedArrival: '2026-12-05T14:40:00+01:00', arrival: '2026-12-05T14:45:00+01:00',
-    departurePlatform: '1', line: { name: 'RE 49' }
+    from: { name: 'Wuppertal Hbf', track: '1' }, to: { name: 'Essen Hbf' }, mode: 'RAIL', routeShortName: 'RE 49',
+    scheduledStartTime: '2026-12-05T14:00:00+01:00', startTime: '2026-12-05T14:05:00+01:00',
+    scheduledEndTime: '2026-12-05T14:40:00+01:00', endTime: '2026-12-05T14:45:00+01:00'
   }
-] }, 0);
+] };
+const normalizedJourney = logic.normalizeJourney(rawTransitousJourney);
+assert.equal(normalizedJourney.transfers, 0);
+assert.equal(normalizedJourney.legs[0].line, 'RE 49');
+const renderedJourney = logic.journeyCard(rawTransitousJourney, 0, { from: 'Wuppertal Hbf', to: 'Essen Hbf', date: '2026-12-05', time: '14:30', mode: 'departure' });
 assert.ok(renderedJourney.includes('14:05 → 14:45'), 'Verbindungszeiten werden nicht dargestellt');
 assert.ok(renderedJourney.includes('Direkt'), 'Direktverbindung wird nicht erkannt');
 assert.ok(renderedJourney.includes('+5 Min.'), 'Verspätung wird nicht dargestellt');
 assert.ok(renderedJourney.includes('RE 49'), 'Linie wird nicht dargestellt');
+assert.ok(renderedJourney.includes('Im DB Navigator öffnen'), 'DB-Navigator-Button fehlt');
 
-console.log(`V2.2.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, ${markets.filter(market => market.new).length} neu, DB-Verbindungssuche geprüft.`);
+console.log(`V2.3.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, ${markets.filter(market => market.new).length} neu, DB-Verbindungssuche geprüft.`);

@@ -1,0 +1,20 @@
+WAY TO WINTER MAGIC V2.3.0 – SELBST BEHOBENE BUGS
+Datenstand: 28.10.2026
+
+1. „Failed to fetch“ der alten Bahn-Schnittstelle: Verbindungssuche vollständig auf Transitous umgestellt.
+2. Transitous liefert andere Feldnamen: Haltestellen, Fahrzeiten, Linien, Gleise, Umstiege und Verspätungen werden jetzt korrekt normalisiert.
+3. Kurzzeitige Netz-/Serverfehler: 12-Sekunden-Timeout, ein automatischer Retry und ein sichtbarer „Erneut versuchen“-Button ergänzt.
+4. Unklare Technikfehler: durch verständliche Meldungen für offline, Timeout, Überlastung, Serverfehler und unbekannte Haltestellen ersetzt.
+5. Offline bisher keine Verbindungen: bis zu 8 erfolgreiche Suchen werden lokal gespeichert und können ohne Internet geöffnet werden.
+6. DB-Prüfung öffnete nur die Startseite: DB-Navigator-Link enthält jetzt Start, Ziel, Datum, Uhrzeit und Abfahrt/Ankunft.
+7. GitHub-Pages-Unterpfad und Service Worker: Transitous wird nicht gecacht; Cache-Version und relative App-Pfade wurden aktualisiert.
+8. Schnelle Folgesuchen: ältere Antworten werden weiterhin abgebrochen und können neuere Ergebnisse nicht überschreiben.
+
+Getestet:
+- Haltestellensuche
+- Hinfahrt (Abfahrt)
+- Rückfahrt (Start/Ziel tauschen und Ankunftssuche)
+- Retry, Timeout und verständliche Fehleranzeige
+- Offline-Anzeige gespeicherter Verbindungen
+- DB-Navigator-Link
+- bestehende Markt-, Timeline-, Trip-, Export- und PWA-Funktionen
