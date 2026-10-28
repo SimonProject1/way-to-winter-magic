@@ -1,0 +1,19 @@
+Way to Winter Magic V3.4.0 – selbst behobene Bugs
+
+1. Interne Gestaltungsangaben waren in Startseite, Album und Sticker-Details sichtbar.
+   Behoben: Durch kurze, nutzerrelevante Erklärungen ersetzt.
+
+2. Sticker-Details zeigten keine zugehörigen Besuche.
+   Behoben: Passende besuchte Märkte werden jetzt mit Datum und Ort angezeigt.
+
+3. Freischaltfenster und Teilen-Grafiken verwendeten interne Effektbeschreibungen.
+   Behoben: Sie zeigen jetzt die verständliche Bedeutung des Stickers.
+
+4. Einzelne Markt- und Personentexte enthielten interne Versions- oder Technikhinweise.
+   Behoben: Neutral und verständlich formuliert.
+
+5. Zugängliche Texte in den Sticker-SVGs enthielten Produktionsbeschreibungen.
+   Behoben: Auf Stickername, Status, Bedeutung und Freischaltbedingung reduziert.
+
+6. Versions- und Offline-Cache-Hinweise waren nicht einheitlich.
+   Behoben: App, Cache, Tests und Dokumentation auf V3.4.0 aktualisiert.

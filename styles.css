@@ -4,7 +4,6 @@
 @media(max-width:390px){.stats span{font-size:.75rem}.stats strong{font-size:1.4rem}.hero p:last-child{font-size:.92rem}.section-head{align-items:flex-start;flex-direction:column}.section-head .ghost{align-self:flex-start}}
 
 
-/* V2.1: Karten-/Listenansicht */
 .view-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
 .view-toggle{min-width:42px;padding:9px 12px;font-size:1.05rem}
 .view-toggle.active{background:var(--pine);color:#fff;border-color:var(--pine)}
@@ -17,7 +16,6 @@
 .list-view .fav{top:50%;transform:translateY(-50%)}
 .list-view .badge.new{position:absolute;left:50%;top:8px}
 
-/* V2.2: DB-Verbindungssuche */
 .connection-search{background:linear-gradient(135deg,#fffdf7,#edf4ee)}
 .connection-actions{margin-top:16px}
 .connections{display:grid;gap:14px}
@@ -53,7 +51,6 @@ summary{cursor:pointer;color:var(--pine);font-weight:800}
 @media(max-width:390px){.tabs button{font-size:.61rem}.tabs span{font-size:.96rem}.view-actions #resetFilters{flex-basis:100%}}
 
 
-/* V2.3: Transitous, verständliche Fehler und Offline-Verbindungen */
 .button-link{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:12px;padding:10px 14px;background:var(--pine);color:#fff;font-weight:800;text-decoration:none;line-height:1.2}
 .button-link.ghost{background:transparent;color:var(--pine);border:1px solid #b9c9c1}
 .result{display:block;width:100%;text-align:left;color:var(--ink)}
@@ -66,7 +63,6 @@ summary{cursor:pointer;color:var(--pine);font-weight:800}
 .attribution{font-size:.86rem;color:var(--muted)}.attribution a{color:var(--pine);font-weight:750}
 @media(max-width:700px){.saved-connection{align-items:flex-start;flex-direction:column}.saved-actions{justify-content:flex-start}.saved-actions>*{font-size:.82rem;padding:8px 10px}}
 
-/* V2.4: zentraler Trip-Planungs-Assistent */
 .planner-shell{background:linear-gradient(145deg,#fffdf7,#f7edda)}
 .planner-title{margin-bottom:14px}.planner-title p{margin:.25rem 0}
 .planner-progress{list-style:none;display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin:0 0 22px;padding:0}
@@ -94,7 +90,6 @@ summary{cursor:pointer;color:var(--pine);font-weight:800}
 }
 @media(max-width:390px){.planner-progress li{flex-basis:70px;font-size:.69rem}.planner-title{flex-direction:column}.planner-nav{grid-template-columns:auto 1fr auto}.planner-nav span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 
-/* V2.5: kompakter Planer, Marktfilter und abwählbare Marktauswahl */
 .planner-shell{padding:16px}.planner-title{margin-bottom:8px}.planner-progress{gap:5px;margin-bottom:14px}.planner-progress li{padding:7px 4px}
 .planner-step h3{font-size:1.28rem;margin:.1rem 0 .55rem}.planner-step>p.muted{margin:.25rem 0 .65rem}.planner-shell .form-grid{gap:10px}.planner-shell input,.planner-shell select,.planner-shell textarea{padding:9px 10px}
 .planner-filter{margin:10px 0 6px;padding:0 12px;border:1px solid var(--line);border-radius:14px;background:#fffaf1}.planner-filter>summary{margin:0;padding:10px 0;border:0;color:var(--pine);font-weight:850}.planner-filter-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:0 0 12px;align-items:end}.planner-filter-grid .wide{grid-column:span 2}.planner-filter-grid button{min-height:42px}
@@ -104,7 +99,6 @@ summary{cursor:pointer;color:var(--pine);font-weight:800}
 @media(max-width:920px){.planner-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.planner-filter-grid .wide{grid-column:1/-1}}
 @media(max-width:700px){.planner-shell{padding:14px}.planner-filter-grid{grid-template-columns:1fr}.planner-filter-grid .wide{grid-column:auto}.planner-selection{align-items:flex-start;flex-direction:column}.planner-selection button{width:100%}.planner-markets{grid-template-columns:1fr}.planner-market .card-actions{display:grid;grid-template-columns:1fr 1fr}.planner-market .card-actions button{width:auto}.planner-nav{margin-left:-14px;margin-right:-14px;margin-bottom:-14px}}
 
-/* V2.6: auf die drei entscheidenden Angaben reduzierte Planer-Marktkarten */
 .planner-markets{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
 .planner-market{display:flex;flex-direction:column}
 .planner-key-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:7px 0 2px}
@@ -117,7 +111,6 @@ summary{cursor:pointer;color:var(--pine);font-weight:800}
 @media(max-width:700px){.planner-markets{grid-template-columns:1fr}.planner-key-facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 
-/* V3.0: Winterzauber-Album, Premium-Medaillen und Wintertagebuch */
 .album-hero{display:flex;align-items:center;justify-content:space-between;gap:24px;overflow:hidden;background:radial-gradient(circle at 88% 15%,#f0ca7540 0 7rem,transparent 15rem),linear-gradient(135deg,#fffdf7,#f1e4c8)}
 .album-hero p{max-width:720px}.album-total{text-align:center;flex:0 0 auto}.album-total small{display:block;margin-top:5px;color:var(--muted);font-weight:800}
 .progress-ring{--progress:0deg;width:64px;aspect-ratio:1;border-radius:50%;display:grid;place-content:center;text-align:center;position:relative;background:conic-gradient(var(--gold) var(--progress),#dce6df 0);color:var(--pine);box-shadow:inset 0 0 0 1px #bca26755}
@@ -137,7 +130,6 @@ summary{cursor:pointer;color:var(--pine);font-weight:800}
 @media(max-width:390px){.tabs button{font-size:.54rem}.album-hero{gap:10px}.album-total .progress-ring.large{width:66px}.journal-card{grid-template-columns:1fr}.journal-date{width:72px}.album-area-head .progress-ring{width:54px}}
 
 
-/* V3.1: sechs echte Grafikvarianten, sichtbarer Sperrfortschritt und motivgenaue Freischaltmomente */
 .medal-progress{position:absolute;z-index:3;left:10.5%;top:13.2%;width:79%;aspect-ratio:1;border-radius:50%;pointer-events:none;background:conic-gradient(from -90deg,#f0c76b calc(var(--sticker-progress)*1%),#86918c33 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));filter:drop-shadow(0 0 3px #e2b65e88)}
 .premium-medal.large .medal-progress{-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 calc(100% - 6px));mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 calc(100% - 6px));filter:drop-shadow(0 0 6px #e2b65eaa)}
 .unlock-card{isolation:isolate}.unlock-card>*:not(.unlock-effect-scene){position:relative;z-index:2}.unlock-effect-scene{position:absolute;z-index:1;inset:0;overflow:hidden;pointer-events:none}.effect-particle{position:absolute;left:var(--x);top:var(--y);display:block;width:10px;height:10px;opacity:0;animation-delay:calc(var(--i)*55ms)!important}
@@ -153,7 +145,6 @@ summary{cursor:pointer;color:var(--pine);font-weight:800}
 .reduce-motion .unlock-effect-scene,.reduce-motion .medal-progress{animation:none!important}.reduce-motion .unlock-effect-scene{display:none}@media(prefers-reduced-motion:reduce){.unlock-effect-scene{display:none}.medal-progress{filter:none}}
 
 
-/* V3.2: freie Themenillustrationen, dunkle Albumflächen und motivgenaue Freischaltungen */
 .album-area{overflow:hidden;border:1px solid #b88a3655;background:radial-gradient(circle at 88% 4%,#d6aa5226,transparent 16rem),linear-gradient(145deg,#102d25,#071c17 72%,#101f2d);box-shadow:0 16px 38px #06140f38,inset 0 1px #fff1b51a}
 .album-area::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle at 14% 18%,#fff9 0 1px,transparent 1.5px),radial-gradient(circle at 74% 62%,#e9c46f77 0 1px,transparent 1.5px);background-size:53px 53px,79px 79px;opacity:.32}
 .album-area>*{position:relative;z-index:1}.album-area-head h2{color:#fff8e9}.album-area-head p{color:#c9d8d1}.album-area-head .eyebrow.dark{color:#e8c36f}.album-area .progress-ring{background:conic-gradient(#e2b65e var(--progress),#ffffff20 0);color:#fff}.album-area .progress-ring::before{background:#0b251e;box-shadow:inset 0 0 0 1px #e2b65e44}.album-area .progress-ring span{color:#dccda9}
@@ -163,7 +154,6 @@ summary{cursor:pointer;color:var(--pine);font-weight:800}
 .theme-progress-reveal{position:absolute;z-index:2;inset:0;display:grid;place-items:center;clip-path:inset(calc(100% - var(--theme-reveal)) 0 0);filter:drop-shadow(0 0 7px #e2b65e88);transition:clip-path .35s ease}.theme-progress-reveal .sticker-art{width:100%;height:100%;object-fit:contain}.theme-progress-badge{position:absolute;z-index:4;right:2%;bottom:8%;min-width:34px;padding:4px 7px;border:1px solid #f0ca72;border-radius:999px;background:#071b16e8;color:#ffe8a7;font-size:.65rem;font-weight:900;box-shadow:0 3px 9px #0007}.premium-medal.theme.large .theme-progress-badge{right:5%;bottom:9%;padding:6px 10px;font-size:.82rem}
 @keyframes free-art-glow{from{filter:drop-shadow(0 8px 7px #0006)}to{filter:drop-shadow(0 9px 15px #e3b65eaa)}}
 
-/* Die Motivbühnen liegen hinter dem freigestellten Sticker. */
 .effect-prop{position:absolute;z-index:0;display:block;pointer-events:none;opacity:.7}.prop-castle{left:9%;right:9%;bottom:8%;height:33%;border-bottom:5px solid #dfb55d}.prop-castle::before,.prop-castle::after{content:"";position:absolute;bottom:0;width:27%;height:72%;border:4px solid #e8c46e;background:#173c3266;clip-path:polygon(0 22%,50% 0,100% 22%,100% 100%,0 100%)}.prop-castle::before{left:3%}.prop-castle::after{right:3%}.prop-castle i{position:absolute;bottom:24%;width:12px;height:20px;border-radius:7px 7px 2px 2px;background:#ffd878;box-shadow:0 0 15px #ffce65;animation:window-light 1.5s ease-in-out infinite}.prop-castle i:nth-child(1){left:21%}.prop-castle i:nth-child(2){left:48%;animation-delay:.2s}.prop-castle i:nth-child(3){right:21%;animation-delay:.4s}.prop-castle b{position:absolute;left:43%;bottom:0;width:14%;height:42%;border:4px solid #e2b65e;border-bottom:0;border-radius:60px 60px 0 0;transform-origin:left;animation:gate-open 2.2s ease-in-out infinite}
 .prop-forest{inset:auto 5% 6%;height:42%}.prop-forest::before,.prop-forest::after,.prop-forest i{content:"";position:absolute;bottom:0;width:26%;height:76%;background:#174b38;clip-path:polygon(50% 0,100% 100%,0 100%);filter:drop-shadow(0 0 6px #ddb65e);animation:tree-grow 2s ease-in-out infinite}.prop-forest::before{left:3%}.prop-forest::after{right:3%;animation-delay:.25s}.prop-forest i:first-child{left:21%;height:92%;animation-delay:.12s}.prop-forest i:nth-child(2){right:21%;height:88%;animation-delay:.36s}.prop-forest b{position:absolute;left:44%;bottom:2%;width:13%;height:17%;border-radius:50% 50% 35% 35%;background:#ffb43e;box-shadow:0 0 26px #ff9b38;animation:fire-flicker .75s ease-in-out infinite alternate}
 .prop-lantern{left:50%;top:42%;width:18px;height:18px;border-radius:50%;background:#fff3ae;box-shadow:0 0 35px 18px #ffc85d99;animation:lantern-pulse 1.8s ease-in-out infinite}.prop-lantern i{position:absolute;inset:-160px;display:block;border:2px solid #efd07855;border-radius:50%;animation:lantern-pulse 1.8s ease-in-out infinite reverse}
@@ -183,7 +173,6 @@ summary{cursor:pointer;color:var(--pine);font-weight:800}
 @media(max-width:390px){.premium-medal.theme.small{width:102px;height:123px}.sticker-card.theme{gap:8px}.theme-progress-badge{font-size:.58rem;padding:3px 5px}}
 
 
-/* V3.3: Materiallicht, Tiefenstaffelung und feine Oberflächen für alle Sticker */
 .unlock-depth-shadow,.unlock-light-bloom,.unlock-material-sweep{position:absolute;z-index:0;display:block;pointer-events:none}
 .unlock-depth-shadow{left:15%;right:15%;bottom:10%;height:17%;border-radius:50%;background:#02080599;filter:blur(18px);animation:depth-settle 1.05s ease-out both}
 .unlock-light-bloom{left:50%;top:37%;width:55%;aspect-ratio:1;border-radius:50%;translate:-50% -50%;background:radial-gradient(circle,#fff5bd9a 0 4%,#f0bf5f38 18%,transparent 67%);filter:blur(4px);animation:bloom-light 2.1s ease-in-out infinite}
@@ -202,47 +191,12 @@ summary{cursor:pointer;color:var(--pine);font-weight:800}
 @media(prefers-reduced-motion:reduce){.unlock-depth-shadow,.unlock-light-bloom,.unlock-material-sweep,.unlock-celebration .premium-medal::after{display:none!important}}
 @media(max-width:390px){.sticker-card{min-width:0}.sticker-copy strong{overflow-wrap:anywhere}.premium-medal.theme.small{width:96px;height:116px}}
 
-/* V4.0.1: responsiver Sticker-Detaildialog ohne überlappende Inhalte */
-.sticker-dialog{width:min(940px,calc(100vw - 28px));max-height:min(92dvh,920px);padding:0;overflow:hidden;overscroll-behavior:contain}
-.sticker-dialog .close{position:absolute;z-index:12;top:12px;right:12px;float:none;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid #d8cdbb;border-radius:50%;background:#fffdf7ed;color:var(--ink);box-shadow:0 5px 18px #102c252b;backdrop-filter:blur(8px);line-height:1}
-#stickerDetail{max-height:min(92dvh,920px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable;padding:clamp(22px,3vw,34px);padding-top:clamp(64px,7vw,74px)}
-.sticker-detail-head{display:grid;grid-template-columns:minmax(280px,320px) minmax(0,1fr);align-items:center;gap:clamp(24px,4vw,44px)}
-.sticker-detail-art{display:grid;place-items:center;min-width:0;min-height:300px;padding:12px;border:1px solid #e5d8bf;border-radius:20px;background:radial-gradient(circle at 50% 42%,#fffdf7 0 25%,#f4ead6 72%,#eee0c3 100%);overflow:hidden}
-.sticker-detail-art .premium-medal.large{max-width:100%;margin:auto}
-.sticker-detail-copy{min-width:0;overflow-wrap:anywhere}
-.sticker-detail-copy h2{font-size:clamp(1.65rem,3vw,2.35rem);line-height:1.08;margin:.2rem 0 .75rem}
-.sticker-detail-copy>p:not(.eyebrow){margin:.2rem 0;max-width:42rem;font-size:1.02rem}
-.sticker-detail-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.sticker-progress-detail,.sticker-specs{position:relative;z-index:1}
-
-@media(max-width:760px){
-  .sticker-dialog{width:min(620px,calc(100vw - 20px));max-height:calc(100dvh - 20px);border-radius:18px}
-  #stickerDetail{max-height:calc(100dvh - 20px);padding:60px clamp(15px,4.5vw,24px) 22px}
-  .sticker-detail-head{grid-template-columns:minmax(0,1fr);gap:18px;text-align:left}
-  .sticker-detail-art{min-height:0;padding:10px}
-  .sticker-detail-art .premium-medal.large{width:min(190px,58vw);height:auto;aspect-ratio:224/271}
-  .sticker-detail-art .premium-medal.theme.large{width:min(230px,70vw);height:auto;aspect-ratio:290/348}
-  .sticker-detail-copy h2{font-size:clamp(1.55rem,7vw,2rem)}
-  .sticker-detail-actions button{width:100%}
-  .sticker-progress-detail>div{align-items:flex-start}.sticker-progress-detail>div span{text-align:right}
-}
-
-@media(max-width:390px){
-  .sticker-dialog{width:calc(100vw - 12px);max-height:calc(100dvh - 12px);border-radius:15px}
-  .sticker-dialog .close{top:9px;right:9px;width:42px;height:42px}
-  #stickerDetail{max-height:calc(100dvh - 12px);padding:56px 13px 18px}
-  .sticker-detail-head{gap:14px}
-  .sticker-detail-art .premium-medal.large{width:min(168px,54vw)}
-  .sticker-detail-art .premium-medal.theme.large{width:min(205px,66vw)}
-  .sticker-progress-detail{margin:12px 0;padding:11px 12px}
-  .sticker-specs{gap:7px}.sticker-specs>div{padding:10px}
-}
-
-@media(max-height:620px) and (min-width:761px){
-  .sticker-dialog{max-height:calc(100dvh - 20px)}
-  #stickerDetail{max-height:calc(100dvh - 20px);padding-top:62px}
-  .sticker-detail-head{align-items:start}
-  .sticker-detail-art{min-height:260px}
-  .sticker-detail-art .premium-medal.large{width:190px;height:auto;aspect-ratio:224/271}
-  .sticker-detail-art .premium-medal.theme.large{width:245px;height:auto;aspect-ratio:290/348}
-}
+.sticker-visits{margin-top:14px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.sticker-visits h3{margin:0 0 9px;color:var(--pine);font:700 1.05rem/1.25 Georgia,serif}
+.sticker-visits p{margin:0;color:var(--muted)}
+.sticker-visits ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none}
+.sticker-visits li{min-width:0;padding:9px 10px;border-radius:11px;background:#f4ecdc}
+.sticker-visits strong,.sticker-visits span{display:block;overflow-wrap:anywhere}
+.sticker-visits strong{color:var(--pine);font-size:.88rem}
+.sticker-visits span{margin-top:2px;color:var(--muted);font-size:.76rem}
+@media(max-width:700px){.sticker-visits ul{grid-template-columns:1fr}}
