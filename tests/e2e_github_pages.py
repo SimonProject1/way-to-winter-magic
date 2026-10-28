@@ -145,7 +145,7 @@ async def main():
             await page.route("https://api.transitous.org/**", api)
             await page.goto(base, wait_until="networkidle")
             assert await page.locator("text=Way to Winter Magic").count() >= 1
-            assert await page.locator("text=V2.6.0").count() >= 1
+            assert await page.locator("text=V3.0.0").count() >= 1
             assert await page.locator("#marketCount").inner_text() == "39"
             overflow = await page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
             assert overflow <= 1, f"Mobiles horizontales Überlaufen: {overflow}px"
@@ -259,11 +259,42 @@ async def main():
             assert "Änderungen lokal gespeichert" in await page.locator("#plannerSaveMessage").inner_text()
             assert "Geplant" in await page.locator("#savedTrips .saved-trip").inner_text()
 
+            # Besuch abschließen, Wintertagebuch speichern und individuelle Sticker freischalten.
+            await page.click('[data-visit-trip]')
+            assert await page.locator("#completionDialog").is_visible()
+            assert "Steeler Weihnachtsmarkt" in await page.locator("#completionMarket").inner_text()
+            await page.fill("#diaryMoment", "Goldene Lichter, gute Gespräche und ein perfekter Winterabend.")
+            await page.fill("#diaryTreat", "Kakao und Reibekuchen")
+            await page.check("#diaryNight")
+            await page.click('#completionForm button[type="submit"]')
+            unlocked_titles = []
+            for _ in range(2):
+                await page.locator("#unlockCelebration").wait_for(state="visible")
+                unlocked_titles.append(await page.locator("#unlockTitle").inner_text())
+                await page.click("#closeUnlock")
+                await page.wait_for_timeout(250)
+            assert set(unlocked_titles) == {"Der erste Zauber", "Night Magic"}, unlocked_titles
+            await page.click('[data-view="wintermagic"]')
+            assert await page.locator(".album-area").count() == 4
+            assert await page.locator(".sticker-card").count() == 16
+            assert await page.locator(".sticker-card.unlocked").count() == 2
+            await page.click("#showJournal")
+            assert await page.locator(".journal-card").count() == 1
+            journal_text = await page.locator(".journal-card").inner_text()
+            for expected in ["Steeler Weihnachtsmarkt", "Goldene Lichter", "Kakao", "Night Magic"]:
+                assert expected in journal_text, f"Tagebuch fehlt: {expected}"
+            stored = await page.evaluate("JSON.parse(localStorage.getItem('wtwm:v2:journal'))")
+            assert len(stored) == 1 and stored[0]["night"] is True
+
             # Persistenz nach Reload und bestehende Recherchebereiche.
             await page.reload(wait_until="networkidle")
             await page.click('[data-view="trip"]')
             assert await page.locator("#savedTrips .saved-trip").count() == 1
-            assert "Geplant" in await page.locator("#savedTrips .saved-trip").inner_text()
+            assert "Besucht" in await page.locator("#savedTrips .saved-trip").inner_text()
+            await page.click('[data-view="wintermagic"]')
+            assert await page.locator(".sticker-card.unlocked").count() == 2
+            await page.click("#showJournal")
+            assert await page.locator(".journal-card").count() == 1
             await page.click('[data-view="markets"]')
             assert await page.locator("#marketList .card").count() == 39
             await page.click('[data-view="connections"]')
@@ -285,7 +316,7 @@ async def main():
             assert await page.evaluate("async () => { await navigator.serviceWorker.ready; return true; }")
             await context.set_offline(True)
             await page.reload(wait_until="domcontentloaded")
-            assert await page.locator("text=V2.6.0").count() >= 1
+            assert await page.locator("text=V3.0.0").count() >= 1
             assert await page.locator("#marketCount").inner_text() == "39"
             await context.set_offline(False)
             assert not console_errors, "Browserfehler: " + " | ".join(console_errors)
@@ -294,7 +325,7 @@ async def main():
         server.shutdown()
         server.server_close()
 
-    print("V2.6.0 E2E bestanden: kompletter 6-Schritt-Planer mobil, Filter, Abwahl, Transitous, Bearbeitung, ICS, Persistenz, Offline-Start und GitHub-Pages-Unterpfad.")
+    print("V3.0.0 E2E bestanden: kompletter 6-Schritt-Planer mobil, Filter, Abwahl, Transitous, Bearbeitung, ICS, Persistenz, Offline-Start und GitHub-Pages-Unterpfad.")
 
 
 if __name__ == "__main__":

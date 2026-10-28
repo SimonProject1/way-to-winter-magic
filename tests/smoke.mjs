@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 const root = new URL('../', import.meta.url);
-const requiredFiles = ['index.html', 'styles.css', 'app.js', 'manifest.webmanifest', 'sw.js', 'data/markets.json', 'icons/icon-192.png', 'icons/icon-512.png'];
+const requiredFiles = ['index.html', 'styles.css', 'app.js', 'rewards.js', 'manifest.webmanifest', 'sw.js', 'data/markets.json', 'icons/icon-192.png', 'icons/icon-512.png'];
 for (const file of requiredFiles) assert.ok(fs.existsSync(new URL(file, root)), `Fehlende Datei: ${file}`);
 
 const markets = JSON.parse(fs.readFileSync(new URL('data/markets.json', root), 'utf8'));
@@ -38,10 +38,10 @@ for (const market of markets) {
 }
 
 const html = fs.readFileSync(new URL('index.html', root), 'utf8');
-for (const id of ['marketSearch', 'cityFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'dateFilter', 'timelineBody', 'peopleList', 'stopResults', 'cardView', 'listView', 'connectionFrom', 'connectionTo', 'connectionMarket', 'connectionDate', 'connectionTime', 'connectionMode', 'searchConnections', 'connectionResults', 'savedConnections', 'clearSavedConnections', 'plannerPersonCount', 'plannerDate', 'plannerAvailability', 'plannerMarkets', 'plannerMarketSearch', 'plannerCityFilter', 'plannerTravelFilter', 'plannerFeatureFilter', 'plannerSortFilter', 'resetPlannerFilters', 'plannerSelectedMarket', 'plannerFilterSummary', 'plannerArrival', 'plannerReturnEnabled', 'plannerBudgetLevel', 'plannerOutbound', 'plannerReturn', 'plannerSummary', 'savePlannedTrip']) {
+for (const id of ['marketSearch', 'cityFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'dateFilter', 'timelineBody', 'peopleList', 'stopResults', 'cardView', 'listView', 'connectionFrom', 'connectionTo', 'connectionMarket', 'connectionDate', 'connectionTime', 'connectionMode', 'searchConnections', 'connectionResults', 'savedConnections', 'clearSavedConnections', 'albumAreas', 'albumUnlockedCount', 'journalEntries', 'completionDialog', 'stickerDialog', 'unlockCelebration', 'reducedMotion', 'plannerPersonCount', 'plannerDate', 'plannerAvailability', 'plannerMarkets', 'plannerMarketSearch', 'plannerCityFilter', 'plannerTravelFilter', 'plannerFeatureFilter', 'plannerSortFilter', 'resetPlannerFilters', 'plannerSelectedMarket', 'plannerFilterSummary', 'plannerArrival', 'plannerReturnEnabled', 'plannerBudgetLevel', 'plannerOutbound', 'plannerReturn', 'plannerSummary', 'savePlannedTrip']) {
   assert.ok(html.includes(`id="${id}"`), `UI-Element fehlt: ${id}`);
 }
-assert.ok(html.includes('V2.6.0'), 'Versionshinweis fehlt');
+assert.ok(html.includes('V3.0.0'), 'Versionshinweis fehlt');
 assert.ok(html.includes('Transitous'), 'Transitous-Hinweis fehlt');
 assert.ok(html.includes('Way to Winter Magic'), 'App-Name fehlt');
 
@@ -62,10 +62,17 @@ assert.ok(sw.includes("event.request.mode === 'navigate'"), 'Offline-Navigation-
 
 const appSource = fs.readFileSync(new URL('app.js', root), 'utf8');
 assert.ok(appSource.includes("const STORAGE_PREFIX = 'wtwm:v2:'"), 'Eigener Speicherbereich fehlt');
-assert.ok(appSource.includes("const VERSION = '2.6.0'"), 'JS-Version ist nicht aktuell');
+assert.ok(appSource.includes("const VERSION = '3.0.0'"), 'JS-Version ist nicht aktuell');
 assert.ok(appSource.includes("state.tripDraft.marketId = selected ? '' : marketId"), 'Marktauswahl kann nicht wieder aufgehoben werden');
 assert.ok(appSource.includes("S.set('plannerMarketFilters', state.plannerFilters)"), 'Planerfilter werden nicht lokal gespeichert');
 assert.ok(appSource.includes("const API = 'https://api.transitous.org/api'"), 'Transitous-Endpunkt fehlt');
+assert.ok(appSource.includes("S.set('journal', state.journal)"), 'Wintertagebuch wird nicht lokal gespeichert');
+assert.ok(appSource.includes("S.set('rewardMeta', state.rewardMeta)"), 'Freischaltdaten werden nicht lokal gespeichert');
+assert.ok(appSource.includes('openCompletionDialog'), 'Abschlussdialog fehlt');
+assert.ok(appSource.includes('prefers-reduced-motion') || fs.readFileSync(new URL('styles.css', root), 'utf8').includes('prefers-reduced-motion'), 'Reduzierter Bewegungsmodus fehlt');
+const rewardSource = fs.readFileSync(new URL('rewards.js', root), 'utf8');
+for (const name of ['Der erste Zauber','Fünf magische Momente','Winterwanderer Bronze','Winterwanderer Silber','Winterwanderer Gold','Winter-Magic-Meister','Schlosszauber','Waldweihnacht','Lichterjäger','Genussreise','Cozy Collector','Deutschlandticket-Profi','Städtesammler','Premierenabend','Winterwochenende','Night Magic']) assert.ok(rewardSource.includes(name), `Sticker fehlt: ${name}`);
+
 assert.ok(!appSource.includes('bahn.guru') && !appSource.includes('transport.rest'), 'Alte Bahn-API ist noch enthalten');
 const plannerCardSource = appSource.slice(appSource.indexOf('function plannerMarketCard'), appSource.indexOf('function togglePlannerMarket'));
 for (const label of ['Deine Bewertung', 'Fahrzeit', 'Ticket für den Weihnachtsmarkt', 'data-detail']) assert.ok(plannerCardSource.includes(label), `Kompaktkarte fehlt: ${label}`);
@@ -80,6 +87,21 @@ globalThis.localStorage = {
 };
 const require = createRequire(import.meta.url);
 const logic = require(fileURLToPath(new URL('../app.js', import.meta.url)));
+assert.equal(logic.STICKERS.length, 16, 'Es müssen genau 16 Sticker vorhanden sein');
+assert.equal(new Set(logic.STICKERS.map(sticker => sticker.name)).size, 16, 'Stickernamen müssen eindeutig sein');
+assert.equal(new Set(logic.STICKERS.map(sticker => sticker.area)).size, 4, 'Album muss vier Bereiche haben');
+for (const sticker of logic.STICKERS) {
+  assert.ok(sticker.target > 0 && sticker.motif && sticker.material && sticker.ribbon && sticker.frame && sticker.effectLabel, `Premiumdefinition unvollständig: ${sticker.name}`);
+  assert.equal(sticker.colors.length, 3, `Farbwelt unvollständig: ${sticker.name}`);
+}
+const rewardTrips = [
+  { id:'t1', status:'Besucht', marketId:'benrath', market:'Schloss', city:'Düsseldorf', date:'2026-11-21', outbound:{ journey:{} }, returnTime:'21:00' },
+  { id:'t2', status:'Besucht', marketId:'muengsten', market:'Wald', city:'Solingen', date:'2026-11-22', outbound:{ journey:{} } },
+  { id:'t3', status:'Besucht', marketId:'hattingen', market:'Licht', city:'Hattingen', date:'2026-11-23', outbound:{ journey:{} } }
+];
+const rewardResult = logic.evaluateRewards(rewardTrips, [{ tripId:'t1', night:true }], markets, {});
+for (const id of ['first-magic','winter-bronze','castle-magic','forest-christmas','de-ticket-pro','night-magic']) assert.equal(rewardResult.find(item => item.id === id).unlocked, true, `Sticker hätte entsperrt sein müssen: ${id}`);
+
 
 for (const iso of ['2026-03-29', '2026-10-25', '2026-12-24']) {
   assert.equal(logic.isoLocal(logic.parseDate(iso)), iso, `Lokales Datum verschoben: ${iso}`);
@@ -172,4 +194,4 @@ assert.equal(logic.score(markets.find(market => market.id === 'steele')).toFixed
 assert.equal(logic.marketOpeningHours({}, '2026-12-05'), 'Noch nicht veröffentlicht – Marktlink prüfen');
 assert.ok(ics.includes('Namen: Alex (Ja)') && ics.includes('Ticketstatus: Nicht nötig'), 'Erweiterte ICS-Angaben fehlen');
 
-console.log(`V2.6.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, ${markets.filter(market => market.new).length} neu, Planerfilter und DB-Verbindungssuche geprüft.`);
+console.log(`V3.0.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, ${markets.filter(market => market.new).length} neu, Planerfilter und DB-Verbindungssuche geprüft.`);

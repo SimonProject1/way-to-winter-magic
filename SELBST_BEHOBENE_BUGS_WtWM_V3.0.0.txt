@@ -1,0 +1,24 @@
+Way to Winter Magic V3.0.0 – selbst behobene Bugs
+Stand: 28.10.2026
+
+- Belohnungsfortschritt konnte nach späterer Trip-Bearbeitung wieder verschwinden
+  Behoben: Einmal freigeschaltete Medaillen bleiben dauerhaft gesammelt; der aktuelle Fortschrittswert wird trotzdem weiter korrekt angezeigt.
+
+- Tagebuch und Tripstatus konnten auseinanderlaufen
+  Behoben: Speichern eines Tagebucheintrags setzt den verknüpften Trip zuverlässig auf „Besucht“. Das Löschen des Eintrags entfernt den Trip nicht.
+
+- Mehrere gleichzeitig verdiente Sticker überlagerten sich
+  Behoben: Freischaltungen werden in einer kontrollierten Warteschlange einzeln mit ihrem individuellen Effekt gezeigt.
+
+- Abschlussdialog konnte per Escape ohne Fortschrittsabgleich geschlossen werden
+  Behoben: Auch „Später“, Schließen und Escape gleichen die besuchsabhängigen Sticker zuverlässig ab.
+
+- Neuer Album-Tab war auf kleinen Displays zu breit
+  Behoben: Navigation, Medaillenkarten, Detailansicht und Tagebuch wurden für 390 × 844 px verdichtet; horizontales Überlaufen wird im E2E-Test geprüft.
+
+- Neue V3-Daten fehlten in Sicherung, Wiederherstellung und Offline-Cache
+  Behoben: Tagebuch, Freischaltdaten, Bewegungsmodus und rewards.js sind in lokaler Speicherung, Import/Export und Service Worker vollständig enthalten.
+
+Automatisiert geprüft: 39 Marktdatensätze, 16 Sticker, vier Albumbereiche, Fortschrittslogik, Abschlussdialog, Tagebuch, Animationen, reduzierter Bewegungsmodus, mobiler und Desktop-Ablauf, GitHub-Pages-Unterpfad, Offline-Start, Sicherung/Persistenz, Planer, Transitous-Mock und ICS-Export.
+
+Hinweis: Der zusätzliche echte Live-Aufruf zu api.transitous.org erhielt in der Testumgebung HTTP 403. Die App-Logik und beide Verbindungsrichtungen wurden deshalb zusätzlich mit realitätsnahen Transitous-Antworten im vollständigen Browsertest geprüft.

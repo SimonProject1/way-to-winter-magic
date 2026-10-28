@@ -1,55 +1,89 @@
-# Way to Winter Magic V2.6.0
+# Way to Winter Magic V3.0.0
 
-Installierbare GitHub-Pages-PWA mit 39 Weihnachtsmärkten und einem zentralen Planungs-Assistenten.
+Installierbare GitHub-Pages-PWA mit 39 Weihnachtsmärkten, Reiseplanung, Transitous-Verbindungssuche, Winterzauber-Album und lokalem Wintertagebuch.
 
-## Neu in V2.6.0
+## Neu in V3.0.0
 
-Die Weihnachtsmarkt-Karten in **Trip planen → Markt** sind jetzt deutlich kompakter. Neben dem Marktnamen zeigen sie ausschließlich:
+### Winterzauber-Album
 
-- **Deine Bewertung** als Gesamtwert
-- **Fahrzeit** ab Wuppertal Hbf
-- **Ticketpflicht** für den Weihnachtsmarkt
+Das Album ist in vier Bereiche gegliedert und zeigt für jeden Sticker einen Fortschrittsring, den aktuellen Fortschrittswert und – nach dem Freischalten – das Freischaltdatum:
 
-Ort, Öffnungszeiten, Eintritt, Einzelbewertungen, Termine, Budget, Hinweise, Tipp und Quellen bleiben vollständig erhalten und sind über **Details** erreichbar. Auswahl, Abwahl, Filter, Sortierung und der komplette Planungsablauf funktionieren unverändert.
+1. **Magische Meilensteine**
+2. **Zauberwelten**
+3. **Reiseabenteuer**
+4. **Saisonmomente**
 
-Der Bereich **Trip planen** führt weiterhin durch sechs Schritte:
+Alle Medaillen verwenden den Way-to-Winter-Magic-Premiumstil: transparente Außenfläche, leicht gewölbte Sammelmedaille, doppelter Metallrahmen, Dunkelgrün, Warmgold, Cremeweiß und dezentes Weihnachtsrot. Jeder Sticker besitzt eine gesperrte, freigeschaltete und neue Variante sowie eine kleine Album- und große Detaildarstellung.
 
-1. Personenanzahl und Namen lokal speichern
-2. Datum sowie Ja / Vielleicht / Nein pro Person festlegen
-3. nur die an diesem Tag geöffneten Märkte filtern, anhand der drei Kerndaten kompakt vergleichen, Details öffnen sowie eine Marktwahl auswählen oder wieder aufheben
-4. Ankunft, optionale Rückfahrt, Budgetstufe, Aktivität, Treffpunkt, Ticketstatus, Notizen und Tripstatus festlegen
-5. über Transitous je drei sinnvolle Hin- und Rückfahrten anzeigen und auswählen
-6. Zusammenfassung prüfen, Trip lokal speichern und `.ics` teilen
+| Sticker | Fortschrittsziel |
+|---|---:|
+| Der erste Zauber | 1 besuchter Markt |
+| Fünf magische Momente | 5 besuchte Märkte |
+| Winterwanderer Bronze | 3 besuchte Märkte |
+| Winterwanderer Silber | 7 besuchte Märkte |
+| Winterwanderer Gold | 12 besuchte Märkte |
+| Winter-Magic-Meister | 20 besuchte Märkte |
+| Schlosszauber | 1 Schlossmarkt |
+| Waldweihnacht | 1 Naturmarkt |
+| Lichterjäger | 3 Lichtermärkte |
+| Genussreise | 3 Genussmärkte |
+| Cozy Collector | 5 besonders gemütliche Märkte |
+| Deutschlandticket-Profi | 3 besuchte Trips mit gespeicherter Bahnverbindung |
+| Städtesammler | 5 verschiedene Städte |
+| Premierenabend | 1 Besuch am Eröffnungstag |
+| Winterwochenende | 3 Wochenendbesuche |
+| Night Magic | 1 im Tagebuch festgehaltener Abendmoment |
 
-Die Marktfilter im Assistenten umfassen Suche, Stadt, maximale ÖPNV-Fahrzeit, Wunschfilter und Sortierung.
+Jede Definition enthält eigenes Motiv, Farben, Material, Band, Rahmen und einen individuellen Freischalteffekt. Die Detailansicht dokumentiert diese Merkmale direkt in der App.
 
-Die Verbindungsauswahl kennzeichnet Empfehlung, wenige Umstiege, schnellste Verbindung, Sicherheitsverbindung, die letzte sinnvolle Rückfahrt innerhalb der Suche und knappe Umstiege. Ein Button prüft die Verbindung erneut.
+### Abschlussdialog und Wintertagebuch
 
-Gespeicherte Trips lassen sich bearbeiten, erneut prüfen, löschen und als vollständige `.ics`-Datei exportieren. Die Kalenderdatei enthält Markt, Namen, Adresse, Aktivität, gewählte Verbindungen, Treffpunkt, Budget, Eintritt, Ticketinformationen, Notizen, Marktlink und DB-Navigator-Links.
+Sobald ein gespeicherter Trip erstmals als **Besucht** markiert wird, öffnet sich der Abschlussdialog. Er speichert:
 
-Die bisherigen Bereiche **Märkte**, **Timeline**, **Bahn** und **Mehr** bleiben erhalten. Erfolgreiche Suchen in der eigenständigen Bahn-Recherche werden weiterhin lokal für die Offline-Anzeige gespeichert.
+- Besuchsdatum und Bewertung
+- Wetter
+- Lieblingsgenuss
+- schönsten Moment
+- Souvenir oder Entdeckung
+- Night-Magic-Kennzeichnung
+
+Der Eintrag ist mit dem besuchten Trip und dem zugehörigen Markt verbunden. Er kann im Wintertagebuch bearbeitet oder separat gelöscht werden. Das Löschen eines Tagebucheintrags löscht den Trip nicht.
+
+### Freischaltanimationen
+
+Jede Medaille besitzt einen eigenen Effektstil. Die App beachtet automatisch `prefers-reduced-motion`. Zusätzlich kann unter **Mehr → Daten & Hinweise** ein dauerhaft lokal gespeicherter reduzierter Bewegungsmodus aktiviert werden.
+
+### Datenschutz, Offline und Sicherungen
+
+Trips, Personen, Verfügbarkeiten, Favoriten, Tagebuch, Stickerfortschritt, Freischaltdaten und Einstellungen bleiben im lokalen Browser-Speicher. Export und Import enthalten auch die neuen V3-Daten. Der Service Worker hält App, Album, Tagebuch, Marktdaten und Gestaltung offline bereit. Nur aktive Haltestellen- und Verbindungssuchen werden an Transitous übertragen.
+
+## Bestehende Funktionen
+
+- 39 geprüfte Weihnachtsmärkte
+- kompakte Markt- und Planeransichten
+- Timeline mit Personenverfügbarkeit
+- sechsstufiger Trip-Assistent
+- Hin- und Rückfahrten über Transitous
+- gespeicherte Verbindungen für die Offline-Anzeige
+- lokale Trips, Bearbeitung, Status und `.ics`-Export
+- vollständige Datensicherung und Wiederherstellung
+- installierbare Offline-PWA
 
 ## GitHub Pages
 
-1. Den **Inhalt** dieses Ordners in die oberste Ebene des Repositorys hochladen.
+1. Den **Inhalt dieses Ordners** in die oberste Ebene des Repositorys laden.
 2. **Settings → Pages** öffnen.
 3. **Deploy from a branch**, Branch **main**, Ordner **/(root)** wählen.
-4. Die Seite nach dem Deployment einmal online neu laden, damit der Service Worker V2.6.0 übernimmt.
+4. Nach dem Deployment einmal online neu laden, damit der Service Worker V3.0.0 übernimmt.
 
-Alle App-Pfade sind relativ und funktionieren auch in einem GitHub-Pages-Unterordner.
+Alle Pfade sind relativ und funktionieren auch in einem GitHub-Pages-Unterordner.
 
 ## Tests
 
 ```bash
 node tests/smoke.mjs
 python3 tests/e2e_github_pages.py
-python3 tests/live_transitous.py   # optional, benötigt direkten Internetzugriff
+python3 tests/live_transitous.py   # optional; benötigt direkten Internetzugriff
 ```
 
-Der E2E-Test verwendet einen GitHub-Pages-typischen Unterpfad und ein Smartphone-Viewport. Er prüft den kompletten Sechs-Schritt-Ablauf, den exakten Inhalt und die Höhe der kompakten Karten, den vollständigen Detaildialog, Marktfilter, Marktabwahl, drei Hin- und Rückfahrtoptionen, Sicherheits- und Rückfahrtkennzeichnung, Umstiegswarnung, Zusammenfassung, lokale Speicherung, Bearbeitung, `.ics`, Persistenz und die bestehenden Recherchebereiche. Zusätzlich werden Desktop-Layout und Offline-Start geprüft.
-
-## Datenschutz und Datenhinweise
-
-Personen, Verfügbarkeiten, Trips und gespeicherte Verbindungen bleiben im lokalen Browser-Speicher. Nur Haltestellen- und Verbindungssuchen werden an Transitous übertragen. Fahrplandaten: [Transitous-Quellen](https://transitous.org/sources/). Ortsdaten: [© OpenStreetMap-Mitwirkende](https://www.openstreetmap.org/copyright).
-
-Bei Märkten ohne veröffentlichte Uhrzeit zeigt der Assistent ausdrücklich **„Noch nicht veröffentlicht – Marktlink prüfen“**. Markt- und Fahrplandaten bitte kurz vor der Abfahrt erneut prüfen.
+Die Tests prüfen Datenbestand, Stickerdefinitionen, Fortschrittslogik, Premiumvarianten, Abschlussdialog, Tagebuch, Freischaltungen, lokale Persistenz, mobile und Desktop-Darstellung, GitHub-Pages-Unterpfad, Offline-Start, Planungsablauf, Bahnoptionen und `.ics`-Export.

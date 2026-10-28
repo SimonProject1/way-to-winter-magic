@@ -14,7 +14,7 @@
 <body>
   <header class="hero">
     <div>
-      <p class="eyebrow">Weihnachtsmarkt-Tripplaner · V2.6.0</p>
+      <p class="eyebrow">Weihnachtsmarkt-Tripplaner · V3.0.0</p>
       <h1>Way to Winter Magic</h1>
       <p>39 geprüfte Ziele ab Wuppertal – gemeinsam planen, vergleichen und die passende Verbindung finden.</p>
     </div>
@@ -27,6 +27,7 @@
     <button data-view="timeline"><span>▦</span>Timeline</button>
     <button data-view="trip"><span>✦</span>Trip planen</button>
     <button data-view="connections"><span>🚆</span>Bahn</button>
+    <button data-view="wintermagic"><span>❉</span>Zauber</button>
     <button data-view="settings"><span>⚙</span>Mehr</button>
   </nav>
 
@@ -38,7 +39,7 @@
         <article><span>Gemeinsame Tage</span><strong id="commonCount">0</strong></article>
       </div>
       <article class="panel intro-panel">
-        <div><p class="eyebrow dark">Neu in V2.6.0</p><h2>Kompakte Marktauswahl</h2><p>Bewertung, Fahrzeit und Ticketpflicht sofort vergleichen – alles Weitere steckt übersichtlich unter „Details“.</p></div>
+        <div><p class="eyebrow dark">Neu in V3.0.0</p><h2>Dein Winterzauber-Album</h2><p>16 hochwertige Sammelmedaillen, persönliche Erinnerungen und ein Wintertagebuch – vollständig lokal und offline.</p></div>
         <button data-jump="trip">Trip planen</button>
       </article>
       <article class="panel"><h2>Passende nächste Termine</h2><div id="nextDates" class="cards compact"></div></article>
@@ -178,6 +179,23 @@
       </article>
     </section>
 
+
+    <section id="wintermagic" class="view">
+      <article class="panel album-hero">
+        <div><p class="eyebrow dark">Deine Winter-Magic-Sammlung</p><h2>Winterzauber-Album</h2><p>Leicht gewölbte Sammelmedaillen im dunkelgrünen Premiumstil. Jeder Besuch füllt deine Ringe und bewahrt einen echten Wintermoment.</p></div>
+        <div class="album-total" aria-label="Gesamtfortschritt"><div id="albumTotalRing" class="progress-ring large"><strong id="albumUnlockedCount">0</strong><span>/ 16</span></div><small>freigeschaltet</small></div>
+      </article>
+      <div class="wintermagic-switch" role="tablist" aria-label="Winterzauber-Bereiche">
+        <button id="showAlbum" class="active" role="tab" aria-selected="true">Album</button>
+        <button id="showJournal" class="ghost" role="tab" aria-selected="false">Wintertagebuch</button>
+      </div>
+      <div id="albumPanel"><div id="albumAreas"></div></div>
+      <div id="journalPanel" hidden>
+        <article class="panel journal-intro"><div><p class="eyebrow dark">Erinnerungen, die bleiben</p><h2>Wintertagebuch</h2><p class="muted">Besuchte Trips werden mit Bewertung, Lieblingsmoment, Wetter und Nachtzauber verbunden.</p></div><strong id="journalCount">0 Einträge</strong></article>
+        <div id="journalEntries" class="journal-grid"></div>
+      </div>
+    </section>
+
     <section id="settings" class="view">
       <article class="panel"><h2>Personen</h2><p class="muted">Jede Person erhält intern eine eigene ID. Gleiche Namen überschreiben sich nicht mehr.</p><div id="peopleList"></div><button id="addPerson">Person hinzufügen</button></article>
       <article class="panel">
@@ -191,13 +209,38 @@
         <h2>Daten & Hinweise</h2>
         <p class="muted">Fahrzeiten sind gerundete Planwerte ab Wuppertal Hbf, Distanzen ungefähre Luftlinien. Verbindung und Marktseite bitte kurz vor Abfahrt prüfen. Marktquellen stehen in den Details.</p>
         <p class="attribution">Fahrplandaten: <a href="https://transitous.org/sources/" target="_blank" rel="noopener noreferrer">Transitous-Quellen</a> · Karten-/Ortsdaten: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap-Mitwirkende</a> · Kontakt über das GitHub-Repository dieser Seite.</p>
+        <label class="motion-setting"><input type="checkbox" id="reducedMotion"> Bewegungen und Freischaltanimationen reduzieren</label>
         <div class="actions"><button id="exportData">Sicherung exportieren</button><label class="file-btn">Sicherung importieren<input type="file" id="importData" accept="application/json"></label><button id="resetData" class="danger">Lokale Daten löschen</button></div>
       </article>
     </section>
   </main>
 
   <dialog id="marketDialog"><button class="close" aria-label="Schließen">×</button><div id="marketDetail"></div></dialog>
-  <footer>Offline-PWA · Transitous-Verbindungssuche · Offline-Speicher · Datenstand 28.10.2026 · V2.6.0</footer>
+  <dialog id="completionDialog" class="completion-dialog">
+    <button class="close" aria-label="Schließen">×</button>
+    <form id="completionForm">
+      <p class="eyebrow dark">Besuch abschließen</p><h2 id="completionTitle">Magischen Moment festhalten</h2>
+      <input id="completionTripId" type="hidden">
+      <div class="completion-market" id="completionMarket"></div>
+      <div class="form-grid">
+        <label>Besuchsdatum<input id="diaryDate" type="date" required></label>
+        <label>Deine Bewertung<select id="diaryRating"><option value="5">5 · Magisch</option><option value="4">4 · Sehr schön</option><option value="3">3 · Schön</option><option value="2">2 · Okay</option><option value="1">1 · Nicht meins</option></select></label>
+        <label>Wetter<select id="diaryWeather"><option>Winterlich</option><option>Klar</option><option>Schnee</option><option>Regen</option><option>Nebel</option><option>Kalt & trocken</option></select></label>
+        <label>Lieblingsgenuss<input id="diaryTreat" maxlength="80" placeholder="z. B. Reibekuchen und Kakao"></label>
+        <label class="wide">Schönster Moment<textarea id="diaryMoment" rows="3" maxlength="500" placeholder="Was möchtest du nicht vergessen?" required></textarea></label>
+        <label class="wide">Souvenir oder Entdeckung<input id="diarySouvenir" maxlength="120" placeholder="z. B. handgemachter Stern"></label>
+        <label class="check wide"><input id="diaryNight" type="checkbox"> Night Magic – den Markt im Abendlicht erlebt</label>
+      </div>
+      <div class="actions"><button type="submit">Eintrag speichern</button><button type="button" id="completionLater" class="ghost">Später</button></div>
+    </form>
+  </dialog>
+  <dialog id="stickerDialog" class="sticker-dialog"><button class="close" aria-label="Schließen">×</button><div id="stickerDetail"></div></dialog>
+  <div id="unlockCelebration" class="unlock-celebration" hidden role="dialog" aria-modal="true" aria-live="assertive">
+    <div class="unlock-card"><button id="closeUnlock" class="close" aria-label="Schließen">×</button><p class="eyebrow">Neu freigeschaltet</p><div id="unlockMedal"></div><h2 id="unlockTitle"></h2><p id="unlockEffect"></p><button id="unlockContinue">Im Album ansehen</button><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+
+  <footer>Offline-PWA · Transitous-Verbindungssuche · Offline-Speicher · Datenstand 28.10.2026 · V3.0.0</footer>
+  <script src="rewards.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>

@@ -1,7 +1,9 @@
-const VERSION = '2.6.0';
+const VERSION = '3.0.0';
+const rewardEngine = typeof WTWM_REWARDS !== 'undefined' ? WTWM_REWARDS : require('./rewards.js');
+const { AREAS: REWARD_AREAS, STICKERS, evaluateRewards } = rewardEngine;
 const API = 'https://api.transitous.org/api';
 const STORAGE_PREFIX = 'wtwm:v2:';
-const APP_KEYS = ['people', 'availability', 'favorites', 'trips', 'tripDraft', 'stop', 'marketFilters', 'plannerMarketFilters', 'marketView', 'connectionPrefs', 'savedConnections'];
+const APP_KEYS = ['people', 'availability', 'favorites', 'trips', 'tripDraft', 'stop', 'marketFilters', 'plannerMarketFilters', 'marketView', 'connectionPrefs', 'savedConnections', 'journal', 'rewardMeta', 'preferences'];
 const REQUEST_TIMEOUT_MS = 12000;
 const MAX_SAVED_CONNECTIONS = 8;
 const DEFAULT_PEOPLE = [
@@ -137,7 +139,10 @@ const state = {
   plannerFilters: { ...DEFAULT_PLANNER_FILTERS, ...(S.get('plannerMarketFilters', {}) || {}) },
   viewMode: S.get('marketView', 'cards') === 'list' ? 'list' : 'cards',
   connectionPrefs: S.get('connectionPrefs', {}) || {},
-  savedConnections: Array.isArray(S.get('savedConnections', [])) ? S.get('savedConnections', []).slice(0, MAX_SAVED_CONNECTIONS) : []
+  savedConnections: Array.isArray(S.get('savedConnections', [])) ? S.get('savedConnections', []).slice(0, MAX_SAVED_CONNECTIONS) : [],
+  journal: Array.isArray(S.get('journal', [])) ? S.get('journal', []).filter(entry => entry && entry.tripId).slice(0, 500) : [],
+  rewardMeta: S.get('rewardMeta', {}) && typeof S.get('rewardMeta', {}) === 'object' ? S.get('rewardMeta', {}) : {},
+  preferences: { reducedMotion: false, ...(S.get('preferences', {}) || {}) }
 };
 
 function saveAll() {
@@ -152,6 +157,9 @@ function saveAll() {
   S.set('marketView', state.viewMode);
   S.set('connectionPrefs', state.connectionPrefs);
   S.set('savedConnections', state.savedConnections);
+  S.set('journal', state.journal);
+  S.set('rewardMeta', state.rewardMeta);
+  S.set('preferences', state.preferences);
 }
 
 function openOn(market, date) {
@@ -785,6 +793,7 @@ async function searchConnections() {
 function renderSettings() {
   renderPeople();
   $('#savedStop').textContent = state.stop?.name || 'keine';
+  if ($('#reducedMotion')) $('#reducedMotion').checked = Boolean(state.preferences.reducedMotion);
 }
 
 function hydrateConnections() {
@@ -1339,6 +1348,7 @@ function savePlannedTrip() {
   const trip = tripFromDraft();
   if (!trip) return null;
   const existing = state.trips.findIndex(item => item.id === trip.id);
+  const wasVisited = existing >= 0 && state.trips[existing].status === 'Besucht';
   if (existing >= 0) trip.createdAt = state.trips[existing].createdAt || trip.updatedAt;
   else trip.createdAt = trip.updatedAt;
   if (existing >= 0) state.trips[existing] = trip;
@@ -1346,7 +1356,10 @@ function savePlannedTrip() {
   editingTripId = trip.id;
   saveAll();
   renderSavedTrips();
+  renderWinterMagic();
   $('#plannerSaveMessage').textContent = existing >= 0 ? 'Änderungen lokal gespeichert.' : 'Trip lokal gespeichert.';
+  if (trip.status === 'Besucht' && !wasVisited) openCompletionDialog(trip.id);
+  else syncRewards(false);
   return trip;
 }
 
@@ -1394,10 +1407,12 @@ function renderSavedTrips() {
     <h3>${esc(formatDate(trip.date))} · ${esc(trip.market || 'Weihnachtsmarkt')}</h3>
     <p>${esc(trip.activity || trip.activityType || 'Nur Weihnachtsmarkt')} · ${Number(trip.budget) || 0} € p. P.</p>
     <p class="muted">${esc((trip.people || []).filter(person => person.status !== 'Nein').map(person => person.name).join(', ') || trip.stop || 'Personen nicht hinterlegt')}</p>
-    <div class="card-actions"><button data-edit-trip="${esc(trip.id)}">Bearbeiten</button><button class="secondary" data-ics-trip="${esc(trip.id)}">.ics</button><button class="ghost" data-check-trip="${esc(trip.id)}">Bahn prüfen</button><button data-delete-trip="${esc(trip.id)}" class="danger">Löschen</button></div>
+    <div class="card-actions"><button data-edit-trip="${esc(trip.id)}">Bearbeiten</button>${trip.status === 'Besucht' ? `<button class="secondary" data-diary-trip="${esc(trip.id)}">Tagebuch</button>` : `<button class="secondary" data-visit-trip="${esc(trip.id)}">Als besucht markieren</button>`}<button class="ghost" data-ics-trip="${esc(trip.id)}">.ics</button><button class="ghost" data-check-trip="${esc(trip.id)}">Bahn prüfen</button><button data-delete-trip="${esc(trip.id)}" class="danger">Löschen</button></div>
   </article>`).join('') : '<p>Noch keine Trips gespeichert.</p>';
   $$('[data-edit-trip]').forEach(button => button.onclick = () => editSavedTrip(button.dataset.editTrip));
   $$('[data-check-trip]').forEach(button => button.onclick = () => editSavedTrip(button.dataset.checkTrip, 5));
+  $$('[data-visit-trip]').forEach(button => button.onclick = () => markTripVisited(button.dataset.visitTrip));
+  $$('[data-diary-trip]').forEach(button => button.onclick = () => openCompletionDialog(button.dataset.diaryTrip));
   $$('[data-delete-trip]').forEach(button => button.onclick = () => deleteSavedTrip(button.dataset.deleteTrip));
   $$('[data-ics-trip]').forEach(button => button.onclick = () => {
     const trip = state.trips.find(item => item.id === button.dataset.icsTrip);
@@ -1503,6 +1518,213 @@ function allSeasonDates() {
   return dateRange(bounds.from, bounds.to);
 }
 
+
+let unlockQueue = [];
+let activeUnlock = '';
+
+function currentRewards() {
+  return evaluateRewards(state.trips, state.journal, markets, state.rewardMeta);
+}
+
+function medalMarkup(sticker, options = {}) {
+  const size = options.size === 'large' ? 'large' : 'small';
+  const locked = options.locked ?? !sticker.unlocked;
+  const isNew = Boolean(options.isNew ?? (sticker.unlocked && !sticker.seen));
+  const colors = sticker.colors || ['#173c32', '#d6aa52', '#fff8e9'];
+  return `<div class="premium-medal ${size} ${locked ? 'locked' : 'unlocked'} ${isNew ? 'newly-unlocked' : ''}" data-variant="${locked ? 'locked' : isNew ? 'new' : 'unlocked'}" style="--medal-dark:${esc(colors[0])};--medal-gold:${esc(colors[1])};--medal-light:${esc(colors[2])}" role="img" aria-label="${esc(sticker.name)} – ${locked ? 'gesperrt' : isNew ? 'neu freigeschaltet' : 'freigeschaltet'}">
+    <span class="medal-ribbon" aria-hidden="true"></span><span class="medal-disc"><span class="medal-icon" aria-hidden="true">${esc(sticker.icon)}</span></span>${locked ? '<span class="medal-lock" aria-hidden="true">●</span>' : ''}${isNew ? '<span class="medal-new">Neu</span>' : ''}
+  </div>`;
+}
+
+function rewardDate(value) {
+  const date = value ? new Date(value) : null;
+  return date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString('de-DE', { day:'2-digit', month:'long', year:'numeric' }) : 'Noch nicht freigeschaltet';
+}
+
+function renderWinterMagic() {
+  if (!$('#albumAreas')) return;
+  const rewards = currentRewards();
+  const unlocked = rewards.filter(sticker => sticker.unlocked).length;
+  const percent = Math.round(unlocked / STICKERS.length * 100);
+  $('#albumUnlockedCount').textContent = unlocked;
+  $('#albumTotalRing').style.setProperty('--progress', `${percent * 3.6}deg`);
+  $('#albumAreas').innerHTML = REWARD_AREAS.map(area => {
+    const items = rewards.filter(sticker => sticker.area === area.id);
+    const areaUnlocked = items.filter(sticker => sticker.unlocked).length;
+    const areaPercent = Math.round(areaUnlocked / items.length * 100);
+    return `<section class="album-area panel" aria-labelledby="area-${esc(area.id)}">
+      <div class="album-area-head"><div><p class="eyebrow dark">${areaUnlocked} von ${items.length} gesammelt</p><h2 id="area-${esc(area.id)}">${esc(area.name)}</h2><p>${esc(area.subtitle)}</p></div><div class="progress-ring" style="--progress:${areaPercent * 3.6}deg"><strong>${areaPercent}</strong><span>%</span></div></div>
+      <div class="sticker-grid">${items.map(sticker => {
+        const ratio = Math.min(100, Math.round(sticker.value / sticker.target * 100));
+        const newSticker = sticker.unlocked && !sticker.seen;
+        return `<button class="sticker-card ${sticker.unlocked ? 'unlocked' : 'locked'} ${newSticker ? 'new' : ''}" data-sticker="${esc(sticker.id)}" aria-label="${esc(sticker.name)} öffnen">
+          ${medalMarkup(sticker, { size:'small', locked:!sticker.unlocked, isNew:newSticker })}
+          <span class="sticker-copy"><strong>${esc(sticker.name)}</strong><small>${sticker.unlocked ? `Freigeschaltet · ${rewardDate(sticker.unlockedAt)}` : `${Math.min(sticker.value, sticker.target)} / ${sticker.target} ${esc(sticker.unit)}`}</small><span class="mini-progress"><i style="width:${ratio}%"></i></span></span>
+        </button>`;
+      }).join('')}</div>
+    </section>`;
+  }).join('');
+  $$('[data-sticker]').forEach(button => button.onclick = () => showStickerDetail(button.dataset.sticker));
+  renderJournal();
+}
+
+function showStickerDetail(id) {
+  let sticker = currentRewards().find(item => item.id === id);
+  if (!sticker) return;
+  if (sticker.unlocked && !sticker.seen) {
+    state.rewardMeta[id] = { ...(state.rewardMeta[id] || {}), seen:true };
+    saveAll();
+    sticker = currentRewards().find(item => item.id === id);
+  }
+  const ratio = Math.min(100, Math.round(sticker.value / sticker.target * 100));
+  $('#stickerDetail').innerHTML = `<div class="sticker-detail-head">${medalMarkup(sticker, { size:'large', locked:!sticker.unlocked, isNew:false })}<div><p class="eyebrow dark">${sticker.unlocked ? 'Freigeschaltet' : 'Noch gesperrt'}</p><h2>${esc(sticker.name)}</h2><p>${esc(sticker.description)}</p></div></div>
+    <div class="sticker-progress-detail"><div><strong>${Math.min(sticker.value, sticker.target)} / ${sticker.target}</strong><span>${esc(sticker.unit)}</span></div><span class="mini-progress"><i style="width:${ratio}%"></i></span></div>
+    <div class="sticker-specs"><div><span>Motiv</span><strong>${esc(sticker.motif)}</strong></div><div><span>Material</span><strong>${esc(sticker.material)}</strong></div><div><span>Band</span><strong>${esc(sticker.ribbon)}</strong></div><div><span>Rahmen</span><strong>${esc(sticker.frame)}</strong></div><div><span>Freischalteffekt</span><strong>${esc(sticker.effectLabel)}</strong></div><div><span>Freischaltdatum</span><strong>${esc(rewardDate(sticker.unlockedAt))}</strong></div></div>`;
+  $('#stickerDialog').showModal();
+  renderWinterMagic();
+}
+
+function switchWinterMagic(target) {
+  const journal = target === 'journal';
+  $('#albumPanel').hidden = journal;
+  $('#journalPanel').hidden = !journal;
+  $('#showAlbum').classList.toggle('active', !journal);
+  $('#showAlbum').classList.toggle('ghost', journal);
+  $('#showJournal').classList.toggle('active', journal);
+  $('#showJournal').classList.toggle('ghost', !journal);
+  $('#showAlbum').setAttribute('aria-selected', String(!journal));
+  $('#showJournal').setAttribute('aria-selected', String(journal));
+  if (journal) renderJournal();
+}
+
+function renderJournal() {
+  if (!$('#journalEntries')) return;
+  const entries = [...state.journal].sort((a,b) => String(b.date).localeCompare(String(a.date)) || String(b.updatedAt).localeCompare(String(a.updatedAt)));
+  $('#journalCount').textContent = `${entries.length} ${entries.length === 1 ? 'Eintrag' : 'Einträge'}`;
+  $('#journalEntries').innerHTML = entries.length ? entries.map(entry => {
+    const trip = state.trips.find(item => String(item.id) === String(entry.tripId));
+    if (!trip) return '';
+    const stars = '★'.repeat(Number(entry.rating) || 0) + '☆'.repeat(Math.max(0, 5 - (Number(entry.rating) || 0)));
+    return `<article class="journal-card"><div class="journal-date"><span>${esc(formatDate(entry.date || trip.date, { day:'2-digit', month:'short' }))}</span><small>${esc(parseDate(entry.date || trip.date)?.getFullYear() || '')}</small></div><div class="journal-copy"><p class="eyebrow dark">${esc(trip.city || 'Winter Magic')}</p><h3>${esc(trip.market)}</h3><div class="journal-rating" aria-label="${Number(entry.rating) || 0} von 5 Sternen">${stars}</div><blockquote>${esc(entry.moment)}</blockquote><p class="journal-meta">${esc(entry.weather || 'Winterlich')}${entry.treat ? ` · ${esc(entry.treat)}` : ''}${entry.night ? ' · ☾ Night Magic' : ''}</p>${entry.souvenir ? `<p><strong>Entdeckung:</strong> ${esc(entry.souvenir)}</p>` : ''}<div class="card-actions"><button data-edit-journal="${esc(trip.id)}">Bearbeiten</button><button class="ghost" data-delete-journal="${esc(entry.id)}">Eintrag löschen</button></div></div></article>`;
+  }).join('') : '<div class="empty journal-empty"><strong>Noch keine Wintermomente.</strong><br>Markiere einen gespeicherten Trip als besucht – danach öffnet sich dein Abschlussdialog.</div>';
+  $$('[data-edit-journal]').forEach(button => button.onclick = () => openCompletionDialog(button.dataset.editJournal));
+  $$('[data-delete-journal]').forEach(button => button.onclick = () => deleteDiaryEntry(button.dataset.deleteJournal));
+}
+
+function markTripVisited(id) {
+  const trip = state.trips.find(item => String(item.id) === String(id));
+  if (!trip) return;
+  trip.status = 'Besucht';
+  trip.updatedAt = new Date().toISOString();
+  saveAll();
+  renderSavedTrips();
+  openCompletionDialog(trip.id);
+}
+
+function openCompletionDialog(tripId) {
+  const trip = state.trips.find(item => String(item.id) === String(tripId));
+  if (!trip) return;
+  const entry = state.journal.find(item => String(item.tripId) === String(trip.id));
+  $('#completionTripId').value = trip.id;
+  $('#completionTitle').textContent = entry ? 'Wintermoment bearbeiten' : 'Magischen Moment festhalten';
+  $('#completionMarket').innerHTML = `<strong>${esc(trip.market)}</strong><span>${esc(trip.city || '')} · ${esc(formatDate(trip.date))}</span>`;
+  $('#diaryDate').value = entry?.date || trip.date;
+  $('#diaryRating').value = String(entry?.rating || 5);
+  $('#diaryWeather').value = entry?.weather || 'Winterlich';
+  $('#diaryTreat').value = entry?.treat || '';
+  $('#diaryMoment').value = entry?.moment || '';
+  $('#diarySouvenir').value = entry?.souvenir || '';
+  $('#diaryNight').checked = Boolean(entry?.night) || String(trip.returnTime || '') >= '20:00';
+  $('#completionDialog').showModal();
+}
+
+function saveDiaryEntry(event) {
+  event.preventDefault();
+  const tripId = $('#completionTripId').value;
+  const trip = state.trips.find(item => String(item.id) === String(tripId));
+  if (!trip) return;
+  const existing = state.journal.findIndex(item => String(item.tripId) === String(tripId));
+  const now = new Date().toISOString();
+  const entry = {
+    id: existing >= 0 ? state.journal[existing].id : makeId('diary'), tripId, marketId:trip.marketId,
+    date:$('#diaryDate').value || trip.date, rating:Number($('#diaryRating').value) || 5,
+    weather:$('#diaryWeather').value, treat:$('#diaryTreat').value.trim(), moment:$('#diaryMoment').value.trim(),
+    souvenir:$('#diarySouvenir').value.trim(), night:$('#diaryNight').checked,
+    createdAt:existing >= 0 ? state.journal[existing].createdAt : now, updatedAt:now
+  };
+  if (existing >= 0) state.journal[existing] = entry; else state.journal.push(entry);
+  trip.status = 'Besucht';
+  saveAll();
+  $('#completionDialog').close();
+  renderSavedTrips();
+  syncRewards(true);
+  renderWinterMagic();
+}
+
+function finishCompletionLater() {
+  if ($('#completionDialog').open) $('#completionDialog').close();
+  syncRewards(true);
+  renderWinterMagic();
+}
+
+function deleteDiaryEntry(id) {
+  if (!confirm('Diesen Tagebucheintrag wirklich löschen? Der Trip bleibt als besucht gespeichert.')) return;
+  state.journal = state.journal.filter(entry => String(entry.id) !== String(id));
+  saveAll();
+  renderWinterMagic();
+}
+
+function syncRewards(animate = false) {
+  if (!markets.length) return [];
+  const before = evaluateRewards(state.trips, state.journal, markets, state.rewardMeta);
+  const unlockedNow = [];
+  const now = new Date().toISOString();
+  for (const sticker of before) {
+    if (sticker.value >= sticker.target && !state.rewardMeta[sticker.id]?.unlockedAt) {
+      state.rewardMeta[sticker.id] = { unlockedAt:now, seen:false };
+      unlockedNow.push(sticker.id);
+    }
+  }
+  if (unlockedNow.length) saveAll();
+  renderWinterMagic();
+  if (animate && unlockedNow.length) showUnlocks(unlockedNow);
+  return unlockedNow;
+}
+
+function showUnlocks(ids) {
+  unlockQueue.push(...ids.filter(id => !unlockQueue.includes(id) && id !== activeUnlock));
+  if (!activeUnlock) showNextUnlock();
+}
+
+function showNextUnlock() {
+  activeUnlock = unlockQueue.shift() || '';
+  if (!activeUnlock) { $('#unlockCelebration').hidden = true; return; }
+  const sticker = currentRewards().find(item => item.id === activeUnlock);
+  if (!sticker) { activeUnlock = ''; showNextUnlock(); return; }
+  const overlay = $('#unlockCelebration');
+  overlay.className = `unlock-celebration effect-${sticker.effect}`;
+  $('#unlockMedal').innerHTML = medalMarkup(sticker, { size:'large', locked:false, isNew:true });
+  $('#unlockTitle').textContent = sticker.name;
+  $('#unlockEffect').textContent = sticker.effectLabel;
+  overlay.hidden = false;
+}
+
+function closeUnlockCelebration() {
+  if (activeUnlock) {
+    state.rewardMeta[activeUnlock] = { ...(state.rewardMeta[activeUnlock] || {}), seen:true };
+    saveAll();
+  }
+  $('#unlockCelebration').hidden = true;
+  activeUnlock = '';
+  renderWinterMagic();
+  if (unlockQueue.length) setTimeout(showNextUnlock, state.preferences.reducedMotion ? 0 : 180);
+}
+
+function applyMotionPreference() {
+  document.documentElement.classList.toggle('reduce-motion', Boolean(state.preferences.reducedMotion));
+  if ($('#reducedMotion')) $('#reducedMotion').checked = Boolean(state.preferences.reducedMotion);
+}
+
 function renderHome() {
   const commonDates = allSeasonDates().filter(common);
   $('#marketCount').textContent = markets.length;
@@ -1530,6 +1752,7 @@ function renderAll() {
   renderSettings();
   renderTrip();
   renderSavedConnections();
+  renderWinterMagic();
 }
 
 function sanitizeImported(payload) {
@@ -1547,7 +1770,10 @@ function sanitizeImported(payload) {
     plannerFilters: source.plannerFilters && typeof source.plannerFilters === 'object' ? { ...DEFAULT_PLANNER_FILTERS, ...source.plannerFilters } : { ...DEFAULT_PLANNER_FILTERS },
     viewMode: source.viewMode === 'list' ? 'list' : 'cards',
     connectionPrefs: source.connectionPrefs && typeof source.connectionPrefs === 'object' ? source.connectionPrefs : {},
-    savedConnections: Array.isArray(source.savedConnections) ? source.savedConnections.filter(item => item && item.query && Array.isArray(item.journeys)).slice(0, MAX_SAVED_CONNECTIONS) : []
+    savedConnections: Array.isArray(source.savedConnections) ? source.savedConnections.filter(item => item && item.query && Array.isArray(item.journeys)).slice(0, MAX_SAVED_CONNECTIONS) : [],
+    journal: Array.isArray(source.journal) ? source.journal.filter(entry => entry && typeof entry.tripId === 'string' && typeof entry.moment === 'string').slice(0, 500) : [],
+    rewardMeta: source.rewardMeta && typeof source.rewardMeta === 'object' && !Array.isArray(source.rewardMeta) ? source.rewardMeta : {},
+    preferences: source.preferences && typeof source.preferences === 'object' ? { reducedMotion: Boolean(source.preferences.reducedMotion) } : { reducedMotion: false }
   };
   return imported;
 }
@@ -1652,6 +1878,20 @@ function bind() {
     const trip = tripFromDraft();
     if (trip) shareTripIcs(trip);
   };
+  $('#showAlbum').onclick = () => switchWinterMagic('album');
+  $('#showJournal').onclick = () => switchWinterMagic('journal');
+  $('#completionForm').onsubmit = saveDiaryEntry;
+  $('#completionLater').onclick = finishCompletionLater;
+  $('#completionDialog .close').onclick = finishCompletionLater;
+  $('#completionDialog').addEventListener('cancel', event => { event.preventDefault(); finishCompletionLater(); });
+  $('#stickerDialog .close').onclick = () => $('#stickerDialog').close();
+  $('#stickerDialog').addEventListener('click', event => { if (event.target === $('#stickerDialog')) $('#stickerDialog').close(); });
+  $('#closeUnlock').onclick = closeUnlockCelebration;
+  $('#unlockContinue').onclick = () => { closeUnlockCelebration(); setView('wintermagic'); switchWinterMagic('album'); };
+  $('#reducedMotion').onchange = () => {
+    state.preferences.reducedMotion = $('#reducedMotion').checked;
+    applyMotionPreference(); saveAll();
+  };
   $('#exportData').onclick = () => {
     const backup = { app: 'Way to Winter Magic', version: VERSION, exportedAt: new Date().toISOString(), state };
     download(URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' })), 'way-to-winter-magic-sicherung.json');
@@ -1702,7 +1942,7 @@ async function loadMarkets() {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { parseDate, isoLocal, dateRange, migratePeople, migrateAvailability, openOn, score, icsEscape, foldIcs, makeIcs, sanitizeImported, buildGeocodeUrl, normalizePlaces, buildJourneyUrl, durationMinutes, durationLabel, delayMinutes, normalizeJourney, buildDbNavigatorUrl, journeyCard, friendlyError, marketOpeningHours, ticketRequirement, transferWarnings, selectPlannerJourneys, connectionSummary };
+  module.exports = { parseDate, isoLocal, dateRange, migratePeople, migrateAvailability, openOn, score, icsEscape, foldIcs, makeIcs, sanitizeImported, buildGeocodeUrl, normalizePlaces, buildJourneyUrl, durationMinutes, durationLabel, delayMinutes, normalizeJourney, buildDbNavigatorUrl, journeyCard, friendlyError, marketOpeningHours, ticketRequirement, transferWarnings, selectPlannerJourneys, connectionSummary, STICKERS, evaluateRewards };
 }
 
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
@@ -1715,6 +1955,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       hydrateFilters();
       hydrateConnections();
       bind();
+      applyMotionPreference();
+      syncRewards(false);
       renderAll();
     } catch (error) {
       document.querySelector('main').innerHTML = `<p class="error-banner">Die Marktdaten konnten nicht geladen werden. Bitte die App einmal online neu öffnen. (${esc(error.message)})</p>`;
