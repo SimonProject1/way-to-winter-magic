@@ -201,3 +201,48 @@ summary{cursor:pointer;color:var(--pine);font-weight:800}
 .reduce-motion .unlock-depth-shadow,.reduce-motion .unlock-light-bloom,.reduce-motion .unlock-material-sweep,.reduce-motion .unlock-celebration .premium-medal::after{display:none!important}
 @media(prefers-reduced-motion:reduce){.unlock-depth-shadow,.unlock-light-bloom,.unlock-material-sweep,.unlock-celebration .premium-medal::after{display:none!important}}
 @media(max-width:390px){.sticker-card{min-width:0}.sticker-copy strong{overflow-wrap:anywhere}.premium-medal.theme.small{width:96px;height:116px}}
+
+/* V4.0.1: responsiver Sticker-Detaildialog ohne überlappende Inhalte */
+.sticker-dialog{width:min(940px,calc(100vw - 28px));max-height:min(92dvh,920px);padding:0;overflow:hidden;overscroll-behavior:contain}
+.sticker-dialog .close{position:absolute;z-index:12;top:12px;right:12px;float:none;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid #d8cdbb;border-radius:50%;background:#fffdf7ed;color:var(--ink);box-shadow:0 5px 18px #102c252b;backdrop-filter:blur(8px);line-height:1}
+#stickerDetail{max-height:min(92dvh,920px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable;padding:clamp(22px,3vw,34px);padding-top:clamp(64px,7vw,74px)}
+.sticker-detail-head{display:grid;grid-template-columns:minmax(280px,320px) minmax(0,1fr);align-items:center;gap:clamp(24px,4vw,44px)}
+.sticker-detail-art{display:grid;place-items:center;min-width:0;min-height:300px;padding:12px;border:1px solid #e5d8bf;border-radius:20px;background:radial-gradient(circle at 50% 42%,#fffdf7 0 25%,#f4ead6 72%,#eee0c3 100%);overflow:hidden}
+.sticker-detail-art .premium-medal.large{max-width:100%;margin:auto}
+.sticker-detail-copy{min-width:0;overflow-wrap:anywhere}
+.sticker-detail-copy h2{font-size:clamp(1.65rem,3vw,2.35rem);line-height:1.08;margin:.2rem 0 .75rem}
+.sticker-detail-copy>p:not(.eyebrow){margin:.2rem 0;max-width:42rem;font-size:1.02rem}
+.sticker-detail-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sticker-progress-detail,.sticker-specs{position:relative;z-index:1}
+
+@media(max-width:760px){
+  .sticker-dialog{width:min(620px,calc(100vw - 20px));max-height:calc(100dvh - 20px);border-radius:18px}
+  #stickerDetail{max-height:calc(100dvh - 20px);padding:60px clamp(15px,4.5vw,24px) 22px}
+  .sticker-detail-head{grid-template-columns:minmax(0,1fr);gap:18px;text-align:left}
+  .sticker-detail-art{min-height:0;padding:10px}
+  .sticker-detail-art .premium-medal.large{width:min(190px,58vw);height:auto;aspect-ratio:224/271}
+  .sticker-detail-art .premium-medal.theme.large{width:min(230px,70vw);height:auto;aspect-ratio:290/348}
+  .sticker-detail-copy h2{font-size:clamp(1.55rem,7vw,2rem)}
+  .sticker-detail-actions button{width:100%}
+  .sticker-progress-detail>div{align-items:flex-start}.sticker-progress-detail>div span{text-align:right}
+}
+
+@media(max-width:390px){
+  .sticker-dialog{width:calc(100vw - 12px);max-height:calc(100dvh - 12px);border-radius:15px}
+  .sticker-dialog .close{top:9px;right:9px;width:42px;height:42px}
+  #stickerDetail{max-height:calc(100dvh - 12px);padding:56px 13px 18px}
+  .sticker-detail-head{gap:14px}
+  .sticker-detail-art .premium-medal.large{width:min(168px,54vw)}
+  .sticker-detail-art .premium-medal.theme.large{width:min(205px,66vw)}
+  .sticker-progress-detail{margin:12px 0;padding:11px 12px}
+  .sticker-specs{gap:7px}.sticker-specs>div{padding:10px}
+}
+
+@media(max-height:620px) and (min-width:761px){
+  .sticker-dialog{max-height:calc(100dvh - 20px)}
+  #stickerDetail{max-height:calc(100dvh - 20px);padding-top:62px}
+  .sticker-detail-head{align-items:start}
+  .sticker-detail-art{min-height:260px}
+  .sticker-detail-art .premium-medal.large{width:190px;height:auto;aspect-ratio:224/271}
+  .sticker-detail-art .premium-medal.theme.large{width:245px;height:auto;aspect-ratio:290/348}
+}

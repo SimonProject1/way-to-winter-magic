@@ -1,0 +1,12 @@
+Way to Winter Magic V4.0.1 – selbst behobene Bugs
+
+1. Artwork überdeckte Überschrift, Status und Beschreibung
+   Behoben: Artwork und Text liegen nun in getrennten responsiven Bereichen. Desktop zeigt beide nebeneinander, Smartphones untereinander.
+
+2. Dialoginhalt war bei kleinen oder flachen Bildschirmen teilweise schwer erreichbar
+   Behoben: Der Inhalt scrollt innerhalb des Dialogs; der Schließen-Button bleibt sichtbar und bedienbar.
+
+3. Uneinheitliche Größen bei Medaillen- und Themen-Artworks
+   Behoben: Alle 16 Sticker passen sich ohne Überlauf an die verfügbare Dialogbreite an. Gesperrte und freigeschaltete Zustände, Fortschritt und Teilen-Hinweis bleiben vollständig sichtbar.
+
+Tests: 16 Sticker × 2 Zustände × 5 Bildschirmgrößen, Smoke-/Logiktest, vollständiger E2E-Ablauf, Offline-Cache und GitHub-Pages-Unterpfad bestanden.

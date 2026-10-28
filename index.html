@@ -14,7 +14,7 @@
 <body>
   <header class="hero">
     <div>
-      <p class="eyebrow">Weihnachtsmarkt-Tripplaner · V4.0.0</p>
+      <p class="eyebrow">Weihnachtsmarkt-Tripplaner · V4.0.1</p>
       <h1>Way to Winter Magic</h1>
       <p>39 geprüfte Ziele ab Wuppertal – gemeinsam planen, vergleichen und die passende Verbindung finden.</p>
     </div>
@@ -39,7 +39,7 @@
         <article><span>Gemeinsame Tage</span><strong id="commonCount">0</strong></article>
       </div>
       <article class="panel intro-panel">
-        <div><p class="eyebrow dark">Neu in V4.0.0</p><h2>Dein Winterzauber-Album</h2><p>Alle 16 Sticker sind jetzt hochwertige Artwork-Bilder: sechs Sammlermedaillen und zehn motivbezogene Illustrationen – vollständig ohne Sticker-SVGs.</p></div>
+        <div><p class="eyebrow dark">Neu in V4.0.1</p><h2>Sticker-Details klar im Blick</h2><p>Artwork, Überschrift, Status und Beschreibung sind auf Desktop und Smartphone jetzt sauber getrennt, vollständig lesbar und responsiv scrollbar.</p></div>
         <button data-jump="trip">Trip planen</button>
       </article>
       <article class="panel"><h2>Passende nächste Termine</h2><div id="nextDates" class="cards compact"></div></article>
@@ -234,12 +234,12 @@
       <div class="actions"><button type="submit">Eintrag speichern</button><button type="button" id="completionLater" class="ghost">Später</button></div>
     </form>
   </dialog>
-  <dialog id="stickerDialog" class="sticker-dialog"><button class="close" aria-label="Schließen">×</button><div id="stickerDetail"></div></dialog>
+  <dialog id="stickerDialog" class="sticker-dialog" aria-labelledby="stickerDetailTitle" aria-describedby="stickerDetailDescription"><button class="close" aria-label="Sticker-Details schließen">×</button><div id="stickerDetail"></div></dialog>
   <div id="unlockCelebration" class="unlock-celebration" hidden role="dialog" aria-modal="true" aria-live="assertive">
     <div class="unlock-card"><div id="unlockEffectScene" class="unlock-effect-scene" aria-hidden="true"></div><button id="closeUnlock" class="close" aria-label="Schließen">×</button><p class="eyebrow">Neu freigeschaltet</p><div id="unlockMedal"></div><h2 id="unlockTitle"></h2><p id="unlockEffect"></p><button id="unlockContinue">Im Album ansehen</button></div>
   </div>
 
-  <footer>Offline-PWA · Transitous-Verbindungssuche · Offline-Speicher · Datenstand 28.10.2026 · V4.0.0</footer>
+  <footer>Offline-PWA · Transitous-Verbindungssuche · Offline-Speicher · Datenstand 28.10.2026 · V4.0.1</footer>
   <script src="rewards.js" defer></script>
   <script src="app.js" defer></script>
 </body>

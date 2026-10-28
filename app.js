@@ -1,4 +1,4 @@
-const VERSION = '4.0.0';
+const VERSION = '4.0.1';
 const rewardEngine = typeof WTWM_REWARDS !== 'undefined' ? WTWM_REWARDS : require('./rewards.js');
 const { AREAS: REWARD_AREAS, STICKERS, evaluateRewards } = rewardEngine;
 const API = 'https://api.transitous.org/api';
@@ -1684,11 +1684,15 @@ function showStickerDetail(id) {
   }
   const ratio = Math.min(100, Math.round(sticker.value / sticker.target * 100));
   const isTheme = sticker.kind === 'theme';
-  $('#stickerDetail').innerHTML = `<div class="sticker-detail-head">${medalMarkup(sticker, { size:'large', locked:!sticker.unlocked, isNew:false, progress:ratio })}<div><p class="eyebrow dark">${sticker.unlocked ? 'Freigeschaltet' : 'Noch gesperrt'}</p><h2>${esc(sticker.name)}</h2><p>${esc(sticker.description)}</p><div class="sticker-detail-actions"><button data-share-sticker="${esc(sticker.id)}" ${sticker.unlocked ? '' : 'disabled'}>${sticker.unlocked ? 'Sticker teilen' : 'Nach Freischaltung teilbar'}</button></div></div></div>
+  const detail = $('#stickerDetail');
+  detail.innerHTML = `<div class="sticker-detail-head"><div class="sticker-detail-art">${medalMarkup(sticker, { size:'large', locked:!sticker.unlocked, isNew:false, progress:ratio })}</div><div class="sticker-detail-copy"><p class="eyebrow dark" id="stickerDetailStatus">${sticker.unlocked ? 'Freigeschaltet' : 'Noch gesperrt'}</p><h2 id="stickerDetailTitle">${esc(sticker.name)}</h2><p id="stickerDetailDescription">${esc(sticker.description)}</p><div class="sticker-detail-actions"><button data-share-sticker="${esc(sticker.id)}" ${sticker.unlocked ? '' : 'disabled'}>${sticker.unlocked ? 'Sticker teilen' : 'Nach Freischaltung teilbar'}</button></div></div></div>
     <div class="sticker-progress-detail"><div><strong>${Math.min(sticker.value, sticker.target)} / ${sticker.target}</strong><span>${esc(sticker.unit)}</span></div><span class="mini-progress"><i style="width:${ratio}%"></i></span></div>
     <div class="sticker-specs"><div><span>Motiv</span><strong>${esc(sticker.motif)}</strong></div><div><span>Material</span><strong>${esc(sticker.material)}</strong></div><div><span>${isTheme ? 'Darstellung' : 'Band'}</span><strong>${esc(sticker.ribbon)}</strong></div><div><span>${isTheme ? 'Kontur' : 'Rahmen'}</span><strong>${esc(sticker.frame)}</strong></div><div><span>Freischalteffekt</span><strong>${esc(sticker.effectLabel)}</strong></div><div><span>Freischaltdatum</span><strong>${esc(rewardDate(sticker.unlockedAt))}</strong></div></div>`;
   $('[data-share-sticker]')?.addEventListener('click', () => shareSticker(sticker.id));
-  $('#stickerDialog').showModal();
+  const dialog = $('#stickerDialog');
+  dialog.showModal();
+  detail.scrollTop = 0;
+  $('#stickerDialog .close').focus({ preventScroll:true });
   renderWinterMagic();
 }
 

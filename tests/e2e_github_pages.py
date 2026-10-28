@@ -145,7 +145,7 @@ async def main():
             await page.route("https://api.transitous.org/**", api)
             await page.goto(base, wait_until="networkidle")
             assert await page.locator("text=Way to Winter Magic").count() >= 1
-            assert await page.locator("text=V4.0.0").count() >= 1
+            assert await page.locator("text=V4.0.1").count() >= 1
             assert await page.locator("#marketCount").inner_text() == "39"
             overflow = await page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
             assert overflow <= 1, f"Mobiles horizontales Überlaufen: {overflow}px"
@@ -342,7 +342,7 @@ async def main():
                 backup_path = pathlib.Path(tmp) / backup_download.suggested_filename
                 await backup_download.save_as(backup_path)
                 backup = json.loads(backup_path.read_text(encoding='utf-8'))
-                assert backup['version'] == '4.0.0'
+                assert backup['version'] == '4.0.1'
                 assert len(backup['state']['journal']) == 1 and len(backup['state']['trips']) == 1
                 assert len(backup['state']['rewardMeta']) >= 2
                 await page.evaluate("localStorage.setItem('wtwm:v2:journal','[]'); localStorage.setItem('wtwm:v2:trips','[]'); localStorage.setItem('wtwm:v2:rewardMeta','{}')")
@@ -386,7 +386,7 @@ async def main():
             assert await page.evaluate("async () => { await navigator.serviceWorker.ready; return true; }")
             await context.set_offline(True)
             await page.reload(wait_until="domcontentloaded")
-            assert await page.locator("text=V4.0.0").count() >= 1
+            assert await page.locator("text=V4.0.1").count() >= 1
             assert await page.locator("#marketCount").inner_text() == "39"
             await page.click('[data-view="wintermagic"]')
             await page.locator('.sticker-card img.sticker-art').first.wait_for()
@@ -406,7 +406,7 @@ async def main():
         server.shutdown()
         server.server_close()
 
-    print("V4.0.0 E2E bestanden: kompletter Planer mobil/desktop, sechs Meilenstein-Medaillen, zehn freie Themen-Sticker, individuelle Freischalteffekte, Teilen, Persistenz, Wiederherstellung, Offline-Start und GitHub-Pages-Unterpfad.")
+    print("V4.0.1 E2E bestanden: kompletter Planer mobil/desktop, sechs Meilenstein-Medaillen, zehn freie Themen-Sticker, individuelle Freischalteffekte, Teilen, Persistenz, Wiederherstellung, Offline-Start und GitHub-Pages-Unterpfad.")
 
 
 if __name__ == "__main__":

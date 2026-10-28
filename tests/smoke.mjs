@@ -41,7 +41,7 @@ const html = fs.readFileSync(new URL('index.html', root), 'utf8');
 for (const id of ['marketSearch', 'cityFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'dateFilter', 'timelineBody', 'peopleList', 'stopResults', 'cardView', 'listView', 'connectionFrom', 'connectionTo', 'connectionMarket', 'connectionDate', 'connectionTime', 'connectionMode', 'searchConnections', 'connectionResults', 'savedConnections', 'clearSavedConnections', 'albumAreas', 'albumUnlockedCount', 'journalEntries', 'completionDialog', 'stickerDialog', 'unlockCelebration', 'reducedMotion', 'plannerPersonCount', 'plannerDate', 'plannerAvailability', 'plannerMarkets', 'plannerMarketSearch', 'plannerCityFilter', 'plannerTravelFilter', 'plannerFeatureFilter', 'plannerSortFilter', 'resetPlannerFilters', 'plannerSelectedMarket', 'plannerFilterSummary', 'plannerArrival', 'plannerReturnEnabled', 'plannerBudgetLevel', 'plannerOutbound', 'plannerReturn', 'plannerSummary', 'savePlannedTrip']) {
   assert.ok(html.includes(`id="${id}"`), `UI-Element fehlt: ${id}`);
 }
-assert.ok(html.includes('V4.0.0'), 'Versionshinweis fehlt');
+assert.ok(html.includes('V4.0.1'), 'Versionshinweis fehlt');
 assert.ok(html.includes('Transitous'), 'Transitous-Hinweis fehlt');
 assert.ok(html.includes('Way to Winter Magic'), 'App-Name fehlt');
 
@@ -62,7 +62,7 @@ assert.ok(sw.includes("event.request.mode === 'navigate'"), 'Offline-Navigation-
 
 const appSource = fs.readFileSync(new URL('app.js', root), 'utf8');
 assert.ok(appSource.includes("const STORAGE_PREFIX = 'wtwm:v2:'"), 'Eigener Speicherbereich fehlt');
-assert.ok(appSource.includes("const VERSION = '4.0.0'"), 'JS-Version ist nicht aktuell');
+assert.ok(appSource.includes("const VERSION = '4.0.1'"), 'JS-Version ist nicht aktuell');
 assert.ok(appSource.includes("state.tripDraft.marketId = selected ? '' : marketId"), 'Marktauswahl kann nicht wieder aufgehoben werden');
 assert.ok(appSource.includes("S.set('plannerMarketFilters', state.plannerFilters)"), 'Planerfilter werden nicht lokal gespeichert');
 assert.ok(appSource.includes("const API = 'https://api.transitous.org/api'"), 'Transitous-Endpunkt fehlt');
@@ -109,6 +109,9 @@ assert.deepEqual(logic.STICKERS.slice(0, 6).map(sticker => sticker.kind), Array(
 assert.deepEqual(logic.STICKERS.slice(6).map(sticker => sticker.kind), Array(10).fill('theme'), 'Die zehn Themen-Sticker müssen freie Illustrationen sein');
 const styleSource = fs.readFileSync(new URL('styles.css', root), 'utf8');
 for (const marker of ['unlock-depth-shadow','unlock-light-bloom','unlock-material-sweep','sticker-sheen']) assert.ok(styleSource.includes(marker), `Material-/Tiefenanimation fehlt: ${marker}`);
+for (const marker of ['.sticker-detail-art','.sticker-detail-copy','overflow-y:auto','max-height:calc(100dvh - 20px)']) assert.ok(styleSource.includes(marker), `Responsive Detaildialog-Regel fehlt: ${marker}`);
+for (const marker of ['id="stickerDetailTitle"','id="stickerDetailStatus"','id="stickerDetailDescription"','detail.scrollTop = 0']) assert.ok(appSource.includes(marker), `Sticker-Detailstruktur fehlt: ${marker}`);
+assert.ok(html.includes('aria-labelledby="stickerDetailTitle"') && html.includes('aria-describedby="stickerDetailDescription"'), 'Sticker-Dialog ist nicht korrekt beschriftet');
 assert.deepEqual(logic.STICKERS.slice(0, 6).map(sticker => sticker.target), [1, 5, 10, 20, 30, 39], 'Besuchs-Meilensteine müssen 1/5/10/20/30/39 sein');
 assert.deepEqual(logic.STICKERS.slice(6).map(sticker => sticker.target), [1, 1, 3, 3, 5, 3, 5, 1, 3, 1], 'Kategorie-Ziele wurden verändert');
 assert.equal(new Set(logic.STICKERS.flatMap(sticker => [sticker.image, sticker.imageLocked, sticker.imageNew, sticker.imageSmall, sticker.imageLarge, sticker.imageShare])).size, 96, 'Jeder Sticker braucht sechs eigene Grafikdateien');
@@ -228,4 +231,4 @@ assert.equal(logic.score(markets.find(market => market.id === 'steele')).toFixed
 assert.equal(logic.marketOpeningHours({}, '2026-12-05'), 'Noch nicht veröffentlicht – Marktlink prüfen');
 assert.ok(ics.includes('Namen: Alex (Ja)') && ics.includes('Ticketstatus: Nicht nötig'), 'Erweiterte ICS-Angaben fehlen');
 
-console.log(`V4.0.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, 6 Meilenstein-Medaillen, 10 freie Themen-Sticker mit 96 Grafikvarianten, Planerfilter und DB-Verbindungssuche geprüft.`);
+console.log(`V4.0.1 Smoke-/Logiktests bestanden: ${markets.length} Märkte, 6 Meilenstein-Medaillen, 10 freie Themen-Sticker mit 96 Grafikvarianten, Planerfilter und DB-Verbindungssuche geprüft.`);
