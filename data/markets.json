@@ -1,0 +1,1430 @@
+[
+  {
+    "id": "steele",
+    "name": "Steeler Weihnachtsmarkt",
+    "city": "Essen",
+    "location": "Kaiser-Otto-Platz, Essen-Steele",
+    "stationQuery": "Essen Steele S",
+    "from": "2026-10-30",
+    "to": "2027-01-03",
+    "closed": [
+      "2026-11-01",
+      "2026-11-22"
+    ],
+    "travel": 55,
+    "distanceKm": 24,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 5,
+    "cozy": 3,
+    "special": 3,
+    "budget": [
+      20,
+      35,
+      45
+    ],
+    "tags": [
+      "essen",
+      "familie",
+      "lange-saison"
+    ],
+    "positive": "Lange Saison, große Essensauswahl und viel Programm.",
+    "negative": "Eher Volksfest als kleiner ruhiger Markt.",
+    "tip": "Ideal als Auftakt und Planungstreffen.",
+    "sourceLabel": "Geprüfter Bestand aus V1.0.0",
+    "verifiedAt": "2026-10-27"
+  },
+  {
+    "id": "muengsten",
+    "name": "Müngstener Winterdorf",
+    "city": "Solingen",
+    "location": "Brückenpark Müngsten",
+    "stationQuery": "Solingen Brückenpark Müngsten",
+    "dates": [
+      "2026-11-27",
+      "2026-11-28",
+      "2026-11-29",
+      "2026-12-04",
+      "2026-12-05",
+      "2026-12-06",
+      "2026-12-11",
+      "2026-12-12",
+      "2026-12-13",
+      "2026-12-18",
+      "2026-12-19",
+      "2026-12-20"
+    ],
+    "travel": 65,
+    "distanceKm": 11,
+    "entry": "Kein Eintritt veröffentlicht",
+    "light": 4,
+    "food": 3,
+    "cozy": 4,
+    "special": 5,
+    "budget": [
+      20,
+      35,
+      45
+    ],
+    "tags": [
+      "klein",
+      "natur",
+      "besonders"
+    ],
+    "positive": "Klein, regional und besondere Brückenkulisse.",
+    "negative": "Weniger Auswahl bei Essen und Ständen.",
+    "tip": "Brückenpark vorher ansehen und bis zur Dunkelheit bleiben.",
+    "sourceLabel": "Geprüfter Bestand aus V1.0.0",
+    "verifiedAt": "2026-10-27"
+  },
+  {
+    "id": "hattingen",
+    "name": "Nostalgischer Weihnachtsmarkt Hattingen",
+    "city": "Hattingen",
+    "location": "Altstadt Hattingen",
+    "stationQuery": "Hattingen Mitte",
+    "from": "2026-11-23",
+    "to": "2026-12-22",
+    "travel": 75,
+    "distanceKm": 19,
+    "entry": "Kostenlos",
+    "light": 5,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      25,
+      40,
+      50
+    ],
+    "tags": [
+      "historisch",
+      "licht",
+      "cozy"
+    ],
+    "positive": "Fachwerk, enge Gassen und starke Atmosphäre.",
+    "negative": "Am Wochenende teilweise voll.",
+    "tip": "Unter der Woche vor der Dämmerung ankommen.",
+    "sourceLabel": "Geprüfter Bestand aus V1.0.0",
+    "verifiedAt": "2026-10-27"
+  },
+  {
+    "id": "benrath",
+    "name": "Weihnachtsmarkt Schloss Benrath",
+    "city": "Düsseldorf",
+    "location": "Schloss Benrath, Düsseldorf",
+    "stationQuery": "Düsseldorf Schloss Benrath",
+    "dates": [
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-27",
+      "2026-11-28",
+      "2026-11-29",
+      "2026-12-04",
+      "2026-12-05",
+      "2026-12-06",
+      "2026-12-11",
+      "2026-12-12",
+      "2026-12-13",
+      "2026-12-18",
+      "2026-12-19",
+      "2026-12-20"
+    ],
+    "travel": 90,
+    "distanceKm": 27,
+    "entry": "Kostenlos",
+    "light": 5,
+    "food": 3,
+    "cozy": 4,
+    "special": 4,
+    "budget": [
+      25,
+      40,
+      55
+    ],
+    "tags": [
+      "schloss",
+      "licht",
+      "kunsthandwerk"
+    ],
+    "positive": "Schlosskulisse und Spiegelungen auf dem Wasser.",
+    "negative": "Essensauswahl eher überschaubar.",
+    "tip": "Schlosspark im Hellen, Markt bei Dunkelheit.",
+    "sourceLabel": "Geprüfter Bestand aus V1.0.0",
+    "verifiedAt": "2026-10-27"
+  },
+  {
+    "id": "gruenewald",
+    "name": "Grünewalder Adventstraum",
+    "city": "Solingen",
+    "location": "Schloss Grünewald, Solingen",
+    "stationQuery": "Solingen Schloss Grünewald",
+    "dates": [
+      "2026-11-27",
+      "2026-11-28",
+      "2026-11-29",
+      "2026-12-04",
+      "2026-12-05",
+      "2026-12-06",
+      "2026-12-11",
+      "2026-12-12",
+      "2026-12-13",
+      "2026-12-18",
+      "2026-12-19",
+      "2026-12-20"
+    ],
+    "travel": 90,
+    "distanceKm": 18,
+    "entry": "Ticket nötig, Preis offen",
+    "light": 5,
+    "food": 5,
+    "cozy": 4,
+    "special": 5,
+    "budget": [
+      35,
+      50,
+      65
+    ],
+    "tags": [
+      "schloss",
+      "licht",
+      "essen",
+      "kunsthandwerk"
+    ],
+    "positive": "Lichterketten, Feuerkörbe und starkes Essen.",
+    "negative": "Mit rund 100 Ausstellern nicht klein.",
+    "tip": "Freitag zur Öffnung kommen.",
+    "sourceLabel": "Geprüfter Bestand aus V1.0.0",
+    "verifiedAt": "2026-10-27"
+  },
+  {
+    "id": "hugenpoet",
+    "name": "Nikolausmarkt Schloss Hugenpoet",
+    "city": "Essen",
+    "location": "Schloss Hugenpoet, Essen-Kettwig",
+    "stationQuery": "Essen Schloss Hugenpoet",
+    "dates": [
+      "2026-12-03",
+      "2026-12-04",
+      "2026-12-05",
+      "2026-12-06"
+    ],
+    "travel": 100,
+    "distanceKm": 25,
+    "entry": "10 bis 14 Euro",
+    "light": 5,
+    "food": 4,
+    "cozy": 5,
+    "special": 5,
+    "budget": [
+      40,
+      55,
+      75
+    ],
+    "tags": [
+      "schloss",
+      "cozy",
+      "kunsthandwerk"
+    ],
+    "positive": "Wasserschloss und hochwertige Stände.",
+    "negative": "Teuer und nur vier Tage geöffnet.",
+    "tip": "Mit Kettwiger Altstadt kombinieren.",
+    "sourceLabel": "Geprüfter Bestand aus V1.0.0",
+    "verifiedAt": "2026-10-27"
+  },
+  {
+    "id": "duisburg-nord",
+    "name": "Lichtermarkt Duisburg-Nord",
+    "city": "Duisburg",
+    "location": "Landschaftspark Duisburg-Nord",
+    "stationQuery": "Duisburg Landschaftspark Nord",
+    "dates": [
+      "2026-11-27",
+      "2026-11-28",
+      "2026-11-29"
+    ],
+    "travel": 95,
+    "distanceKm": 38,
+    "entry": "7 Euro",
+    "light": 6,
+    "food": 3,
+    "cozy": 3,
+    "special": 5,
+    "budget": [
+      30,
+      45,
+      60
+    ],
+    "tags": [
+      "licht",
+      "industrie",
+      "event"
+    ],
+    "positive": "Spektakuläre Industriebeleuchtung.",
+    "negative": "Mehr Event als klassischer Markt.",
+    "tip": "Landschaftspark erst im Hellen erkunden.",
+    "sourceLabel": "Geprüfter Bestand aus V1.0.0",
+    "verifiedAt": "2026-10-27"
+  },
+  {
+    "id": "koeln-stadtgarten",
+    "name": "Weihnachtsmarkt im Stadtgarten Köln",
+    "city": "Köln",
+    "location": "Stadtgarten Köln",
+    "stationQuery": "Köln West",
+    "from": "2026-11-13",
+    "to": "2026-12-23",
+    "travel": 75,
+    "distanceKm": 40,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 5,
+    "cozy": 4,
+    "special": 4,
+    "budget": [
+      30,
+      50,
+      65
+    ],
+    "tags": [
+      "essen",
+      "cozy",
+      "kunsthandwerk"
+    ],
+    "positive": "Lichter unter Bäumen und vielseitiges Essen.",
+    "negative": "Am Wochenende schnell voll.",
+    "tip": "Mit dem Belgischen Viertel kombinieren.",
+    "sourceLabel": "Geprüfter Bestand aus V1.0.0",
+    "verifiedAt": "2026-10-27"
+  },
+  {
+    "id": "moyland",
+    "name": "Kunsthandwerker-Weihnachtsmarkt Schloss Moyland",
+    "city": "Bedburg-Hau",
+    "location": "Schloss Moyland, Bedburg-Hau",
+    "stationQuery": "Bedburg-Hau Schloss Moyland",
+    "dates": [
+      "2026-12-09",
+      "2026-12-10",
+      "2026-12-11",
+      "2026-12-12",
+      "2026-12-13"
+    ],
+    "travel": 190,
+    "distanceKm": 71,
+    "entry": "10 Euro",
+    "light": 5,
+    "food": 4,
+    "cozy": 4,
+    "special": 5,
+    "budget": [
+      40,
+      60,
+      80
+    ],
+    "tags": [
+      "schloss",
+      "kunsthandwerk",
+      "tagestrip"
+    ],
+    "positive": "Schlosspark, Fackeln und Kunsthandwerk.",
+    "negative": "Lange Fahrt und nur fünf Tage geöffnet.",
+    "tip": "Als ganzen Tagestrip mit Museum planen.",
+    "sourceLabel": "Geprüfter Bestand aus V1.0.0",
+    "verifiedAt": "2026-10-27"
+  },
+  {
+    "id": "elberfeld",
+    "name": "Elberfelder Weihnachtsmarkt",
+    "city": "Wuppertal",
+    "location": "Elberfelder Innenstadt",
+    "stationQuery": "Wuppertal Hbf",
+    "from": "2026-11-19",
+    "to": "2026-12-27",
+    "closed": [
+      "2026-12-24",
+      "2026-12-25",
+      "2026-12-26"
+    ],
+    "travel": 10,
+    "distanceKm": 1,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
+    "special": 3,
+    "budget": [
+      15,
+      30,
+      45
+    ],
+    "tags": [
+      "nah",
+      "kunsthandwerk",
+      "musik"
+    ],
+    "positive": "Sehr kurze Anreise und breites Programm mitten in Elberfeld.",
+    "negative": "Zu Stoßzeiten städtisch und belebt.",
+    "tip": "Gut für einen spontanen Feierabend-Trip.",
+    "sourceUrl": "https://elberfelder-weihnachtsmarkt.com/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "barmen",
+    "name": "Barmer Weihnachtsmarkt",
+    "city": "Wuppertal",
+    "location": "Innenstadt Wuppertal-Barmen",
+    "stationQuery": "Wuppertal-Barmen Bahnhof",
+    "from": "2026-11-19",
+    "to": "2026-12-27",
+    "closed": [
+      "2026-12-24",
+      "2026-12-25",
+      "2026-12-26"
+    ],
+    "travel": 20,
+    "distanceKm": 6,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
+    "special": 3,
+    "budget": [
+      15,
+      30,
+      45
+    ],
+    "tags": [
+      "nah",
+      "musik",
+      "familie"
+    ],
+    "positive": "Nah, kostenlos und gut mit Schwebebahn oder Bahn erreichbar.",
+    "negative": "Mehr Innenstadtmarkt als ruhiger Ausflugsmarkt.",
+    "tip": "Mit einer Schwebebahnfahrt verbinden.",
+    "sourceUrl": "https://barmer-weihnachtsmarkt.com/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "remscheid",
+    "name": "Remscheider Weihnachtstreff",
+    "city": "Remscheid",
+    "location": "Rathausplatz Remscheid",
+    "stationQuery": "Remscheid Rathaus",
+    "from": "2026-11-13",
+    "to": "2026-12-23",
+    "closed": [
+      "2026-11-22"
+    ],
+    "travel": 35,
+    "distanceKm": 11,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      20,
+      35,
+      50
+    ],
+    "tags": [
+      "nah",
+      "eisstock",
+      "familie"
+    ],
+    "positive": "Eisstockschießen, Programm und kurze Anreise.",
+    "negative": "Kompakter Innenstadtplatz statt historischer Kulisse.",
+    "tip": "Freitag oder Samstag für die längeren Öffnungszeiten wählen.",
+    "sourceUrl": "https://www.remscheider-weihnachtstreff.de/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "ohligs",
+    "name": "Weihnachtsdürpel Ohligs",
+    "city": "Solingen",
+    "location": "Forststraße, Solingen-Ohligs",
+    "stationQuery": "Solingen Hbf",
+    "dates": [
+      "2026-12-04",
+      "2026-12-05",
+      "2026-12-06"
+    ],
+    "travel": 35,
+    "distanceKm": 19,
+    "entry": "Kostenlos",
+    "light": 3,
+    "food": 4,
+    "cozy": 4,
+    "special": 3,
+    "budget": [
+      20,
+      35,
+      45
+    ],
+    "tags": [
+      "klein",
+      "nah",
+      "wochenende"
+    ],
+    "positive": "Kleiner Stadtteilmarkt direkt am gut erreichbaren Solinger Hauptbahnhof.",
+    "negative": "Nur ein Wochenende geöffnet.",
+    "tip": "Für einen kurzen, unkomplizierten Abendtrip.",
+    "sourceUrl": "https://owg-ohligs.de/termine-rund-um-ohligs/",
+    "sourceLabel": "Ohligser Werbe- und Interessengemeinschaft",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "velbert-offers",
+    "name": "Weihnachtsmarkt Am Offers",
+    "city": "Velbert",
+    "location": "Platz Am Offers, Velbert-Mitte",
+    "stationQuery": "Velbert ZOB",
+    "dates": [
+      "2026-12-04",
+      "2026-12-05",
+      "2026-12-06",
+      "2026-12-10",
+      "2026-12-11",
+      "2026-12-12",
+      "2026-12-13"
+    ],
+    "travel": 55,
+    "distanceKm": 16,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 3,
+    "cozy": 4,
+    "special": 3,
+    "budget": [
+      20,
+      35,
+      45
+    ],
+    "tags": [
+      "klein",
+      "familie",
+      "wochenende"
+    ],
+    "positive": "Überschaubarer Markt mit Familienprogramm und kurzen Wegen.",
+    "negative": "Nur an zwei Adventsblöcken geöffnet.",
+    "tip": "Gut mit einem Altstadtbummel kombinierbar.",
+    "sourceUrl": "https://stadtmarketing.velbert.de/events/weihnachtsmarkt-am-offers",
+    "sourceLabel": "Velbert Marketing",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "mettmann",
+    "name": "Blotschenmarkt Mettmann",
+    "city": "Mettmann",
+    "location": "Am Königshof, Mettmann",
+    "stationQuery": "Mettmann Zentrum",
+    "from": "2026-11-27",
+    "to": "2026-12-13",
+    "travel": 50,
+    "distanceKm": 17,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 4,
+    "special": 4,
+    "budget": [
+      20,
+      35,
+      50
+    ],
+    "tags": [
+      "tradition",
+      "familie",
+      "cozy"
+    ],
+    "positive": "Traditionsmarkt mit kompaktem Aufbau und lokalem Programm.",
+    "negative": "Kürzere Saison als große Innenstadtmärkte.",
+    "tip": "Nachmittags starten und die Beleuchtung mitnehmen.",
+    "sourceUrl": "https://www.blotschenmarkt-mettmann.de/programm/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "essen-international",
+    "name": "Internationaler Weihnachtsmarkt Essen",
+    "city": "Essen",
+    "location": "Kennedyplatz und Innenstadt Essen",
+    "stationQuery": "Essen Hbf",
+    "from": "2026-11-13",
+    "to": "2026-12-23",
+    "travel": 50,
+    "distanceKm": 25,
+    "entry": "Kostenlos",
+    "light": 5,
+    "food": 5,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      60
+    ],
+    "tags": [
+      "licht",
+      "essen",
+      "groß",
+      "international"
+    ],
+    "positive": "Große Auswahl, internationale Küche und starke Lichtinszenierung.",
+    "negative": "Groß und zu Hauptzeiten sehr voll.",
+    "tip": "Unter der Woche mehrere Themenbereiche ablaufen.",
+    "sourceUrl": "https://www.visitessen.de/festivals-highlights/internationaler-weihnachtsmarkt/",
+    "sourceLabel": "Visit Essen",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "kettwig-adventsdorf",
+    "name": "Kettwiger Adventsdorf",
+    "city": "Essen",
+    "location": "Historische Altstadt Essen-Kettwig",
+    "stationQuery": "Essen Kettwig Stausee",
+    "dates": [
+      "2026-11-27",
+      "2026-11-28",
+      "2026-11-29"
+    ],
+    "travel": 70,
+    "distanceKm": 23,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      20,
+      35,
+      50
+    ],
+    "tags": [
+      "historisch",
+      "klein",
+      "cozy",
+      "kunsthandwerk"
+    ],
+    "positive": "Fachwerk-Altstadt, kreative Stände und gemütlicher Auftakt.",
+    "negative": "Nur am ersten Adventswochenende.",
+    "tip": "Mit dem Ruhr-Ufer oder Schloss Hugenpoet kombinieren.",
+    "sourceUrl": "https://www.kettwig.eu/programm-kettwiger-adventsdorf",
+    "sourceLabel": "Kettwig vor Ort",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "bochum",
+    "name": "Bochumer Weihnachtsmarkt",
+    "city": "Bochum",
+    "location": "Innenstadt Bochum",
+    "stationQuery": "Bochum Hbf",
+    "from": "2026-11-19",
+    "to": "2026-12-23",
+    "closed": [
+      "2026-11-22"
+    ],
+    "travel": 55,
+    "distanceKm": 27,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 5,
+    "cozy": 3,
+    "special": 5,
+    "budget": [
+      25,
+      45,
+      60
+    ],
+    "tags": [
+      "groß",
+      "familie",
+      "event",
+      "essen"
+    ],
+    "positive": "Fliegender Weihnachtsmann und viele Themenbereiche.",
+    "negative": "Eher großes Event als ruhiger, gemütlicher Markt.",
+    "tip": "Für die Hochseilshow rechtzeitig am Dr.-Ruer-Platz sein.",
+    "sourceUrl": "https://www.alle-weihnachtsmaerkte.de/weihnachtsmaerkte/bochum/bochumer-weihnachtsmarkt-834636.html",
+    "sourceLabel": "Terminübersicht, Veranstalterangaben",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "dortmund",
+    "name": "Dortmunder Weihnachtsstadt",
+    "city": "Dortmund",
+    "location": "Hansaplatz und Innenstadt Dortmund",
+    "stationQuery": "Dortmund Hbf",
+    "from": "2026-11-19",
+    "to": "2026-12-30",
+    "closed": [
+      "2026-11-22",
+      "2026-12-25"
+    ],
+    "travel": 55,
+    "distanceKm": 36,
+    "entry": "Kostenlos",
+    "light": 5,
+    "food": 5,
+    "cozy": 2,
+    "special": 5,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "groß",
+      "licht",
+      "essen",
+      "familie"
+    ],
+    "positive": "Riesiger Weihnachtsbaum, sehr große Auswahl und lange Saison.",
+    "negative": "Nicht klein und an Wochenenden stark besucht.",
+    "tip": "Werktags anreisen und den Hansaplatz nach Einbruch der Dunkelheit besuchen.",
+    "sourceUrl": "https://www.weihnachtsstadt-do.de/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "duesseldorf-city",
+    "name": "Düsseldorfer Weihnachtsmarkt",
+    "city": "Düsseldorf",
+    "location": "Sieben Themenmärkte in der Innenstadt",
+    "stationQuery": "Düsseldorf Heinrich-Heine-Allee",
+    "from": "2026-11-19",
+    "to": "2026-12-30",
+    "closed": [
+      "2026-11-22",
+      "2026-12-25"
+    ],
+    "travel": 50,
+    "distanceKm": 28,
+    "entry": "Kostenlos",
+    "light": 5,
+    "food": 5,
+    "cozy": 3,
+    "special": 5,
+    "budget": [
+      25,
+      50,
+      70
+    ],
+    "tags": [
+      "groß",
+      "licht",
+      "essen",
+      "eisbahn"
+    ],
+    "positive": "Mehrere Themenwelten, Altstadt und sehr gute ÖPNV-Anbindung.",
+    "negative": "Viele Wege und zu Stoßzeiten voll.",
+    "tip": "Mit Altstadtmarkt starten und am Kö-Bogen enden.",
+    "sourceUrl": "https://www.visitduesseldorf.de/event/duesseldorfer-weihnachtsmarkt-c632015b44",
+    "sourceLabel": "Visit Düsseldorf",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "kaiserswerth",
+    "name": "Nikolausmarkt Kaiserswerth",
+    "city": "Düsseldorf",
+    "location": "Historischer Kern Kaiserswerth",
+    "stationQuery": "Düsseldorf Klemensplatz",
+    "dates": [
+      "2026-12-05",
+      "2026-12-06"
+    ],
+    "travel": 80,
+    "distanceKm": 31,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 3,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      20,
+      35,
+      50
+    ],
+    "tags": [
+      "historisch",
+      "klein",
+      "cozy",
+      "wochenende"
+    ],
+    "positive": "Kleiner Markt im historischen Ortskern.",
+    "negative": "Nur zwei Tage geöffnet.",
+    "tip": "Mit Rheinspaziergang und Kaiserpfalz verbinden.",
+    "sourceUrl": "https://nordbote.de/kalender/nikolausmarkt-2026",
+    "sourceLabel": "Lokaler Veranstaltungskalender",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "duisburg-city",
+    "name": "Duisburger Weihnachtsmarkt",
+    "city": "Duisburg",
+    "location": "Königstraße, Duisburg-Innenstadt",
+    "stationQuery": "Duisburg Hbf",
+    "from": "2026-11-12",
+    "to": "2026-12-30",
+    "closed": [
+      "2026-11-22",
+      "2026-12-24",
+      "2026-12-25"
+    ],
+    "travel": 65,
+    "distanceKm": 35,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 5,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      60
+    ],
+    "tags": [
+      "groß",
+      "eisbahn",
+      "essen",
+      "familie"
+    ],
+    "positive": "Lange Laufzeit, viele Hütten und Eislaufangebot.",
+    "negative": "Innenstadtmarkt mit entsprechendem Andrang.",
+    "tip": "Mit dem Innenhafen kombinieren.",
+    "sourceUrl": "https://www.duisburger-weihnachtsmarkt.de/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "oberhausen-centro",
+    "name": "Westfield Centro Weihnachtsmarkt",
+    "city": "Oberhausen",
+    "location": "Promenade am Westfield Centro",
+    "stationQuery": "Oberhausen Neue Mitte",
+    "from": "2026-11-13",
+    "to": "2026-12-23",
+    "travel": 80,
+    "distanceKm": 32,
+    "entry": "Kostenlos",
+    "light": 5,
+    "food": 5,
+    "cozy": 2,
+    "special": 5,
+    "budget": [
+      25,
+      50,
+      70
+    ],
+    "tags": [
+      "groß",
+      "familie",
+      "event",
+      "shopping"
+    ],
+    "positive": "Großes Freizeitangebot, Riesenrad und gute Kombi mit Shopping.",
+    "negative": "Sehr kommerziell und kaum ruhige Altstadtatmosphäre.",
+    "tip": "Für einen ganztägigen Freizeit- und Markttrip.",
+    "sourceUrl": "https://www.centro-weihnachtsmarkt.de/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "muelheim-altstadt",
+    "name": "Mülheimer Altstadt-Adventsmarkt",
+    "city": "Mülheim an der Ruhr",
+    "location": "Historische Altstadt Mülheim",
+    "stationQuery": "Mülheim an der Ruhr Stadtmitte",
+    "from": "2026-11-27",
+    "to": "2026-12-13",
+    "weekdays": [
+      0,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "travel": 65,
+    "distanceKm": 29,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      20,
+      40,
+      55
+    ],
+    "tags": [
+      "historisch",
+      "klein",
+      "cozy",
+      "kunsthandwerk"
+    ],
+    "positive": "Historische Gassen, lokale Aussteller und ruhiger Charakter.",
+    "negative": "Montags geschlossen und relativ kurze Saison.",
+    "tip": "Freitagabend für Licht und längere Öffnung wählen.",
+    "sourceUrl": "https://adventsmarkt-muelheim.de/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "recklinghausen",
+    "name": "Weihnachtsmarkt Recklinghausen",
+    "city": "Recklinghausen",
+    "location": "Altstadtmarkt Recklinghausen",
+    "stationQuery": "Recklinghausen Hbf",
+    "from": "2026-11-19",
+    "to": "2026-12-23",
+    "travel": 95,
+    "distanceKm": 40,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 4,
+    "special": 4,
+    "budget": [
+      25,
+      40,
+      55
+    ],
+    "tags": [
+      "altstadt",
+      "familie",
+      "licht"
+    ],
+    "positive": "Mehrere Plätze, Altstadtflair und Familienangebote.",
+    "negative": "Am Wochenende lebhaft.",
+    "tip": "Vom Rathaus aus durch alle Marktbereiche laufen.",
+    "sourceUrl": "https://weihnachtsmarkt-re.de/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "muenster",
+    "name": "Weihnachtsmärkte Münster",
+    "city": "Münster",
+    "location": "Sechs Märkte in der Altstadt Münster",
+    "stationQuery": "Münster Westf Hbf",
+    "from": "2026-11-23",
+    "to": "2026-12-23",
+    "travel": 125,
+    "distanceKm": 72,
+    "entry": "Kostenlos",
+    "light": 5,
+    "food": 5,
+    "cozy": 4,
+    "special": 5,
+    "budget": [
+      30,
+      55,
+      75
+    ],
+    "tags": [
+      "tagestrip",
+      "historisch",
+      "groß",
+      "kunsthandwerk"
+    ],
+    "positive": "Sechs unterschiedliche Märkte in einer sehr schönen Altstadt.",
+    "negative": "Langer Tag und an Adventssamstagen sehr voll.",
+    "tip": "Als Tagestrip planen und am Rathausmarkt beginnen.",
+    "sourceUrl": "https://www.muenster-guide.de/veranstaltungen/weihnachtsmarkt-muenster/",
+    "sourceLabel": "Münster Guide, veröffentlichte Termine",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "aachen",
+    "name": "Aachener Weihnachtsmarkt",
+    "city": "Aachen",
+    "location": "Dom und Rathaus Aachen",
+    "stationQuery": "Aachen Hbf",
+    "from": "2026-11-20",
+    "to": "2026-12-23",
+    "travel": 120,
+    "distanceKm": 95,
+    "entry": "Kostenlos",
+    "light": 5,
+    "food": 5,
+    "cozy": 4,
+    "special": 5,
+    "budget": [
+      30,
+      55,
+      75
+    ],
+    "tags": [
+      "tagestrip",
+      "historisch",
+      "essen",
+      "kunsthandwerk"
+    ],
+    "positive": "Domkulisse, Printen und sehr stimmige Altstadt.",
+    "negative": "Längere Anreise und hoher Andrang am Wochenende.",
+    "tip": "Früh anreisen und Dom sowie Rathaus einplanen.",
+    "sourceUrl": "https://aachenweihnachtsmarkt.de/de/seiten/aktuelles/aachener-weihnachtsmarkt-2025/",
+    "sourceLabel": "Veranstalterseite 2026",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "bonn",
+    "name": "Bonner Weihnachtsmarkt",
+    "city": "Bonn",
+    "location": "Münsterplatz und Bonner Innenstadt",
+    "stationQuery": "Bonn Hbf",
+    "from": "2026-11-18",
+    "to": "2026-12-23",
+    "closed": [
+      "2026-11-22"
+    ],
+    "travel": 110,
+    "distanceKm": 64,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 5,
+    "cozy": 4,
+    "special": 4,
+    "budget": [
+      30,
+      50,
+      70
+    ],
+    "tags": [
+      "tagestrip",
+      "kunsthandwerk",
+      "essen",
+      "groß"
+    ],
+    "positive": "Über 160 Stände und mehrere Plätze in kompakter Innenstadtlage.",
+    "negative": "Für einen kurzen Abendtrip relativ weit.",
+    "tip": "Mit Münster, Altstadt und Rhein verbinden.",
+    "sourceUrl": "https://bonnerweihnachtsmarkt.de/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "siegburg",
+    "name": "Mittelalterlicher Markt Siegburg",
+    "city": "Siegburg",
+    "location": "Marktplatz Siegburg",
+    "stationQuery": "Siegburg Bonn Bahnhof",
+    "from": "2026-11-20",
+    "to": "2026-12-22",
+    "travel": 95,
+    "distanceKm": 54,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 4,
+    "special": 5,
+    "budget": [
+      25,
+      45,
+      60
+    ],
+    "tags": [
+      "mittelalter",
+      "besonders",
+      "familie",
+      "kunsthandwerk"
+    ],
+    "positive": "Konsequentes Mittelalterkonzept mit Handwerk und täglichem Programm.",
+    "negative": "Weniger klassischer Weihnachtsmarktstil.",
+    "tip": "Programmzeiten prüfen und einen Auftritt mitnehmen.",
+    "sourceUrl": "https://mittelalterlicher-markt-siegburg.de/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "monschau",
+    "name": "Monschauer Weihnachtsmarkt",
+    "city": "Monschau",
+    "location": "Historische Altstadt Monschau",
+    "stationQuery": "Monschau Parkhaus",
+    "dates": [
+      "2026-11-27",
+      "2026-11-28",
+      "2026-11-29",
+      "2026-12-04",
+      "2026-12-05",
+      "2026-12-06",
+      "2026-12-11",
+      "2026-12-12",
+      "2026-12-13",
+      "2026-12-18",
+      "2026-12-19",
+      "2026-12-20"
+    ],
+    "travel": 175,
+    "distanceKm": 87,
+    "entry": "Kostenlos",
+    "light": 5,
+    "food": 4,
+    "cozy": 5,
+    "special": 5,
+    "budget": [
+      35,
+      60,
+      80
+    ],
+    "tags": [
+      "tagestrip",
+      "historisch",
+      "cozy",
+      "wochenende"
+    ],
+    "positive": "Extrem stimmige Fachwerk- und Eifelkulisse.",
+    "negative": "Busanschluss verlängert die Anreise; Adventswochenenden sind voll.",
+    "tip": "Als vollen Tagestrip mit früher Hinfahrt planen.",
+    "sourceUrl": "https://www.monschau.de/tourismus/weihnachtsmarkt/",
+    "sourceLabel": "Stadt Monschau",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "soest",
+    "name": "Soester Weihnachtsmarkt",
+    "city": "Soest",
+    "location": "Markt und Petrikirchhof Soest",
+    "stationQuery": "Soest Bahnhof",
+    "from": "2026-11-23",
+    "to": "2026-12-22",
+    "travel": 105,
+    "distanceKm": 75,
+    "entry": "Kostenlos",
+    "light": 5,
+    "food": 4,
+    "cozy": 5,
+    "special": 5,
+    "budget": [
+      30,
+      50,
+      70
+    ],
+    "tags": [
+      "tagestrip",
+      "historisch",
+      "cozy",
+      "licht"
+    ],
+    "positive": "Grünsandstein-Altstadt und besonders schöne Lichtkulisse.",
+    "negative": "Am Wochenende gut besucht.",
+    "tip": "Vor der Dämmerung ankommen und den Wall mitnehmen.",
+    "sourceUrl": "https://christkindlmaerkte.com/deutschland/nordrhein-westfalen/soest/weihnachtsmarkt-soest/",
+    "sourceLabel": "Terminübersicht mit Veranstalterangabe",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "xanten",
+    "name": "Xantener Weihnachtsmarkt",
+    "city": "Xanten",
+    "location": "Marktplatz am St.-Viktor-Dom",
+    "stationQuery": "Xanten Bahnhof",
+    "from": "2026-11-20",
+    "to": "2026-12-20",
+    "travel": 150,
+    "distanceKm": 60,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      30,
+      50,
+      70
+    ],
+    "tags": [
+      "tagestrip",
+      "historisch",
+      "cozy",
+      "kunsthandwerk"
+    ],
+    "positive": "Domkulisse, kompakte Altstadt und über 40 Chalets.",
+    "negative": "Längere Regionalverkehrsfahrt.",
+    "tip": "Mit Dom oder Archäologischem Park als Tagestrip planen.",
+    "sourceUrl": "https://www.xanten.de/tourismus-freizeit/veranstaltungen/weihnachtsmarkt-2026",
+    "sourceLabel": "Stadt Xanten",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "neuss",
+    "name": "Neusser Weihnachtsmarkt",
+    "city": "Neuss",
+    "location": "Freithof am Quirinusmünster",
+    "stationQuery": "Neuss Hauptbahnhof",
+    "from": "2026-11-18",
+    "to": "2026-12-23",
+    "travel": 70,
+    "distanceKm": 36,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 4,
+    "special": 3,
+    "budget": [
+      25,
+      40,
+      55
+    ],
+    "tags": [
+      "altstadt",
+      "familie",
+      "cozy"
+    ],
+    "positive": "Münsterkulisse und kompakte, gemütliche Marktfläche.",
+    "negative": "Kleiner als die Märkte im benachbarten Düsseldorf.",
+    "tip": "Für einen entspannten Abendtrip statt Großmarkt.",
+    "sourceUrl": "https://www.neuss-marketing.de/events/neusser-weihnachtsmarkt-2/",
+    "sourceLabel": "Neuss Marketing",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "ratingen",
+    "name": "Ratinger Weihnachtsmarkt",
+    "city": "Ratingen",
+    "location": "Marktplatz Ratingen",
+    "stationQuery": "Ratingen Mitte",
+    "from": "2026-11-21",
+    "to": "2026-12-22",
+    "travel": 75,
+    "distanceKm": 25,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 4,
+    "special": 3,
+    "budget": [
+      20,
+      40,
+      55
+    ],
+    "tags": [
+      "altstadt",
+      "familie",
+      "cozy"
+    ],
+    "positive": "Kompakter Altstadtmarkt mit Familienangeboten.",
+    "negative": "Weniger spektakulär als große Themenmärkte.",
+    "tip": "Gut für einen ruhigen Abend ohne Großstadttrubel.",
+    "sourceUrl": "https://www.weihnachtsmarkt-ratingen.de/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "koeln-dom",
+    "name": "Weihnachtsmarkt am Kölner Dom",
+    "city": "Köln",
+    "location": "Roncalliplatz am Kölner Dom",
+    "stationQuery": "Köln Hbf",
+    "from": "2026-11-16",
+    "to": "2026-12-23",
+    "closed": [
+      "2026-11-22"
+    ],
+    "travel": 65,
+    "distanceKm": 40,
+    "entry": "Kostenlos",
+    "light": 5,
+    "food": 5,
+    "cozy": 3,
+    "special": 5,
+    "budget": [
+      30,
+      50,
+      70
+    ],
+    "tags": [
+      "licht",
+      "groß",
+      "kunsthandwerk",
+      "tagestrip"
+    ],
+    "positive": "Domkulisse, großer Sternenhimmel und direkte Bahnhofslage.",
+    "negative": "Sehr touristisch und oft dicht besucht.",
+    "tip": "Früh am Werktag kommen und mit einem kleineren Kölner Markt kombinieren.",
+    "sourceUrl": "https://www.koelnerweihnachtsmarkt.com/de/",
+    "sourceLabel": "Veranstalterseite",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "koeln-heinzels",
+    "name": "Heinzels Wintermärchen",
+    "city": "Köln",
+    "location": "Alter Markt und Heumarkt Köln",
+    "stationQuery": "Köln Heumarkt",
+    "from": "2026-11-23",
+    "to": "2027-01-10",
+    "closed": [
+      "2026-12-24",
+      "2026-12-25"
+    ],
+    "travel": 75,
+    "distanceKm": 41,
+    "entry": "Kostenlos, Eisbahn kostenpflichtig",
+    "light": 5,
+    "food": 5,
+    "cozy": 4,
+    "special": 5,
+    "budget": [
+      30,
+      55,
+      80
+    ],
+    "tags": [
+      "eisbahn",
+      "historisch",
+      "essen",
+      "lange-saison"
+    ],
+    "positive": "Große Eisbahn, Altstadtkulisse und lange Öffnung bis Januar.",
+    "negative": "An Wochenenden und abends sehr voll.",
+    "tip": "Nach Weihnachten ist es meist entspannter.",
+    "sourceUrl": "https://www.colognecathedral.de/heinzels-wintermaerchen.html",
+    "sourceLabel": "Veröffentlichte Terminübersicht",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "koeln-hafen",
+    "name": "Hafen-Weihnachtsmarkt Köln",
+    "city": "Köln",
+    "location": "Schokoladenmuseum am Rhein",
+    "stationQuery": "Köln Schokoladenmuseum",
+    "from": "2026-11-13",
+    "to": "2027-01-03",
+    "closed": [
+      "2026-12-24",
+      "2026-12-25"
+    ],
+    "travel": 80,
+    "distanceKm": 42,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 5,
+    "cozy": 4,
+    "special": 5,
+    "budget": [
+      30,
+      55,
+      75
+    ],
+    "tags": [
+      "wasser",
+      "essen",
+      "tagestrip",
+      "lange-saison"
+    ],
+    "positive": "Maritimes Thema, Rheinlage und Neujahrsmarkt.",
+    "negative": "Vom Hauptbahnhof noch ein längerer Fußweg oder Stadtbahn nötig.",
+    "tip": "Mit Rheinauhafen und Schokoladenmuseum verbinden.",
+    "sourceUrl": "https://www.koeln.de/weihnachten/weihnachtsmaerkte-koeln/hafen-weihnachtsmarkt/",
+    "sourceLabel": "Köln.de",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "gelsenkirchen",
+    "name": "Weihnachtsmarkt Gelsenkirchen City",
+    "city": "Gelsenkirchen",
+    "location": "Heinrich-König-Platz und Neumarkt",
+    "stationQuery": "Gelsenkirchen Hbf",
+    "from": "2026-11-20",
+    "to": "2026-12-23",
+    "travel": 80,
+    "distanceKm": 32,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
+    "special": 3,
+    "budget": [
+      20,
+      40,
+      55
+    ],
+    "tags": [
+      "familie",
+      "innenstadt",
+      "essen"
+    ],
+    "positive": "Zentrale Lage und unkomplizierter Ruhrgebiets-Trip.",
+    "negative": "Weniger besondere Kulisse als historische Märkte.",
+    "tip": "Mit Musiktheater oder Nordsternpark kombinieren.",
+    "sourceUrl": "https://christkindlmaerkte.com/deutschland/nordrhein-westfalen/gelsenkirchen/weihnachtsmarkt-city-gelsenkirchen/",
+    "sourceLabel": "Terminübersicht mit Veranstalterangabe",
+    "verifiedAt": "2026-10-28",
+    "new": true
+  },
+  {
+    "id": "hagen",
+    "name": "Hagener Weihnachtsmarkt",
+    "city": "Hagen",
+    "location": "Friedrich-Ebert-Platz und Innenstadt Hagen",
+    "stationQuery": "Hagen Hbf",
+    "from": "2026-11-19",
+    "to": "2026-12-30",
+    "travel": 35,
+    "distanceKm": 23,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      20,
+      40,
+      55
+    ],
+    "tags": [
+      "nah",
+      "familie",
+      "lange-saison"
+    ],
+    "positive": "Kurze Bahnfahrt und lange Saison bis nach Weihnachten.",
+    "negative": "Klassischer Innenstadtmarkt statt ruhiger Altstadtkulisse.",
+    "tip": "Gut für einen spontanen halben Tag.",
+    "sourceUrl": "https://christkindlmaerkte.com/deutschland/nordrhein-westfalen/hagen/weihnachtsmarkt-hagen/",
+    "sourceLabel": "Terminübersicht mit Veranstalterangabe",
+    "verifiedAt": "2026-10-28",
+    "new": true,
+    "closed": [
+      "2026-11-22",
+      "2026-12-24",
+      "2026-12-25",
+      "2026-12-26",
+      "2026-12-27"
+    ]
+  }
+]

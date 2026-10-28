@@ -1,0 +1,19 @@
+{
+  "id": "./",
+  "name": "Way to Winter Magic",
+  "short_name": "WtWM",
+  "description": "Offline Weihnachtsmarkt- und Städtetrip-Planer mit 39 Zielen ab Wuppertal",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f1e3",
+  "theme_color": "#0b3026",
+  "orientation": "any",
+  "categories": ["travel", "lifestyle", "planning"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

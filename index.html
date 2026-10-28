@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b3026">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Way to Winter Magic – installierbare Offline-PWA für Weihnachtsmarkt-Trips ab Wuppertal">
+  <meta name="application-name" content="Way to Winter Magic">
+  <meta name="apple-mobile-web-app-title" content="WtWM">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta property="og:title" content="Way to Winter Magic">
+  <meta property="og:description" content="39 Weihnachtsmärkte ab Wuppertal gemeinsam planen, vergleichen und offline mitnehmen.">
+  <meta property="og:type" content="website">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>Way to Winter Magic</title>
+</head>
+<body>
+  <header class="hero">
+    <div class="brand-lockup">
+      <img class="brand-icon" src="icons/icon-192.png" alt="" width="96" height="96">
+      <div>
+        <p class="eyebrow">Dein Weihnachtsmarkt-Tripplaner · V2.0.0</p>
+        <h1>Way to Winter Magic</h1>
+        <p>39 geprüfte Ziele ab Wuppertal – gemeinsam planen, vergleichen und offline mitnehmen.</p>
+      </div>
+    </div>
+    <button id="installBtn" hidden>WtWM installieren</button>
+  </header>
+
+  <nav class="tabs" aria-label="Hauptnavigation">
+    <button data-view="home" class="active"><span>⌂</span>Start</button>
+    <button data-view="markets"><span>★</span>Märkte</button>
+    <button data-view="timeline"><span>▦</span>Timeline</button>
+    <button data-view="trip"><span>✦</span>Trip</button>
+    <button data-view="settings"><span>⚙</span>Mehr</button>
+  </nav>
+
+  <main>
+    <section id="home" class="view active">
+      <div class="grid stats">
+        <article><span>Märkte</span><strong id="marketCount">0</strong></article>
+        <article><span>Favoriten</span><strong id="favCount">0</strong></article>
+        <article><span>Gemeinsame Tage</span><strong id="commonCount">0</strong></article>
+      </div>
+      <article class="panel intro-panel">
+        <div><p class="eyebrow dark">Saison 2026/27</p><h2>Dein Weg zum Winterzauber</h2><p>Filtere 39 Ziele nach Stadt, Luftlinie, ungefährer ÖPNV-Fahrzeit, Datum und Stimmung.</p></div>
+        <button data-jump="markets">Märkte entdecken</button>
+      </article>
+      <article class="panel"><h2>Passende nächste Termine</h2><div id="nextDates" class="cards compact"></div></article>
+      <article class="panel"><h2>Top-Empfehlungen</h2><div id="topMarkets" class="cards"></div></article>
+    </section>
+
+    <section id="markets" class="view">
+      <article class="panel filters" aria-labelledby="filterHeading">
+        <div class="section-head"><div><p class="eyebrow dark">Finden statt scrollen</p><h2 id="filterHeading">Marktfilter</h2></div><button id="resetFilters" class="ghost">Zurücksetzen</button></div>
+        <div class="filter-grid">
+          <label class="wide">Suche<input id="marketSearch" type="search" placeholder="Markt, Ort oder Stichwort"></label>
+          <label>Stadt<select id="cityFilter"><option value="all">Alle Städte</option></select></label>
+          <label>Geöffnet am<input id="dateFilter" type="date" min="2026-10-30" max="2027-01-10"></label>
+          <label>Max. ÖPNV-Fahrzeit<select id="travelFilter"><option value="999">Beliebig</option><option value="45">bis 45 Min.</option><option value="60">bis 1 Std.</option><option value="90">bis 1,5 Std.</option><option value="120">bis 2 Std.</option><option value="150">bis 2,5 Std.</option><option value="180">bis 3 Std.</option></select></label>
+          <label>Max. Distanz<select id="distanceFilter"><option value="999">Beliebig</option><option value="15">bis 15 km</option><option value="25">bis 25 km</option><option value="40">bis 40 km</option><option value="60">bis 60 km</option><option value="100">bis 100 km</option></select></label>
+          <label>Wunschfilter<select id="featureFilter"><option value="all">Alle</option><option value="free">Kostenlos</option><option value="cozy">Besonders gemütlich</option><option value="light">Top-Beleuchtung</option><option value="food">Starkes Essen</option><option value="small">Klein & ruhig</option><option value="historic">Historische Kulisse</option><option value="craft">Kunsthandwerk</option><option value="family">Familienfreundlich</option><option value="long">Lange Saison</option><option value="new">Neu in V2</option><option value="favorites">Nur Favoriten</option></select></label>
+          <label>Sortierung<select id="sortFilter"><option value="score">Empfehlung</option><option value="travel">Fahrzeit</option><option value="distance">Distanz</option><option value="city">Stadt A–Z</option><option value="start">Startdatum</option></select></label>
+        </div>
+        <p id="filterSummary" class="status" aria-live="polite"></p>
+      </article>
+      <div id="marketList" class="cards"></div>
+    </section>
+
+    <section id="timeline" class="view">
+      <article class="panel">
+        <div class="section-head"><div><p class="eyebrow dark">Gemeinsam frei?</p><h2>Verfügbarkeiten</h2></div></div>
+        <p class="muted">Für jede Person Ja, Vielleicht oder Nein wählen. Geöffnete Märkte werden automatisch gezählt.</p>
+        <div class="timeline-toolbar">
+          <label>Von<input type="date" id="timelineFrom"></label>
+          <label>Bis<input type="date" id="timelineTo"></label>
+          <label class="check"><input type="checkbox" id="onlyCommon"> Nur gemeinsame Tage</label>
+        </div>
+        <div class="table-wrap"><table><thead id="timelineHead"></thead><tbody id="timelineBody"></tbody></table></div>
+      </article>
+    </section>
+
+    <section id="trip" class="view">
+      <article class="panel">
+        <p class="eyebrow dark">Fest einplanen</p><h2>Trip und .ics-Datei</h2>
+        <div class="form-grid">
+          <label>Datum<input type="date" id="tripDate" min="2026-10-30" max="2027-01-10"></label>
+          <label>Weihnachtsmarkt<select id="tripMarket"></select></label>
+          <label>Startzeit<input type="time" id="tripStart" value="14:00"></label>
+          <label>Endzeit<input type="time" id="tripEnd" value="20:00"></label>
+          <label>Aktivität / Städtetrip<input id="tripActivity" placeholder="z. B. Altstadt oder Museum"></label>
+          <label>Budget pro Person<input type="number" id="tripBudget" min="0" step="1" value="45"></label>
+          <label class="wide">Notizen<textarea id="tripNotes" rows="3"></textarea></label>
+        </div>
+        <div class="actions"><button id="saveTrip">Trip lokal speichern</button><button id="exportIcs" class="secondary">.ics erstellen / teilen</button></div>
+        <p id="tripMessage" class="status" aria-live="polite"></p>
+      </article>
+      <article class="panel"><h2>Gespeicherte Trips</h2><div id="savedTrips" class="cards compact"></div></article>
+    </section>
+
+    <section id="settings" class="view">
+      <article class="panel"><h2>Personen</h2><p class="muted">Jede Person erhält intern eine eigene ID. Gleiche Namen überschreiben sich nicht.</p><div id="peopleList"></div><button id="addPerson">Person hinzufügen</button></article>
+      <article class="panel">
+        <h2>Zielhaltestelle</h2>
+        <p class="muted">Online-Suche über die DB-basierte Schnittstelle von transport.rest. Alle übrigen Bereiche von WtWM bleiben offline nutzbar.</p>
+        <div class="search-row"><input id="stopQuery" placeholder="Haltestelle oder Adresse" autocomplete="off"><button id="searchStop">Suchen</button></div>
+        <div id="stopResults" role="listbox"></div>
+        <p>Gespeichert: <strong id="savedStop">keine</strong></p>
+      </article>
+      <article class="panel">
+        <h2>Daten & Hinweise</h2>
+        <p class="muted">Fahrzeiten sind gerundete Planwerte ab Wuppertal Hbf, Distanzen ungefähre Luftlinien. Verbindung und Marktseite bitte kurz vor Abfahrt prüfen. Marktquellen stehen in den Details.</p>
+        <div class="actions"><button id="exportData">Sicherung exportieren</button><label class="file-btn">Sicherung importieren<input type="file" id="importData" accept="application/json"></label><button id="resetData" class="danger">Lokale Daten löschen</button></div>
+      </article>
+    </section>
+  </main>
+
+  <dialog id="marketDialog"><button class="close" aria-label="Schließen">×</button><div id="marketDetail"></div></dialog>
+  <footer>Way to Winter Magic · Offline-PWA · lokale Speicherung · Datenstand 28.10.2026 · V2.0.0</footer>
+  <script src="app.js" defer></script>
+</body>
+</html>
