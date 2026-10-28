@@ -1,4 +1,4 @@
-const VERSION = '2.5.0';
+const VERSION = '2.6.0';
 const API = 'https://api.transitous.org/api';
 const STORAGE_PREFIX = 'wtwm:v2:';
 const APP_KEYS = ['people', 'availability', 'favorites', 'trips', 'tripDraft', 'stop', 'marketFilters', 'plannerMarketFilters', 'marketView', 'connectionPrefs', 'savedConnections'];
@@ -223,9 +223,12 @@ function bindCards() {
   $$('[data-connection]').forEach(button => button.onclick = () => prepareConnection(button.dataset.connection));
 }
 
-function showDetail(id) {
+function showDetail(id, dateIso = '') {
   const market = markets.find(item => item.id === id);
   if (!market) return;
+  const detailDate = parseDate(dateIso);
+  const hoursLabel = detailDate ? `Öffnungszeiten am ${formatDate(dateIso)}` : 'Öffnungszeiten';
+  const hours = marketOpeningHours(market, dateIso);
   const source = market.sourceUrl?.startsWith('https://')
     ? `<a class="source" href="${esc(market.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(market.sourceLabel || 'Marktquelle öffnen')} ↗</a>`
     : `<span>${esc(market.sourceLabel || 'Quelle im Bestand')}</span>`;
@@ -237,7 +240,10 @@ function showDetail(id) {
       <div class="detail-box"><strong>ÖPNV ab Wuppertal Hbf</strong>ca. ${market.travel} Minuten</div>
       <div class="detail-box"><strong>Luftlinie</strong>ca. ${market.distanceKm} km</div>
       <div class="detail-box"><strong>Termine 2026/27</strong>${esc(formatMarketDates(market))}</div>
-      <div class="detail-box"><strong>Gesamtwertung</strong>${score(market).toFixed(1)} / 5</div>
+      <div class="detail-box"><strong>Deine Bewertung</strong>${score(market).toFixed(1)} / 5</div>
+      <div class="detail-box"><strong>${esc(hoursLabel)}</strong>${esc(hours)}</div>
+      <div class="detail-box"><strong>Eintritt</strong>${esc(market.entry)}</div>
+      <div class="detail-box"><strong>Ticket für den Weihnachtsmarkt</strong>${esc(ticketRequirement(market))}</div>
     </div>
     <p>Licht ${stars(market.light)} · Essen ${stars(market.food)} · Cozy ${stars(market.cozy)}</p>
     <h3>Passt gut, weil …</h3><p>${esc(market.positive)}</p>
@@ -956,13 +962,14 @@ function filteredPlannerMarkets(date, filters = state.plannerFilters) {
 
 function plannerMarketCard(market) {
   const selected = state.tripDraft.marketId === market.id;
-  const hours = marketOpeningHours(market, state.tripDraft.date);
   return `<article class="card planner-market ${selected ? 'selected' : ''}">
     ${selected ? '<span class="badge gold selected-badge">✓ Verbindlich ausgewählt</span>' : ''}
     <h3>${esc(market.name)}</h3>
-    <p>${esc(market.city)} · ${esc(market.location)}</p>
-    <div class="market-facts"><span class="badge">🕒 ${esc(hours)}</span><span class="badge">🚆 ca. ${market.travel} Min.</span><span class="badge gold">${esc(market.entry)}</span><span class="badge">🎟 ${esc(ticketRequirement(market))}</span></div>
-    <p class="planner-ratings">Cozy ${stars(market.cozy)} · Licht ${stars(market.light)} · Essen ${stars(market.food)}</p>
+    <div class="planner-key-facts" role="list" aria-label="Kompakte Marktinformationen">
+      <div role="listitem"><small>Deine Bewertung</small><strong>⭐ ${score(market).toFixed(1)} / 5</strong></div>
+      <div role="listitem"><small>Fahrzeit</small><strong>🚆 ca. ${market.travel} Min.</strong></div>
+      <div class="ticket-fact" role="listitem"><small>Ticket für den Weihnachtsmarkt</small><strong>🎟 ${esc(ticketRequirement(market))}</strong></div>
+    </div>
     <div class="card-actions"><button class="${selected ? 'ghost market-deselect' : ''}" data-planner-market="${esc(market.id)}" aria-pressed="${selected}">${selected ? 'Auswahl aufheben' : 'Verbindlich auswählen'}</button><button class="ghost" data-detail="${esc(market.id)}">Details</button></div>
   </article>`;
 }
@@ -1003,7 +1010,7 @@ function renderPlannerMarkets() {
   target.innerHTML = available.length ? available.map(plannerMarketCard).join('') : '<div class="empty"><strong>Keine Treffer.</strong><br>Filter zurücksetzen oder einen anderen Begriff wählen.</div>';
   $$('[data-planner-market]').forEach(button => button.onclick = () => togglePlannerMarket(button.dataset.plannerMarket));
   $('[data-clear-planner-market]')?.addEventListener('click', event => togglePlannerMarket(event.currentTarget.dataset.clearPlannerMarket));
-  $$('#plannerMarkets [data-detail]').forEach(button => button.onclick = () => showDetail(button.dataset.detail));
+  $$('#plannerMarkets [data-detail]').forEach(button => button.onclick = () => showDetail(button.dataset.detail, state.tripDraft.date));
 }
 
 function syncPlannerConfigFromInputs() {

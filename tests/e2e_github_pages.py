@@ -145,7 +145,7 @@ async def main():
             await page.route("https://api.transitous.org/**", api)
             await page.goto(base, wait_until="networkidle")
             assert await page.locator("text=Way to Winter Magic").count() >= 1
-            assert await page.locator("text=V2.5.0").count() >= 1
+            assert await page.locator("text=V2.6.0").count() >= 1
             assert await page.locator("#marketCount").inner_text() == "39"
             overflow = await page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
             assert overflow <= 1, f"Mobiles horizontales Überlaufen: {overflow}px"
@@ -170,14 +170,25 @@ async def main():
             assert "Weihnachtsmärkte" in await page.locator("#plannerDateHint").inner_text()
             await page.click("#plannerNext")
 
-            # 3: Nur geöffnete Märkte, kompakte Filter und abwählbare Auswahl.
+            # 3: Nur geöffnete Märkte, exakt drei Kerndaten, vollständige Details und abwählbare Auswahl.
             assert await page.locator("#plannerMarkets .planner-market").count() > 0
             await page.locator(".planner-filter summary").click()
             await page.fill("#plannerMarketSearch", "Steeler")
             assert await page.locator("#plannerMarkets .planner-market").count() == 1
             assert "1 von" in await page.locator("#plannerFilterSummary").inner_text()
-            compact_card = await page.locator("#plannerMarkets .planner-market").inner_text()
-            assert "Tagestrip-Tipp" not in compact_card and "Details:" not in compact_card
+            compact_locator = page.locator("#plannerMarkets .planner-market")
+            compact_lines = [line.strip().casefold() for line in (await compact_locator.inner_text()).splitlines() if line.strip()]
+            assert compact_lines == [
+                "steeler weihnachtsmarkt", "deine bewertung", "⭐ 3.8 / 5", "fahrzeit", "🚆 ca. 55 min.",
+                "ticket für den weihnachtsmarkt", "🎟 keine ticketpflicht", "verbindlich auswählen", "details"
+            ], f"Kompaktkarte enthält unerwartete Angaben: {compact_lines}"
+            compact_box = await compact_locator.bounding_box()
+            assert compact_box and compact_box["height"] <= 245, f"Kompaktkarte ist zu hoch: {compact_box}"
+            await page.locator('#plannerMarkets [data-detail="steele"]').click()
+            detail_text = await page.locator("#marketDetail").inner_text()
+            for expected in ["Kaiser-Otto-Platz", "Öffnungszeiten am 05.12.2026", "Noch nicht veröffentlicht", "Eintritt", "Kostenlos", "Ticket für den Weihnachtsmarkt", "Keine Ticketpflicht", "Licht", "Trip-Tipp"]:
+                assert expected in detail_text, f"Detaildialog fehlt: {expected}"
+            await page.locator("#marketDialog .close").click()
             await page.click('[data-planner-market="steele"]')
             assert await page.locator('[data-planner-market="steele"]').inner_text() == "Auswahl aufheben"
             assert "Steeler Weihnachtsmarkt" in await page.locator("#plannerSelectedMarket").inner_text()
@@ -187,7 +198,7 @@ async def main():
             assert "Marktauswahl aufgehoben" in await page.locator("#plannerMessage").inner_text()
             await page.click('[data-planner-market="steele"]')
             selected_text = await page.locator("#plannerMarkets .planner-market.selected").inner_text()
-            assert "Ticket" in selected_text and "Tagestrip-Tipp" not in selected_text
+            assert "ticket" in selected_text.casefold() and "tagestrip-tipp" not in selected_text.casefold()
             await page.click("#resetPlannerFilters")
             assert await page.locator("#plannerMarkets .planner-market").count() > 1
             await page.click("#plannerNext")
@@ -269,13 +280,21 @@ async def main():
             await page.reload(wait_until="networkidle")
             overflow = await page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
             assert overflow <= 1, f"Desktop-Überlaufen: {overflow}px"
+
+            # Installierte PWA muss anschließend ohne Netz aus dem Service-Worker-Cache starten.
+            assert await page.evaluate("async () => { await navigator.serviceWorker.ready; return true; }")
+            await context.set_offline(True)
+            await page.reload(wait_until="domcontentloaded")
+            assert await page.locator("text=V2.6.0").count() >= 1
+            assert await page.locator("#marketCount").inner_text() == "39"
+            await context.set_offline(False)
             assert not console_errors, "Browserfehler: " + " | ".join(console_errors)
             await browser.close()
     finally:
         server.shutdown()
         server.server_close()
 
-    print("V2.5.0 E2E bestanden: kompletter 6-Schritt-Planer mobil, Filter, Abwahl, Transitous, Bearbeitung, ICS, Persistenz und GitHub-Pages-Unterpfad.")
+    print("V2.6.0 E2E bestanden: kompletter 6-Schritt-Planer mobil, Filter, Abwahl, Transitous, Bearbeitung, ICS, Persistenz, Offline-Start und GitHub-Pages-Unterpfad.")
 
 
 if __name__ == "__main__":

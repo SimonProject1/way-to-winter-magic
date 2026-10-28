@@ -1,0 +1,13 @@
+Way to Winter Magic V2.6.0 – selbst behobene Bugs
+Stand: 28.10.2026
+
+1. Detailverlust nach dem Kürzen der Planer-Karten verhindert
+   Öffnungszeiten, Eintritt und Ticketpflicht fehlten bisher im Detaildialog. Diese Angaben sind jetzt dort vollständig vorhanden; beim Öffnen aus der Planung wird außerdem das gewählte Datum genannt.
+
+2. Uneindeutige Bewertung in der Marktauswahl behoben
+   Die drei Einzelwertungen belegten viel Platz und ergaben keinen schnellen Gesamtvergleich. Die Planer-Karte zeigt jetzt den bereits vorhandenen, korrekt berechneten Gesamtwert als „Deine Bewertung“.
+
+3. Zu große Marktkarten im Planungsschritt behoben
+   Ort, Öffnungszeiten, Eintritt und Einzelwertungen wurden aus der Karte entfernt. Erhalten bleiben nur Bewertung, Fahrzeit und Ticketpflicht sowie die notwendigen Auswahl- und Details-Schaltflächen.
+
+Alle 39 Marktdatensätze und alle vorhandenen Funktionen wurden beibehalten. Automatisierte Smoke-, Daten-, Mobil-, Desktop-, Offline-, Speicher-, Planungs-, Verbindungs- und Exporttests wurden ausgeführt.

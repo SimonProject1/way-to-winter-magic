@@ -1,4 +1,4 @@
-const CACHE = 'way-to-winter-magic-v2.5.0';
+const CACHE = 'way-to-winter-magic-v2.6.0';
 const ASSETS = ['./', './index.html', './styles.css', './app.js', './manifest.webmanifest', './data/markets.json', './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', event => {

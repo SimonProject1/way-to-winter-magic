@@ -10,7 +10,7 @@ API = "https://api.transitous.org/api"
 HEADERS = {
     "Accept": "application/json",
     "Origin": "https://example.github.io",
-    "User-Agent": "Way-to-Winter-Magic/2.5.0 (GitHub-Pages-PWA; repository contact)",
+    "User-Agent": "Way-to-Winter-Magic/2.6.0 (GitHub-Pages-PWA; repository contact)",
 }
 
 

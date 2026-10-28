@@ -103,3 +103,15 @@ summary{cursor:pointer;color:var(--pine);font-weight:800}
 .planner-nav{padding-top:13px;margin-top:13px}.info-box{margin-top:10px;padding:11px}.availability-list{gap:8px;margin-top:10px}.availability-row{padding:9px 11px}
 @media(max-width:920px){.planner-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.planner-filter-grid .wide{grid-column:1/-1}}
 @media(max-width:700px){.planner-shell{padding:14px}.planner-filter-grid{grid-template-columns:1fr}.planner-filter-grid .wide{grid-column:auto}.planner-selection{align-items:flex-start;flex-direction:column}.planner-selection button{width:100%}.planner-markets{grid-template-columns:1fr}.planner-market .card-actions{display:grid;grid-template-columns:1fr 1fr}.planner-market .card-actions button{width:auto}.planner-nav{margin-left:-14px;margin-right:-14px;margin-bottom:-14px}}
+
+/* V2.6: auf die drei entscheidenden Angaben reduzierte Planer-Marktkarten */
+.planner-markets{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.planner-market{display:flex;flex-direction:column}
+.planner-key-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:7px 0 2px}
+.planner-key-facts>div{min-width:0;padding:8px 9px;border-radius:11px;background:var(--soft)}
+.planner-key-facts .ticket-fact{grid-column:1/-1}
+.planner-key-facts small,.planner-key-facts strong{display:block}
+.planner-key-facts small{margin-bottom:2px;color:var(--muted);font-size:.68rem;font-weight:850;text-transform:uppercase;letter-spacing:.035em}
+.planner-key-facts strong{color:var(--pine);font-size:.83rem;line-height:1.3;overflow-wrap:anywhere}
+.planner-market .card-actions{margin-top:auto;padding-top:8px}
+@media(max-width:700px){.planner-markets{grid-template-columns:1fr}.planner-key-facts{grid-template-columns:repeat(2,minmax(0,1fr))}}

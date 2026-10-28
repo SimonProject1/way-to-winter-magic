@@ -41,7 +41,7 @@ const html = fs.readFileSync(new URL('index.html', root), 'utf8');
 for (const id of ['marketSearch', 'cityFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'dateFilter', 'timelineBody', 'peopleList', 'stopResults', 'cardView', 'listView', 'connectionFrom', 'connectionTo', 'connectionMarket', 'connectionDate', 'connectionTime', 'connectionMode', 'searchConnections', 'connectionResults', 'savedConnections', 'clearSavedConnections', 'plannerPersonCount', 'plannerDate', 'plannerAvailability', 'plannerMarkets', 'plannerMarketSearch', 'plannerCityFilter', 'plannerTravelFilter', 'plannerFeatureFilter', 'plannerSortFilter', 'resetPlannerFilters', 'plannerSelectedMarket', 'plannerFilterSummary', 'plannerArrival', 'plannerReturnEnabled', 'plannerBudgetLevel', 'plannerOutbound', 'plannerReturn', 'plannerSummary', 'savePlannedTrip']) {
   assert.ok(html.includes(`id="${id}"`), `UI-Element fehlt: ${id}`);
 }
-assert.ok(html.includes('V2.5.0'), 'Versionshinweis fehlt');
+assert.ok(html.includes('V2.6.0'), 'Versionshinweis fehlt');
 assert.ok(html.includes('Transitous'), 'Transitous-Hinweis fehlt');
 assert.ok(html.includes('Way to Winter Magic'), 'App-Name fehlt');
 
@@ -62,11 +62,15 @@ assert.ok(sw.includes("event.request.mode === 'navigate'"), 'Offline-Navigation-
 
 const appSource = fs.readFileSync(new URL('app.js', root), 'utf8');
 assert.ok(appSource.includes("const STORAGE_PREFIX = 'wtwm:v2:'"), 'Eigener Speicherbereich fehlt');
-assert.ok(appSource.includes("const VERSION = '2.5.0'"), 'JS-Version ist nicht aktuell');
+assert.ok(appSource.includes("const VERSION = '2.6.0'"), 'JS-Version ist nicht aktuell');
 assert.ok(appSource.includes("state.tripDraft.marketId = selected ? '' : marketId"), 'Marktauswahl kann nicht wieder aufgehoben werden');
 assert.ok(appSource.includes("S.set('plannerMarketFilters', state.plannerFilters)"), 'Planerfilter werden nicht lokal gespeichert');
 assert.ok(appSource.includes("const API = 'https://api.transitous.org/api'"), 'Transitous-Endpunkt fehlt');
 assert.ok(!appSource.includes('bahn.guru') && !appSource.includes('transport.rest'), 'Alte Bahn-API ist noch enthalten');
+const plannerCardSource = appSource.slice(appSource.indexOf('function plannerMarketCard'), appSource.indexOf('function togglePlannerMarket'));
+for (const label of ['Deine Bewertung', 'Fahrzeit', 'Ticket für den Weihnachtsmarkt', 'data-detail']) assert.ok(plannerCardSource.includes(label), `Kompaktkarte fehlt: ${label}`);
+for (const removed of ['market.city', 'market.location', 'marketOpeningHours', 'market.entry', 'planner-ratings']) assert.ok(!plannerCardSource.includes(removed), `Kompaktkarte enthält noch Detail: ${removed}`);
+for (const detail of ['Öffnungszeiten', 'Eintritt', 'Ticket für den Weihnachtsmarkt']) assert.ok(appSource.includes(detail), `Detaildialog fehlt: ${detail}`);
 
 const store = new Map();
 globalThis.localStorage = {
@@ -164,7 +168,8 @@ assert.ok(plannerOptions.some(option => option.roles.includes('Empfohlen')), 'Em
 assert.ok(plannerOptions.some(option => option.roles.includes('Sicherheitsverbindung')), 'Sicherheitsverbindung fehlt');
 assert.equal(logic.ticketRequirement({ entry: '10 Euro' }), 'Ticket erforderlich');
 assert.equal(logic.ticketRequirement({ entry: 'Kostenlos' }), 'Keine Ticketpflicht');
+assert.equal(logic.score(markets.find(market => market.id === 'steele')).toFixed(1), '3.8', 'Planerbewertung für Steele ist falsch');
 assert.equal(logic.marketOpeningHours({}, '2026-12-05'), 'Noch nicht veröffentlicht – Marktlink prüfen');
 assert.ok(ics.includes('Namen: Alex (Ja)') && ics.includes('Ticketstatus: Nicht nötig'), 'Erweiterte ICS-Angaben fehlen');
 
-console.log(`V2.5.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, ${markets.filter(market => market.new).length} neu, Planerfilter und DB-Verbindungssuche geprüft.`);
+console.log(`V2.6.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, ${markets.filter(market => market.new).length} neu, Planerfilter und DB-Verbindungssuche geprüft.`);
