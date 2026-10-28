@@ -1,0 +1,18 @@
+WAY TO WINTER MAGIC V2.2.0 – SELBST BEHOBENE BUGS
+Datenstand: 28.10.2026
+
+Bei Umsetzung und Prüfung der DB-Verbindungssuche behoben:
+1. Die Ausgangsversion speicherte allgemeine Schlüssel und konnte Daten anderer Apps auf derselben Domain berühren. V2.2.0 nutzt den eigenen Bereich „wtwm:v2:“ und übernimmt vorhandene Daten automatisch.
+2. Unmögliche Kalenderdaten konnten vom Browser verschoben statt abgelehnt werden. Die Datumsprüfung vergleicht nun Jahr, Monat und Tag exakt.
+3. Doppelte Personen-IDs aus Sicherungen konnten Verfügbarkeiten zusammenführen. IDs werden beim Import eindeutig repariert.
+4. Lange Kalenderzeilen wurden nach Zeichen statt UTF-8-Bytes gefaltet. Umlaute und Emojis halten nun ebenfalls die 75-Byte-Grenze ein.
+5. Wiederholte Verbindungssuchen konnten ältere Antworten nach einer neueren Suche anzeigen. Laufende Anfragen werden jetzt abgebrochen und nur die aktuelle Antwort gerendert.
+6. Der alte V6-Endpunkt ist nicht mehr in Betrieb. V2.2.0 nutzt deshalb den weiterhin dokumentierten V5-Endpunkt mit CORS und ohne API-Schlüssel.
+7. Die DB-API wird nicht im Service Worker zwischengespeichert; Offline-Navigation und Live-Fahrplandaten geraten dadurch nicht durcheinander.
+
+Abschlusstest:
+- 39 von 39 Märkten und 30 neue Ziele bestätigt
+- Smoke-/Logiktests bestanden
+- DB-Suchformular, Marktübernahme und URL-Aufbau geprüft
+- Karten-/Listenansicht, Filter, Favoriten, Timeline, Trips und Export geprüft
+- Manifest, Service Worker und GitHub-Pages-Pfade geprüft

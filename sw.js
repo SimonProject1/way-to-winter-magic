@@ -1,16 +1,5 @@
-const CACHE = 'wtwm-v2.1.0-r1';
-const ASSETS = [
-  './',
-  './index.html',
-  './styles.css',
-  './app.js',
-  './manifest.webmanifest',
-  './data/markets.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-maskable-512.png',
-  './icons/apple-touch-icon.png'
-];
+const CACHE = 'way-to-winter-magic-v2.2.0';
+const ASSETS = ['./', './index.html', './styles.css', './app.js', './manifest.webmanifest', './data/markets.json', './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
@@ -23,7 +12,7 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
-  if (url.hostname.endsWith('transport.rest')) return;
+  if (url.hostname.endsWith('transport.rest') || url.hostname.endsWith('api.bahn.guru')) return;
   if (url.origin !== self.location.origin) return;
 
   if (event.request.mode === 'navigate') {

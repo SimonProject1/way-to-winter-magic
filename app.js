@@ -1,8 +1,8 @@
-const VERSION = '2.1.0';
-const APP_NAME = 'Way to Winter Magic';
-const API = 'https://v6.db.transport.rest';
-const APP_KEYS = ['people', 'availability', 'favorites', 'trips', 'stop', 'marketFilters'];
-const STORAGE_PREFIX = 'wtwm:';
+const VERSION = '2.2.0';
+const API = 'https://v5.db.api.bahn.guru';
+const API_FALLBACK = 'https://v5.db.transport.rest';
+const STORAGE_PREFIX = 'wtwm:v2:';
+const APP_KEYS = ['people', 'availability', 'favorites', 'trips', 'stop', 'marketFilters', 'marketView', 'connectionPrefs'];
 const DEFAULT_PEOPLE = [
   { id: 'p1', name: 'Person 1' },
   { id: 'p2', name: 'Person 2' }
@@ -11,8 +11,12 @@ const DEFAULT_PEOPLE = [
 const S = {
   get(key, fallback) {
     try {
-      const current = localStorage.getItem(`${STORAGE_PREFIX}${key}`);
-      const raw = current === null ? localStorage.getItem(key) : current;
+      const scopedKey = STORAGE_PREFIX + key;
+      let raw = localStorage.getItem(scopedKey);
+      if (raw === null) {
+        raw = localStorage.getItem(key);
+        if (raw !== null) localStorage.setItem(scopedKey, raw);
+      }
       const value = JSON.parse(raw);
       return value ?? fallback;
     } catch {
@@ -20,7 +24,13 @@ const S = {
     }
   },
   set(key, value) {
-    try { localStorage.setItem(`${STORAGE_PREFIX}${key}`, JSON.stringify(value)); } catch { /* private mode/quota */ }
+    try { localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value)); } catch { /* private mode/quota */ }
+  },
+  remove(key) {
+    try {
+      localStorage.removeItem(STORAGE_PREFIX + key);
+      localStorage.removeItem(key);
+    } catch { /* private mode */ }
   }
 };
 
@@ -31,22 +41,17 @@ const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
 }[char]));
 const pad = value => String(value).padStart(2, '0');
 const uid = () => `p-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-const shorten = (value, max = 96) => {
-  const text = String(value ?? '').trim();
-  if (text.length <= max) return text;
-  return `${text.slice(0, Math.max(1, max - 1)).trimEnd()}…`;
-};
 
 let markets = [];
 let installPrompt = null;
 let stopController = null;
+let connectionController = null;
 
 function parseDate(iso) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(iso))) return null;
   const [year, month, day] = iso.split('-').map(Number);
   const date = new Date(year, month - 1, day, 12, 0, 0);
-  if (Number.isNaN(date.getTime())) return null;
-  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+  if (Number.isNaN(date.getTime()) || date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
   return date;
 }
 
@@ -70,14 +75,14 @@ function marketBounds() {
 
 function migratePeople(raw) {
   if (!Array.isArray(raw) || !raw.length) return structuredClone(DEFAULT_PEOPLE);
-  const usedIds = new Set();
+  const used = new Set();
   return raw.map((person, index) => {
     const name = typeof person === 'string' ? person.trim() : String(person?.name || '').trim();
-    const baseId = typeof person === 'string' ? `p${index + 1}` : String(person?.id || `p${index + 1}`);
-    let id = baseId;
+    const requested = typeof person === 'string' ? `p${index + 1}` : String(person?.id || `p${index + 1}`);
+    let id = requested;
     let suffix = 2;
-    while (usedIds.has(id)) id = `${baseId}-${suffix++}`;
-    usedIds.add(id);
+    while (used.has(id)) id = `${requested}-${suffix++}`;
+    used.add(id);
     return { id, name: name || `Person ${index + 1}` };
   });
 }
@@ -107,7 +112,9 @@ const state = {
   favorites: Array.isArray(S.get('favorites', [])) ? S.get('favorites', []).map(String) : [],
   trips: Array.isArray(S.get('trips', [])) ? S.get('trips', []) : [],
   stop: S.get('stop', null),
-  filters: S.get('marketFilters', {}) || {}
+  filters: S.get('marketFilters', {}) || {},
+  viewMode: S.get('marketView', 'cards') === 'list' ? 'list' : 'cards',
+  connectionPrefs: S.get('connectionPrefs', {}) || {}
 };
 
 function saveAll() {
@@ -117,11 +124,9 @@ function saveAll() {
   S.set('trips', state.trips);
   S.set('stop', state.stop);
   S.set('marketFilters', state.filters);
+  S.set('marketView', state.viewMode);
+  S.set('connectionPrefs', state.connectionPrefs);
 }
-
-// Übernimmt beim ersten Start vorhandene Daten der bisherigen V2.0.0
-// automatisch in den eigenen WtWM-Speicherbereich.
-saveAll();
 
 function openOn(market, date) {
   const iso = isoLocal(date);
@@ -165,20 +170,17 @@ function score(market) {
 
 function marketCard(market) {
   const favorite = state.favorites.includes(market.id);
-  return `<article class="card market-card">
+  return `<article class="card">
     <button class="fav ${favorite ? 'on' : ''}" data-fav="${esc(market.id)}" aria-label="${favorite ? 'Favorit entfernen' : 'Als Favorit speichern'}">♥</button>
-    <div class="market-card-main">
-      <div class="card-head">${market.new ? '<span class="badge new">Neu</span>' : ''}<span class="badge gold">${esc(market.entry)}</span></div>
-      <h3>${esc(market.name)}</h3>
-      <p class="market-place" title="${esc(`${market.city} · ${market.location}`)}">${esc(market.city)} · ${esc(market.location)}</p>
-    </div>
-    <div class="market-card-info">
-      <div class="market-meta"><span class="badge">🚆 ${market.travel} Min.</span><span class="badge">↗ ${market.distanceKm} km</span></div>
-      <p class="market-date">${esc(formatMarketDates(market))}</p>
-      <div class="market-rating"><span class="rating-score" aria-label="Gesamtwertung ${score(market).toFixed(1)} von 5">★ ${score(market).toFixed(1)}</span><span class="rating-parts" title="Gemütlichkeit ${market.cozy}, Licht ${market.light}, Essen ${market.food}" aria-label="Gemütlichkeit ${market.cozy}, Licht ${market.light}, Essen ${market.food}">G ${market.cozy} · L ${market.light} · E ${market.food}</span></div>
-      <p class="market-review" title="${esc(market.positive)}">${esc(shorten(market.positive))}</p>
-    </div>
-    <div class="card-actions"><button data-detail="${esc(market.id)}">Details</button><button class="ghost" data-plan="${esc(market.id)}">Planen</button></div>
+    ${market.new ? '<span class="badge new">Neu</span>' : ''}
+    <h3>${esc(market.name)}</h3>
+    <p>${esc(market.city)} · ${esc(market.location)}</p>
+    <span class="badge">🚆 ca. ${market.travel} Min.</span>
+    <span class="badge">↗ ca. ${market.distanceKm} km</span>
+    <span class="badge gold">${esc(market.entry)}</span>
+    <p class="muted">${esc(formatMarketDates(market))}</p>
+    <p>Cozy ${stars(market.cozy)}<br>Licht ${stars(market.light)} · Essen ${stars(market.food)}</p>
+    <div class="card-actions"><button data-detail="${esc(market.id)}">Details</button><button class="ghost" data-plan="${esc(market.id)}">Planen</button><button class="ghost" data-connection="${esc(market.id)}">Bahn</button></div>
   </article>`;
 }
 
@@ -200,6 +202,7 @@ function bindCards() {
     $('#tripBudget').value = market.budget[1];
     $('#tripMessage').textContent = `${market.name} wurde übernommen.`;
   });
+  $$('[data-connection]').forEach(button => button.onclick = () => prepareConnection(button.dataset.connection));
 }
 
 function showDetail(id) {
@@ -209,22 +212,22 @@ function showDetail(id) {
     ? `<a class="source" href="${esc(market.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(market.sourceLabel || 'Marktquelle öffnen')} ↗</a>`
     : `<span>${esc(market.sourceLabel || 'Quelle im Bestand')}</span>`;
   $('#marketDetail').innerHTML = `
-    <div class="detail-header"><p class="eyebrow dark">${market.new ? 'Neu in V2' : 'Geprüfter Bestand'}</p>
+    <p class="eyebrow dark">${market.new ? 'Neu in V2' : 'Geprüfter Bestand'}</p>
     <h2>${esc(market.name)}</h2>
-    <p><strong>${esc(market.location)}</strong></p></div>
+    <p><strong>${esc(market.location)}</strong></p>
     <div class="detail-grid">
       <div class="detail-box"><strong>ÖPNV ab Wuppertal Hbf</strong>ca. ${market.travel} Minuten</div>
       <div class="detail-box"><strong>Luftlinie</strong>ca. ${market.distanceKm} km</div>
       <div class="detail-box"><strong>Termine 2026/27</strong>${esc(formatMarketDates(market))}</div>
       <div class="detail-box"><strong>Gesamtwertung</strong>${score(market).toFixed(1)} / 5</div>
     </div>
-    <div class="detail-rating" aria-label="Bewertungen"><span class="badge">Gemütlichkeit ${market.cozy}</span><span class="badge">Licht ${market.light}</span><span class="badge">Essen ${market.food}</span></div>
-    <div class="detail-sections">
-      <details class="detail-section" open><summary>Kurzbewertung</summary><p><strong>Passt gut:</strong> ${esc(market.positive)}<br><strong>Beachten:</strong> ${esc(market.negative)}</p></details>
-      <details class="detail-section"><summary>Trip-Tipp & Budget</summary><p>${esc(market.tip)}<br><strong>Budget pro Person:</strong> sparsam ${market.budget[0]} € · normal ${market.budget[1]} € · mit Aktivität ${market.budget[2]} €</p></details>
-      <details class="detail-section"><summary>Quelle & Prüfstand</summary><p><strong>Quelle:</strong> ${source}<br><span class="muted">geprüft am ${formatDate(market.verifiedAt)}</span></p></details>
-    </div>
-    <div class="actions"><button class="small-btn" data-detail-plan="${esc(market.id)}">Trip planen</button><button class="secondary small-btn" data-detail-stop="${esc(market.id)}">Zielhaltestelle suchen</button></div>`;
+    <p>Licht ${stars(market.light)} · Essen ${stars(market.food)} · Cozy ${stars(market.cozy)}</p>
+    <h3>Passt gut, weil …</h3><p>${esc(market.positive)}</p>
+    <h3>Beachten</h3><p>${esc(market.negative)}</p>
+    <h3>Trip-Tipp</h3><p>${esc(market.tip)}</p>
+    <p><strong>Budget pro Person:</strong> sparsam ${market.budget[0]} € · normal ${market.budget[1]} € · mit Aktivität ${market.budget[2]} €</p>
+    <p><strong>Quelle:</strong> ${source}<br><span class="muted">geprüft am ${formatDate(market.verifiedAt)}</span></p>
+    <div class="actions"><button data-detail-plan="${esc(market.id)}">Trip planen</button><button class="secondary" data-detail-connection="${esc(market.id)}">DB-Verbindung</button><button class="ghost" data-detail-stop="${esc(market.id)}">Zielhaltestelle speichern</button></div>`;
   $('[data-detail-plan]').onclick = () => {
     $('#marketDialog').close();
     setView('trip');
@@ -238,6 +241,10 @@ function showDetail(id) {
     setView('settings');
     $('#stopQuery').value = market.stationQuery || market.location;
     $('#stopQuery').focus();
+  };
+  $('[data-detail-connection]').onclick = () => {
+    $('#marketDialog').close();
+    prepareConnection(market.id);
   };
   $('#marketDialog').showModal();
 }
@@ -258,7 +265,6 @@ function hydrateFilters() {
   if (!$('#distanceFilter').value) $('#distanceFilter').value = '999';
   if (!$('#featureFilter').value) $('#featureFilter').value = 'all';
   if (!$('#sortFilter').value) $('#sortFilter').value = 'score';
-  setMarketLayout(state.filters.view === 'list' ? 'list' : 'card', false);
 }
 
 function readFilters() {
@@ -269,8 +275,7 @@ function readFilters() {
     travel: $('#travelFilter').value,
     distance: $('#distanceFilter').value,
     feature: $('#featureFilter').value,
-    sort: $('#sortFilter').value,
-    view: state.filters.view === 'list' ? 'list' : 'card'
+    sort: $('#sortFilter').value
   };
   saveAll();
   return state.filters;
@@ -316,28 +321,29 @@ function filteredMarkets() {
   });
 }
 
+function applyMarketView() {
+  const list = $('#marketList');
+  if (!list) return;
+  list.classList.toggle('list-view', state.viewMode === 'list');
+  list.classList.toggle('cards', state.viewMode !== 'list');
+  $('#cardView')?.classList.toggle('active', state.viewMode === 'cards');
+  $('#listView')?.classList.toggle('active', state.viewMode === 'list');
+  $('#cardView')?.setAttribute('aria-pressed', String(state.viewMode === 'cards'));
+  $('#listView')?.setAttribute('aria-pressed', String(state.viewMode === 'list'));
+}
+
+function setMarketView(mode) {
+  state.viewMode = mode === 'list' ? 'list' : 'cards';
+  saveAll();
+  applyMarketView();
+}
+
 function renderMarkets() {
   const list = filteredMarkets();
   $('#filterSummary').textContent = `${list.length} von ${markets.length} Märkten passen zu deiner Auswahl.`;
   $('#marketList').innerHTML = list.length ? list.map(marketCard).join('') : '<div class="empty"><strong>Keine Treffer.</strong><br>Entferne einen Filter oder wähle einen anderen Tag.</div>';
-  setMarketLayout(state.filters.view === 'list' ? 'list' : 'card', false);
+  applyMarketView();
   bindCards();
-}
-
-function setMarketLayout(mode, persist = true) {
-  const layout = mode === 'list' ? 'list' : 'card';
-  const list = $('#marketList');
-  if (list) {
-    list.classList.toggle('list-view', layout === 'list');
-    list.classList.toggle('card-view', layout === 'card');
-    list.classList.toggle('cards', layout === 'card');
-  }
-  $('#cardViewBtn')?.setAttribute('aria-pressed', String(layout === 'card'));
-  $('#listViewBtn')?.setAttribute('aria-pressed', String(layout === 'list'));
-  if (persist) {
-    state.filters.view = layout;
-    saveAll();
-  }
 }
 
 function availabilityKey(date, personId) {
@@ -415,9 +421,7 @@ async function searchStops() {
   $('#stopResults').innerHTML = '<p>Suche …</p>';
   try {
     const url = `${API}/locations?query=${encodeURIComponent(query)}&results=8&stops=true&addresses=true&poi=false&language=de`;
-    const response = await fetch(url, { signal: stopController.signal });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
+    const data = await fetchJson(url, stopController.signal);
     if (!Array.isArray(data) || !data.length) {
       $('#stopResults').innerHTML = '<p class="muted">Keine passende Haltestelle oder Adresse gefunden.</p>';
       return;
@@ -443,6 +447,172 @@ async function searchStops() {
   }
 }
 
+function buildJourneyUrl(fromId, toId, date, time, mode = 'departure') {
+  if (!fromId || !toId || !parseDate(date) || !/^\d{2}:\d{2}$/.test(String(time))) return '';
+  const params = new URLSearchParams({
+    from: String(fromId),
+    to: String(toId),
+    results: '6',
+    stopovers: 'false',
+    remarks: 'true',
+    language: 'de'
+  });
+  params.set(mode === 'arrival' ? 'arrival' : 'departure', `${date}T${time}:00+01:00`);
+  return `${API}/journeys?${params.toString()}`;
+}
+
+async function fetchJson(url, signal) {
+  const candidates = [url, url.startsWith(API) ? url.replace(API, API_FALLBACK) : null].filter(Boolean);
+  let lastError = null;
+  for (const candidate of candidates) {
+    try {
+      const response = await fetch(candidate, { signal, headers: { accept: 'application/json' } });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      if (error.name === 'AbortError') throw error;
+      lastError = error;
+    }
+  }
+  throw lastError || new Error('Fahrplanschnittstelle nicht erreichbar');
+}
+
+async function resolveStop(query, signal) {
+  const url = `${API}/locations?query=${encodeURIComponent(query)}&results=8&stops=true&addresses=false&poi=false&language=de`;
+  const data = await fetchJson(url, signal);
+  const stop = Array.isArray(data) ? data.find(item => item?.type === 'stop' && item.id) || data.find(item => item?.id) : null;
+  if (!stop) throw new Error(`Keine Haltestelle für „${query}“ gefunden`);
+  return { id: String(stop.id), name: String(stop.name || query) };
+}
+
+function connectionTime(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '–' : date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' });
+}
+
+function durationMinutes(from, to) {
+  const start = new Date(from).getTime();
+  const end = new Date(to).getTime();
+  return Number.isFinite(start) && Number.isFinite(end) && end >= start ? Math.round((end - start) / 60000) : 0;
+}
+
+function durationLabel(minutes) {
+  if (!minutes) return 'Dauer unbekannt';
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  return hours ? `${hours} Std. ${rest ? `${rest} Min.` : ''}`.trim() : `${rest} Min.`;
+}
+
+function delayMinutes(actual, planned) {
+  if (!actual || !planned) return 0;
+  return Math.max(0, Math.round((new Date(actual).getTime() - new Date(planned).getTime()) / 60000) || 0);
+}
+
+function legName(leg) {
+  if (leg.walking) return 'Fußweg';
+  return leg.line?.name || leg.line?.fahrtNr || leg.product?.name || 'ÖPNV';
+}
+
+function journeyCard(journey, index) {
+  const legs = Array.isArray(journey?.legs) ? journey.legs.filter(leg => leg?.origin && leg?.destination) : [];
+  if (!legs.length) return '';
+  const first = legs[0];
+  const last = legs.at(-1);
+  const departure = first.departure || first.plannedDeparture;
+  const arrival = last.arrival || last.plannedArrival;
+  const depDelay = delayMinutes(first.departure, first.plannedDeparture);
+  const arrDelay = delayMinutes(last.arrival, last.plannedArrival);
+  const publicLegs = legs.filter(leg => !leg.walking);
+  const transfers = Math.max(0, publicLegs.length - 1);
+  const products = [...new Set(publicLegs.map(legName))].join(' · ') || 'Fußweg';
+  const cancelled = journey.cancelled || legs.some(leg => leg.cancelled);
+  const delay = Math.max(depDelay, arrDelay);
+  const details = legs.map(leg => {
+    const dep = leg.departure || leg.plannedDeparture;
+    const arr = leg.arrival || leg.plannedArrival;
+    const platform = leg.departurePlatform || leg.plannedDeparturePlatform;
+    return `<li><span class="leg-time">${connectionTime(dep)}–${connectionTime(arr)}</span><strong>${esc(legName(leg))}</strong><span>${esc(leg.origin?.name || 'Start')} → ${esc(leg.destination?.name || 'Ziel')}${platform ? ` · Gleis ${esc(platform)}` : ''}</span></li>`;
+  }).join('');
+  return `<article class="panel connection-card ${cancelled ? 'cancelled' : ''}">
+    <div class="connection-head"><div><span class="connection-time">${connectionTime(departure)} → ${connectionTime(arrival)}</span><p>${esc(first.origin?.name || 'Start')} → ${esc(last.destination?.name || 'Ziel')}</p></div><strong>${durationLabel(durationMinutes(departure, arrival))}</strong></div>
+    <div class="connection-meta"><span class="badge">${transfers ? `${transfers}× umsteigen` : 'Direkt'}</span><span class="badge">${esc(products)}</span>${delay ? `<span class="badge delay">+${delay} Min.</span>` : '<span class="badge on-time">Planmäßig</span>'}${cancelled ? '<span class="badge cancelled-label">Fällt aus</span>' : ''}</div>
+    <details><summary>Etappen anzeigen</summary><ol class="legs">${details}</ol></details>
+    <a class="db-link" href="https://int.bahn.de/" target="_blank" rel="noopener noreferrer">Verbindung bei DB prüfen ↗</a>
+  </article>`;
+}
+
+function renderConnectionMarkets(preferredId = '') {
+  const select = $('#connectionMarket');
+  if (!select) return;
+  const current = preferredId || select.value;
+  select.innerHTML = '<option value="">Markt auswählen …</option>' + [...markets]
+    .sort((a, b) => a.city.localeCompare(b.city, 'de') || a.name.localeCompare(b.name, 'de'))
+    .map(market => `<option value="${esc(market.id)}">${esc(market.city)} · ${esc(market.name)}</option>`).join('');
+  if (markets.some(market => market.id === current)) select.value = current;
+}
+
+function prepareConnection(marketId, date = '', time = '') {
+  const market = markets.find(item => item.id === marketId);
+  if (!market) return;
+  setView('connections');
+  renderConnectionMarkets(market.id);
+  $('#connectionTo').value = market.stationQuery || market.location;
+  $('#connectionDate').value = parseDate(date) ? date : firstDate(market);
+  $('#connectionTime').value = /^\d{2}:\d{2}$/.test(time) ? time : '14:00';
+  $('#connectionResults').innerHTML = '';
+  $('#connectionMessage').textContent = `${market.name} wurde als Ziel übernommen.`;
+}
+
+async function searchConnections() {
+  const fromQuery = $('#connectionFrom').value.trim();
+  const toQuery = $('#connectionTo').value.trim();
+  const date = $('#connectionDate').value;
+  const time = $('#connectionTime').value;
+  const mode = $('#connectionMode').value === 'arrival' ? 'arrival' : 'departure';
+  const message = $('#connectionMessage');
+  const results = $('#connectionResults');
+  if (fromQuery.length < 3 || toQuery.length < 3) {
+    message.textContent = 'Bitte Start und Ziel mit mindestens 3 Zeichen eingeben.';
+    results.innerHTML = '';
+    return;
+  }
+  if (!parseDate(date) || !/^\d{2}:\d{2}$/.test(time)) {
+    message.textContent = 'Bitte ein gültiges Datum und eine Uhrzeit wählen.';
+    results.innerHTML = '';
+    return;
+  }
+  if (!navigator.onLine) {
+    message.textContent = '';
+    results.innerHTML = '<p class="error-banner">Offline: Die DB-Verbindungssuche benötigt eine Internetverbindung.</p>';
+    return;
+  }
+
+  state.connectionPrefs = { from: fromQuery, to: toQuery, date, time, mode, marketId: $('#connectionMarket').value };
+  saveAll();
+  connectionController?.abort();
+  connectionController = new AbortController();
+  const controller = connectionController;
+  const timeout = setTimeout(() => controller.abort(), 20000);
+  message.textContent = 'Haltestellen werden gesucht …';
+  results.innerHTML = '<article class="panel loading-card">Verbindungen werden geladen …</article>';
+  try {
+    const [from, to] = await Promise.all([resolveStop(fromQuery, controller.signal), resolveStop(toQuery, controller.signal)]);
+    message.textContent = `${from.name} → ${to.name}`;
+    const url = buildJourneyUrl(from.id, to.id, date, time, mode);
+    const data = await fetchJson(url, controller.signal);
+    const journeys = Array.isArray(data) ? data : data?.journeys;
+    const cards = Array.isArray(journeys) ? journeys.map(journeyCard).filter(Boolean) : [];
+    results.innerHTML = cards.length ? cards.join('') : '<article class="panel empty"><strong>Keine Verbindung gefunden.</strong><br>Ändere Uhrzeit, Datum oder Haltestelle.</article>';
+  } catch (error) {
+    if (controller !== connectionController) return;
+    message.textContent = '';
+    const text = error.name === 'AbortError' ? 'Die Suche hat zu lange gedauert. Bitte erneut versuchen.' : esc(error.message || 'Die Verbindungssuche ist derzeit nicht erreichbar.');
+    results.innerHTML = `<p class="error-banner">${text}</p>`;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 function renderSettings() {
   renderPeople();
   $('#savedStop').textContent = state.stop?.name || 'keine';
@@ -461,12 +631,28 @@ function renderTripMarketOptions(preferredId) {
 function renderTrip() {
   renderTripMarketOptions();
   const sortedTrips = state.trips.map((trip, index) => ({ trip, index })).sort((a, b) => String(a.trip.date).localeCompare(String(b.trip.date)));
-  $('#savedTrips').innerHTML = sortedTrips.length ? sortedTrips.map(({ trip, index }) => `<article class="card"><strong>${esc(formatDate(trip.date))} · ${esc(trip.market || 'Weihnachtsmarkt')}</strong><p>${esc(trip.activity || 'Ohne Zusatzaktivität')} · ${Number(trip.budget) || 0} € p. P.</p><p class="muted">${esc(trip.stop || 'Keine Zielhaltestelle')}</p><button data-deltrip="${index}" class="danger small-btn">Löschen</button></article>`).join('') : '<p>Noch keine Trips gespeichert.</p>';
+  $('#savedTrips').innerHTML = sortedTrips.length ? sortedTrips.map(({ trip, index }) => `<article class="card"><strong>${esc(formatDate(trip.date))} · ${esc(trip.market || 'Weihnachtsmarkt')}</strong><p>${esc(trip.activity || 'Ohne Zusatzaktivität')} · ${Number(trip.budget) || 0} € p. P.</p><p class="muted">${esc(trip.stop || 'Keine Zielhaltestelle')}</p><div class="card-actions"><button data-tripconnection="${index}">Bahn suchen</button><button data-deltrip="${index}" class="danger">Löschen</button></div></article>`).join('') : '<p>Noch keine Trips gespeichert.</p>';
   $$('[data-deltrip]').forEach(button => button.onclick = () => {
     state.trips.splice(Number(button.dataset.deltrip), 1);
     saveAll();
     renderTrip();
   });
+  $$('[data-tripconnection]').forEach(button => button.onclick = () => {
+    const trip = state.trips[Number(button.dataset.tripconnection)];
+    const market = markets.find(item => item.id === trip?.marketId) || markets.find(item => item.name === trip?.market);
+    if (market) prepareConnection(market.id, trip.date, trip.start);
+  });
+}
+
+function hydrateConnections() {
+  const prefs = state.connectionPrefs || {};
+  renderConnectionMarkets(prefs.marketId || '');
+  $('#connectionFrom').value = typeof prefs.from === 'string' && prefs.from.trim() ? prefs.from : 'Wuppertal Hbf';
+  $('#connectionTo').value = typeof prefs.to === 'string' ? prefs.to : '';
+  $('#connectionMode').value = prefs.mode === 'arrival' ? 'arrival' : 'departure';
+  const bounds = marketBounds();
+  $('#connectionDate').value = parseDate(prefs.date) ? prefs.date : bounds.from;
+  $('#connectionTime').value = /^\d{2}:\d{2}$/.test(prefs.time) ? prefs.time : '14:00';
 }
 
 function tripData() {
@@ -502,22 +688,19 @@ function icsEscape(value) {
 
 function foldIcs(text) {
   return text.split('\r\n').flatMap(line => {
-    const parts = [];
     const encoder = new TextEncoder();
-    let part = '';
-    let bytes = 0;
+    const parts = [];
+    let current = '';
     for (const char of line) {
-      const charBytes = encoder.encode(char).length;
-      if (part && bytes + charBytes > 75) {
-        parts.push(part);
-        part = ` ${char}`;
-        bytes = 1 + charBytes;
+      const limit = current.startsWith(' ') ? 75 : 75;
+      if (current && encoder.encode(current + char).length > limit) {
+        parts.push(current);
+        current = ` ${char}`;
       } else {
-        part += char;
-        bytes += charBytes;
+        current += char;
       }
     }
-    parts.push(part);
+    parts.push(current);
     return parts;
   }).join('\r\n');
 }
@@ -526,7 +709,7 @@ function makeIcs(trip) {
   const date = trip.date.replaceAll('-', '');
   const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const description = `Aktivität: ${trip.activity || 'keine'}\nBudget pro Person: ${trip.budget} €\nZielhaltestelle: ${trip.stop || 'nicht gewählt'}\n${trip.notes || ''}`;
-  return foldIcs(`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nCALSCALE:GREGORIAN\r\nPRODID:-//Way to Winter Magic V${VERSION}//DE\r\nBEGIN:VEVENT\r\nUID:${Date.now()}-${Math.random().toString(36).slice(2)}@wtwm\r\nDTSTAMP:${stamp}\r\nDTSTART;TZID=Europe/Berlin:${date}T${trip.start.replace(':', '')}00\r\nDTEND;TZID=Europe/Berlin:${date}T${trip.end.replace(':', '')}00\r\nSUMMARY:${icsEscape('Weihnachtsmarkt: ' + trip.market)}\r\nLOCATION:${icsEscape(trip.location)}\r\nDESCRIPTION:${icsEscape(description)}\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n`);
+  return foldIcs(`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nCALSCALE:GREGORIAN\r\nPRODID:-//Way to Winter Magic V${VERSION}//DE\r\nBEGIN:VEVENT\r\nUID:${Date.now()}-${Math.random().toString(36).slice(2)}@way-to-winter-magic\r\nDTSTAMP:${stamp}\r\nDTSTART;TZID=Europe/Berlin:${date}T${trip.start.replace(':', '')}00\r\nDTEND;TZID=Europe/Berlin:${date}T${trip.end.replace(':', '')}00\r\nSUMMARY:${icsEscape('Weihnachtsmarkt: ' + trip.market)}\r\nLOCATION:${icsEscape(trip.location)}\r\nDESCRIPTION:${icsEscape(description)}\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n`);
 }
 
 function download(url, name) {
@@ -595,7 +778,9 @@ function sanitizeImported(payload) {
     favorites: Array.isArray(source.favorites) ? [...new Set(source.favorites.map(String))].filter(id => markets.some(market => market.id === id)) : [],
     trips: Array.isArray(source.trips) ? source.trips.filter(trip => trip && parseDate(trip.date) && typeof trip.market === 'string').slice(0, 500) : [],
     stop: source.stop && typeof source.stop.name === 'string' ? source.stop : null,
-    filters: source.filters && typeof source.filters === 'object' ? source.filters : {}
+    filters: source.filters && typeof source.filters === 'object' ? source.filters : {},
+    viewMode: source.viewMode === 'list' ? 'list' : 'cards',
+    connectionPrefs: source.connectionPrefs && typeof source.connectionPrefs === 'object' ? source.connectionPrefs : {}
   };
   return imported;
 }
@@ -603,17 +788,16 @@ function sanitizeImported(payload) {
 function bind() {
   $$('.tabs button').forEach(button => button.onclick = () => setView(button.dataset.view));
   $$('[data-jump]').forEach(button => button.onclick = () => setView(button.dataset.jump));
+  $('#cardView').onclick = () => setMarketView('cards');
+  $('#listView').onclick = () => setMarketView('list');
   ['marketSearch', 'cityFilter', 'dateFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'sortFilter'].forEach(id => {
     $(`#${id}`).addEventListener(id === 'marketSearch' ? 'input' : 'change', renderMarkets);
   });
   $('#resetFilters').onclick = () => {
-    const view = state.filters.view;
-    state.filters = { view };
+    state.filters = {};
     hydrateFilters();
     renderMarkets();
   };
-  $('#cardViewBtn').onclick = () => setMarketLayout('card');
-  $('#listViewBtn').onclick = () => setMarketLayout('list');
   $('#timelineFrom').onchange = renderTimeline;
   $('#timelineTo').onchange = renderTimeline;
   $('#onlyCommon').onchange = renderTimeline;
@@ -624,10 +808,42 @@ function bind() {
   };
   $('#searchStop').onclick = searchStops;
   $('#stopQuery').onkeydown = event => { if (event.key === 'Enter') searchStops(); };
+  $('#connectionMarket').onchange = () => {
+    const market = markets.find(item => item.id === $('#connectionMarket').value);
+    if (market) {
+      $('#connectionTo').value = market.stationQuery || market.location;
+      if (!$('#connectionDate').value) $('#connectionDate').value = firstDate(market);
+    }
+  };
+  $('#searchConnections').onclick = searchConnections;
+  ['connectionFrom', 'connectionTo'].forEach(id => $(`#${id}`).onkeydown = event => { if (event.key === 'Enter') searchConnections(); });
+  $('#useSavedStop').onclick = () => {
+    if (!state.stop?.name) {
+      $('#connectionMessage').textContent = 'Unter „Mehr“ ist noch keine Zielhaltestelle gespeichert.';
+      return;
+    }
+    $('#connectionTo').value = state.stop.name;
+    $('#connectionMarket').value = '';
+    $('#connectionMessage').textContent = `${state.stop.name} wurde übernommen.`;
+  };
+  $('#swapConnection').onclick = () => {
+    const from = $('#connectionFrom').value;
+    $('#connectionFrom').value = $('#connectionTo').value;
+    $('#connectionTo').value = from;
+    $('#connectionMarket').value = '';
+  };
   $('#tripDate').onchange = () => { renderTripMarketOptions(); $('#tripMessage').textContent = ''; };
   $('#tripMarket').onchange = () => {
     const market = markets.find(item => item.id === $('#tripMarket').value);
     if (market) $('#tripBudget').value = market.budget[1];
+  };
+  $('#tripConnection').onclick = () => {
+    const market = markets.find(item => item.id === $('#tripMarket').value);
+    if (!market) {
+      $('#tripMessage').textContent = 'Bitte zuerst einen Markt wählen.';
+      return;
+    }
+    prepareConnection(market.id, $('#tripDate').value, $('#tripStart').value);
   };
   $('#saveTrip').onclick = () => {
     const trip = tripData();
@@ -640,8 +856,8 @@ function bind() {
   };
   $('#exportIcs').onclick = shareIcs;
   $('#exportData').onclick = () => {
-    const backup = { app: APP_NAME, version: VERSION, exportedAt: new Date().toISOString(), state };
-    download(URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' })), 'wtwm-sicherung.json');
+    const backup = { app: 'Way to Winter Magic', version: VERSION, exportedAt: new Date().toISOString(), state };
+    download(URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' })), 'way-to-winter-magic-sicherung.json');
   };
   $('#importData').onchange = async event => {
     try {
@@ -661,10 +877,7 @@ function bind() {
   };
   $('#resetData').onclick = () => {
     if (!confirm('Alle lokalen Eingaben dieser App wirklich löschen?')) return;
-    APP_KEYS.forEach(key => {
-      localStorage.removeItem(`${STORAGE_PREFIX}${key}`);
-      localStorage.removeItem(key);
-    });
+    APP_KEYS.forEach(key => S.remove(key));
     location.reload();
   };
   $('#marketDialog .close').onclick = () => $('#marketDialog').close();
@@ -692,7 +905,7 @@ async function loadMarkets() {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { parseDate, isoLocal, dateRange, migratePeople, migrateAvailability, openOn, score, icsEscape, foldIcs, makeIcs, sanitizeImported };
+  module.exports = { parseDate, isoLocal, dateRange, migratePeople, migrateAvailability, openOn, score, icsEscape, foldIcs, makeIcs, sanitizeImported, buildJourneyUrl, durationMinutes, durationLabel, delayMinutes, journeyCard };
 }
 
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
@@ -703,6 +916,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       $('#timelineFrom').value = bounds.from;
       $('#timelineTo').value = bounds.to;
       hydrateFilters();
+      hydrateConnections();
       bind();
       renderAll();
     } catch (error) {

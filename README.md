@@ -1,33 +1,34 @@
-# Way to Winter Magic V2.1.0
+# Way to Winter Magic V2.2.0
 
-**WtWM** ist eine statische, installierbare GitHub-Pages-PWA für Weihnachtsmarkt-Trips ab Wuppertal.
+Installierbare GitHub-Pages-PWA für Weihnachtsmarkt-Trips ab Wuppertal.
 
-## Neu in V2.1.0
+## Neu in V2.2.0
 
-- kompakter Header, Navigation, Formulare, Timeline und Detaildialog
-- kompakte Marktkarten mit Kurzbewertung `G · L · E`, Gesamtwert und gekürztem Fazit
-- gleich hohe Marktkarten und kleinere Aktionsbuttons
-- umschaltbare, lokal gespeicherte Karten- und Listenansicht
-- aufklappbare Bereiche auf Start-, Timeline-, Trip-, Mehr- und Detailseiten
-- alle 39 Märkte und alle vorhandenen Funktionen unverändert enthalten
+- eigener Bereich **Bahn** für DB-Verbindungen
+- Start und Ziel frei eingeben oder einen der 39 Märkte übernehmen
+- Suche nach Abfahrts- oder Ankunftszeit
+- Anzeige von Fahrzeit, Umstiegen, Verkehrsmitteln, Verspätung und Etappen
+- Verbindung direkt aus Marktkarte, Marktdetails, Tripmaske oder gespeichertem Trip öffnen
+- zuletzt verwendete Suchdaten werden lokal gespeichert
+- V2.1-Karten-/Listenansicht und bestehende lokale Daten bleiben erhalten
 
-## Funktionen
+Die Verbindungssuche nutzt online die öffentlich erreichbare, DB-basierte Fahrplanschnittstelle `v5.db.api.bahn.guru`. Märkte, Favoriten, Timeline, Trips und gespeicherte Daten funktionieren weiterhin offline.
 
-- 39 Weihnachtsmärkte, davon 30 in V2 ergänzte Ziele
-- Filter nach Stadt, ÖPNV-Fahrzeit, Luftlinie, Öffnungstag und Wunschmerkmal
-- Sortierung, Favoriten und Marktquellen
-- Timeline mit mehreren Personen und gemeinsamen freien Tagen
-- Tripplanung mit Budget, Aktivität, Notizen und `.ics`-Export
-- Online-Haltestellensuche über `v6.db.transport.rest`
-- lokale Datensicherung, Import und Offline-PWA
-- mobile untere Navigation und responsives Desktop-Layout
+## Weitere Funktionen
+
+- 39 geprüfte Märkte, davon 30 in V2 ergänzte Ziele
+- Marktfilter, Sortierung, Favoriten und Karten-/Listenansicht
+- gemeinsame Terminplanung für beliebig viele Personen
+- Tripplanung mit Budget, Notizen, Zielhaltestelle und `.ics`-Export
+- lokale Sicherung und Wiederherstellung
+- installierbare Offline-PWA mit relativen GitHub-Pages-Pfaden
 
 ## GitHub Pages
 
-1. Den **Inhalt** dieses Ordners in die oberste Ebene eines GitHub-Repositorys hochladen.
-2. In GitHub **Settings → Pages** öffnen.
+1. Den **Inhalt** dieses Ordners in die oberste Ebene des Repositorys hochladen.
+2. **Settings → Pages** öffnen.
 3. **Deploy from a branch**, Branch **main**, Ordner **/(root)** wählen.
-4. Die veröffentlichte Seite einmal online öffnen. Danach stehen App und Marktdaten offline bereit.
+4. Die Seite einmal online öffnen, damit die Offline-Dateien gespeichert werden.
 
 ## Lokal starten
 
@@ -35,7 +36,7 @@
 python3 -m http.server 8080
 ```
 
-Danach `http://localhost:8080` öffnen. Ein Webserver ist für PWA und Offline-Cache nötig.
+Danach `http://localhost:8080` öffnen.
 
 ## Tests
 
@@ -43,24 +44,8 @@ Danach `http://localhost:8080` öffnen. Ein Webserver ist für PWA und Offline-C
 node tests/smoke.mjs
 ```
 
-Optionaler Browser-Kompletttest, wenn Python Playwright und Chromium installiert sind:
+Geprüft werden unter anderem Marktdaten, Datumslogik, lokale Speicherung, Listenansicht, DB-Suchoberfläche, Aufbau der Fahrplananfrage, `.ics`-Export, Manifest und Offline-Cache.
 
-```bash
-python3 tests/e2e.py
-```
+## Datenhinweis
 
-Geprüft werden unter anderem:
-
-- 39 eindeutige Märkte und genau 30 in V2 ergänzte Ziele
-- Marktdaten, Termine, Quellen, Budgets, Fahrzeiten und Distanzen
-- Karten-/Listenansicht, gleiche Kartenhöhen und responsive Darstellung
-- Filter, Sortierung, Favoriten, aufklappbare Details und Navigation
-- Timeline, Personen, Trip speichern/löschen, `.ics` und Datensicherung
-- Haltestellensuche, Import, lokale Speicherung und Offline-Neuladen
-- Manifest, App-Icons, Cache-Dateien und GitHub-Pages-Pfade
-
-## Daten
-
-Markttermine und Quellen wurden am 28.10.2026 geprüft. Fahrzeiten sind gerundete Planwerte ab Wuppertal Hbf; Distanzen sind ungefähre Luftlinien. Verbindung, Sonderfahrplan und Marktseite bitte kurz vor Abfahrt erneut prüfen.
-
-Vorhandene lokale Daten der V2.0.0 werden weiterhin übernommen. Sicherungsdateien der bisherigen Version bleiben importierbar.
+Markttermine und Quellen: Prüfstand 28.10.2026. Fahrzeiten sind gerundete Planwerte ab Wuppertal Hbf. Live-Verbindungen können sich ändern und sollten vor der Abfahrt zusätzlich bei DB geprüft werden.
