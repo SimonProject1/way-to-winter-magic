@@ -1,7 +1,7 @@
-const VERSION = '2.3.0';
+const VERSION = '2.4.0';
 const API = 'https://api.transitous.org/api';
 const STORAGE_PREFIX = 'wtwm:v2:';
-const APP_KEYS = ['people', 'availability', 'favorites', 'trips', 'stop', 'marketFilters', 'marketView', 'connectionPrefs', 'savedConnections'];
+const APP_KEYS = ['people', 'availability', 'favorites', 'trips', 'tripDraft', 'stop', 'marketFilters', 'marketView', 'connectionPrefs', 'savedConnections'];
 const REQUEST_TIMEOUT_MS = 12000;
 const MAX_SAVED_CONNECTIONS = 8;
 const DEFAULT_PEOPLE = [
@@ -41,12 +41,26 @@ const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 }[char]));
 const pad = value => String(value).padStart(2, '0');
-const uid = () => `p-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+const makeId = prefix => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+const uid = () => makeId('p');
 
 let markets = [];
 let installPrompt = null;
 let stopController = null;
 let connectionController = null;
+let plannerController = null;
+let plannerStep = 1;
+let editingTripId = '';
+
+const TRIP_STATUSES = ['Idee', 'In Planung', 'Geplant', 'Besucht', 'Abgesagt'];
+const BUDGET_INDEX = { saving: 0, normal: 1, activity: 2 };
+const DEFAULT_DRAFT = {
+  date: '', marketId: '', arrival: '15:00', returnEnabled: false, returnTime: '20:00',
+  budgetLevel: 'normal', activityType: 'Städtetrip', activity: '', notes: '',
+  ticketStatus: 'Noch nicht geprüft', meetingPoint: 'Wuppertal Hbf', status: 'Idee',
+  outboundOptions: [], returnOptions: [], selectedOutbound: '', selectedReturn: '',
+  resolvedStops: null, connectionsCheckedAt: ''
+};
 
 function parseDate(iso) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(iso))) return null;
@@ -111,7 +125,12 @@ const state = {
   people,
   availability: migrateAvailability(S.get('availability', {}), people, legacyPeople),
   favorites: Array.isArray(S.get('favorites', [])) ? S.get('favorites', []).map(String) : [],
-  trips: Array.isArray(S.get('trips', [])) ? S.get('trips', []) : [],
+  trips: Array.isArray(S.get('trips', [])) ? S.get('trips', []).map((trip, index) => ({
+    ...trip,
+    id: String(trip?.id || `legacy-trip-${index}-${Date.now().toString(36)}`),
+    status: TRIP_STATUSES.includes(trip?.status) ? trip.status : 'Idee'
+  })) : [],
+  tripDraft: { ...DEFAULT_DRAFT, ...(S.get('tripDraft', {}) || {}) },
   stop: S.get('stop', null),
   filters: S.get('marketFilters', {}) || {},
   viewMode: S.get('marketView', 'cards') === 'list' ? 'list' : 'cards',
@@ -124,6 +143,7 @@ function saveAll() {
   S.set('availability', state.availability);
   S.set('favorites', state.favorites);
   S.set('trips', state.trips);
+  S.set('tripDraft', state.tripDraft);
   S.set('stop', state.stop);
   S.set('marketFilters', state.filters);
   S.set('marketView', state.viewMode);
@@ -196,15 +216,7 @@ function bindCards() {
     renderMarkets();
   });
   $$('[data-detail]').forEach(button => button.onclick = () => showDetail(button.dataset.detail));
-  $$('[data-plan]').forEach(button => button.onclick = () => {
-    setView('trip');
-    const market = markets.find(item => item.id === button.dataset.plan);
-    if (!market) return;
-    $('#tripDate').value = firstDate(market);
-    renderTripMarketOptions(market.id);
-    $('#tripBudget').value = market.budget[1];
-    $('#tripMessage').textContent = `${market.name} wurde übernommen.`;
-  });
+  $$('[data-plan]').forEach(button => button.onclick = () => startPlannerForMarket(button.dataset.plan));
   $$('[data-connection]').forEach(button => button.onclick = () => prepareConnection(button.dataset.connection));
 }
 
@@ -233,11 +245,7 @@ function showDetail(id) {
     <div class="actions"><button data-detail-plan="${esc(market.id)}">Trip planen</button><button class="secondary" data-detail-connection="${esc(market.id)}">DB-Verbindung</button><button class="ghost" data-detail-stop="${esc(market.id)}">Zielhaltestelle speichern</button></div>`;
   $('[data-detail-plan]').onclick = () => {
     $('#marketDialog').close();
-    setView('trip');
-    $('#tripDate').value = firstDate(market);
-    renderTripMarketOptions(market.id);
-    $('#tripBudget').value = market.budget[1];
-    $('#tripMessage').textContent = `${market.name} wurde übernommen.`;
+    startPlannerForMarket(market.id);
   };
   $('[data-detail-stop]').onclick = () => {
     $('#marketDialog').close();
@@ -473,7 +481,7 @@ function buildJourneyUrl(fromId, toId, date, time, mode = 'departure') {
     toPlace: String(toId),
     time: `${date}T${time}:00+01:00`,
     arriveBy: String(mode === 'arrival'),
-    numItineraries: '6'
+    numItineraries: '8'
   });
   return `${API}/v6/plan?${params.toString()}`;
 }
@@ -766,32 +774,6 @@ function renderSettings() {
   $('#savedStop').textContent = state.stop?.name || 'keine';
 }
 
-function renderTripMarketOptions(preferredId) {
-  const date = parseDate($('#tripDate').value);
-  const current = preferredId || $('#tripMarket').value;
-  const available = date ? markets.filter(market => openOn(market, date)) : [...markets];
-  $('#tripMarket').innerHTML = available.length
-    ? available.sort((a, b) => a.city.localeCompare(b.city, 'de') || a.name.localeCompare(b.name, 'de')).map(market => `<option value="${esc(market.id)}">${esc(market.city)} · ${esc(market.name)}</option>`).join('')
-    : '<option value="">Kein Markt an diesem Tag geöffnet</option>';
-  if (available.some(market => market.id === current)) $('#tripMarket').value = current;
-}
-
-function renderTrip() {
-  renderTripMarketOptions();
-  const sortedTrips = state.trips.map((trip, index) => ({ trip, index })).sort((a, b) => String(a.trip.date).localeCompare(String(b.trip.date)));
-  $('#savedTrips').innerHTML = sortedTrips.length ? sortedTrips.map(({ trip, index }) => `<article class="card"><strong>${esc(formatDate(trip.date))} · ${esc(trip.market || 'Weihnachtsmarkt')}</strong><p>${esc(trip.activity || 'Ohne Zusatzaktivität')} · ${Number(trip.budget) || 0} € p. P.</p><p class="muted">${esc(trip.stop || 'Keine Zielhaltestelle')}</p><div class="card-actions"><button data-tripconnection="${index}">Bahn suchen</button><button data-deltrip="${index}" class="danger">Löschen</button></div></article>`).join('') : '<p>Noch keine Trips gespeichert.</p>';
-  $$('[data-deltrip]').forEach(button => button.onclick = () => {
-    state.trips.splice(Number(button.dataset.deltrip), 1);
-    saveAll();
-    renderTrip();
-  });
-  $$('[data-tripconnection]').forEach(button => button.onclick = () => {
-    const trip = state.trips[Number(button.dataset.tripconnection)];
-    const market = markets.find(item => item.id === trip?.marketId) || markets.find(item => item.name === trip?.market);
-    if (market) prepareConnection(market.id, trip.date, trip.start);
-  });
-}
-
 function hydrateConnections() {
   const prefs = state.connectionPrefs || {};
   renderConnectionMarkets(prefs.marketId || '');
@@ -803,31 +785,564 @@ function hydrateConnections() {
   $('#connectionTime').value = /^\d{2}:\d{2}$/.test(prefs.time) ? prefs.time : '14:00';
 }
 
-function tripData() {
-  const market = markets.find(item => item.id === $('#tripMarket').value);
+function marketOpeningHours(market, dateIso = '') {
+  const value = market?.openingHours;
+  if (typeof value === 'string' && value.trim()) return value.trim();
+  if (value && typeof value === 'object') {
+    const date = parseDate(dateIso);
+    const weekday = date ? String(date.getDay()) : '';
+    return String(value[dateIso] || value[weekday] || value.default || '').trim() || 'Noch nicht veröffentlicht – Marktlink prüfen';
+  }
+  return 'Noch nicht veröffentlicht – Marktlink prüfen';
+}
+
+function ticketRequirement(market) {
+  if (market?.ticketRequired === true) return 'Ticket erforderlich';
+  if (market?.ticketRequired === false) return 'Keine Ticketpflicht';
+  const entry = String(market?.entry || '').toLocaleLowerCase('de');
+  if (entry.includes('kein eintritt veröffentlicht') || entry.includes('preis offen')) return 'Vorab prüfen';
+  if (entry.includes('ticket') || ((!entry.includes('kostenlos')) && (/\d/.test(entry) || entry.includes('euro') || entry.includes('€')))) return 'Ticket erforderlich';
+  return 'Keine Ticketpflicht';
+}
+
+function marketLink(market) {
+  if (market?.sourceUrl?.startsWith('https://')) return market.sourceUrl;
+  const query = encodeURIComponent(`${market?.name || 'Weihnachtsmarkt'} ${market?.city || ''}`.trim());
+  return `https://www.google.com/search?q=${query}`;
+}
+
+function clearPlannerConnections() {
+  state.tripDraft.outboundOptions = [];
+  state.tripDraft.returnOptions = [];
+  state.tripDraft.selectedOutbound = '';
+  state.tripDraft.selectedReturn = '';
+  state.tripDraft.resolvedStops = null;
+  state.tripDraft.connectionsCheckedAt = '';
+}
+
+function ensurePlannerDate() {
+  if (!parseDate(state.tripDraft.date)) state.tripDraft.date = marketBounds().from;
+}
+
+function plannerParticipants() {
+  const date = parseDate(state.tripDraft.date);
+  if (!date) return [];
+  return state.people.map(person => ({
+    id: person.id,
+    name: person.name,
+    status: state.availability[availabilityKey(date, person.id)] || ''
+  }));
+}
+
+function budgetForDraft(draft = state.tripDraft) {
+  const market = markets.find(item => item.id === draft.marketId);
+  const index = BUDGET_INDEX[draft.budgetLevel] ?? 1;
+  return Number(market?.budget?.[index] || 0);
+}
+
+function selectedPlannerOption(direction, draft = state.tripDraft) {
+  const list = direction === 'return' ? draft.returnOptions : draft.outboundOptions;
+  const selected = direction === 'return' ? draft.selectedReturn : draft.selectedOutbound;
+  return Array.isArray(list) ? list.find(option => option.id === selected) || null : null;
+}
+
+function renderPlannerPeople() {
+  $('#plannerPersonCount').value = state.people.length;
+  $('#plannerPeople').innerHTML = state.people.map((person, index) => `<div class="person-row"><input data-planner-person="${esc(person.id)}" value="${esc(person.name)}" aria-label="Name Person ${index + 1}"><button data-planner-remove="${esc(person.id)}" class="danger" ${state.people.length === 1 ? 'disabled' : ''}>Entfernen</button></div>`).join('');
+  $$('[data-planner-person]').forEach(input => input.onchange = () => {
+    const person = state.people.find(item => item.id === input.dataset.plannerPerson);
+    if (!person) return;
+    person.name = input.value.trim() || `Person ${state.people.indexOf(person) + 1}`;
+    saveAll();
+    renderPeople();
+    renderPlannerAvailability();
+  });
+  $$('[data-planner-remove]').forEach(button => button.onclick = () => removePlannerPerson(button.dataset.plannerRemove));
+}
+
+function syncPlannerPersonCount() {
+  const requested = Math.min(20, Math.max(1, Number($('#plannerPersonCount').value) || 1));
+  while (state.people.length < requested) state.people.push({ id: uid(), name: `Person ${state.people.length + 1}` });
+  while (state.people.length > requested && state.people.length > 1) {
+    const removed = state.people.pop();
+    for (const key of Object.keys(state.availability)) if (key.endsWith(`|${removed.id}`)) delete state.availability[key];
+  }
+  saveAll();
+  renderPlannerPeople();
+  renderPeople();
+}
+
+function removePlannerPerson(id) {
+  if (state.people.length <= 1) return;
+  state.people = state.people.filter(person => person.id !== id);
+  for (const key of Object.keys(state.availability)) if (key.endsWith(`|${id}`)) delete state.availability[key];
+  saveAll();
+  renderPlannerPeople();
+  renderPlannerAvailability();
+  renderPeople();
+}
+
+function renderPlannerAvailability() {
+  ensurePlannerDate();
+  $('#plannerDate').value = state.tripDraft.date;
+  const date = parseDate(state.tripDraft.date);
+  if (!date) return;
+  $('#plannerAvailability').innerHTML = state.people.map(person => {
+    const key = availabilityKey(date, person.id);
+    const current = state.availability[key] || '';
+    return `<div class="availability-row"><strong>${esc(person.name)}</strong><div class="segmented" role="group" aria-label="Verfügbarkeit ${esc(person.name)}">${['Ja', 'Vielleicht', 'Nein'].map(value => `<button class="${current === value ? 'active' : ''}" data-planner-avail="${esc(key)}" data-value="${value}" aria-pressed="${current === value}">${value}</button>`).join('')}</div></div>`;
+  }).join('');
+  $$('[data-planner-avail]').forEach(button => button.onclick = () => {
+    state.availability[button.dataset.plannerAvail] = button.dataset.value;
+    saveAll();
+    renderPlannerAvailability();
+    renderTimeline();
+    renderHome();
+  });
+  const openCount = markets.filter(market => openOn(market, date)).length;
+  $('#plannerDateHint').textContent = `${openCount} Weihnachtsmärkte sind an diesem Datum geöffnet.`;
+}
+
+function plannerMarketCard(market) {
+  const selected = state.tripDraft.marketId === market.id;
+  const hours = marketOpeningHours(market, state.tripDraft.date);
+  return `<article class="card planner-market ${selected ? 'selected' : ''}">
+    ${selected ? '<span class="selected-ribbon">Verbindlich ausgewählt</span>' : ''}
+    <h3>${esc(market.name)}</h3>
+    <p>${esc(market.city)} · ${esc(market.location)}</p>
+    <div class="market-facts"><span class="badge">🕒 ${esc(hours)}</span><span class="badge">🚆 ca. ${market.travel} Min.</span><span class="badge gold">${esc(market.entry)}</span><span class="badge">🎟 ${esc(ticketRequirement(market))}</span></div>
+    <p>Licht ${stars(market.light)}<br>Essen ${stars(market.food)} · Cozy ${stars(market.cozy)}</p>
+    <p><strong>Details:</strong> ${esc(market.positive)} <span class="muted">${esc(market.negative)}</span></p>
+    <p><strong>Tagestrip-Tipp:</strong> ${esc(market.tip)}</p>
+    <div class="card-actions"><button data-planner-market="${esc(market.id)}">${selected ? 'Ausgewählt ✓' : 'Diesen Markt verbindlich auswählen'}</button><button class="ghost" data-detail="${esc(market.id)}">Details</button></div>
+  </article>`;
+}
+
+function renderPlannerMarkets() {
+  const date = parseDate(state.tripDraft.date);
+  const target = $('#plannerMarkets');
+  if (!date) {
+    target.innerHTML = '<div class="empty">Bitte zuerst ein gültiges Datum wählen.</div>';
+    return;
+  }
+  const available = markets.filter(market => openOn(market, date)).sort((a, b) => score(b) - score(a) || a.travel - b.travel);
+  if (!available.some(market => market.id === state.tripDraft.marketId)) {
+    state.tripDraft.marketId = '';
+    clearPlannerConnections();
+  }
+  target.innerHTML = available.length ? available.map(plannerMarketCard).join('') : '<div class="empty"><strong>Kein Markt geöffnet.</strong><br>Bitte einen anderen Tag wählen.</div>';
+  $$('[data-planner-market]').forEach(button => button.onclick = () => {
+    if (state.tripDraft.marketId !== button.dataset.plannerMarket) clearPlannerConnections();
+    state.tripDraft.marketId = button.dataset.plannerMarket;
+    saveAll();
+    renderPlannerMarkets();
+    renderPlannerBudget();
+    $('#plannerMessage').textContent = 'Markt verbindlich für diesen Tag ausgewählt.';
+  });
+  $$('[data-detail]').forEach(button => button.onclick = () => showDetail(button.dataset.detail));
+}
+
+function syncPlannerConfigFromInputs() {
+  const draft = state.tripDraft;
+  draft.arrival = $('#plannerArrival').value || '15:00';
+  draft.returnEnabled = $('#plannerReturnEnabled').checked;
+  draft.returnTime = $('#plannerReturnTime').value || '20:00';
+  draft.budgetLevel = ['saving', 'normal', 'activity'].includes($('#plannerBudgetLevel').value) ? $('#plannerBudgetLevel').value : 'normal';
+  draft.activityType = $('#plannerActivityType').value;
+  draft.activity = $('#plannerActivity').value.trim();
+  draft.ticketStatus = $('#plannerTicketStatus').value;
+  draft.meetingPoint = $('#plannerMeetingPoint').value.trim();
+  draft.status = TRIP_STATUSES.includes($('#plannerStatus').value) ? $('#plannerStatus').value : 'Idee';
+  draft.notes = $('#plannerNotes').value.trim();
+  saveAll();
+}
+
+function hydratePlannerConfig() {
+  const draft = state.tripDraft;
+  $('#plannerArrival').value = draft.arrival || '15:00';
+  $('#plannerReturnEnabled').checked = Boolean(draft.returnEnabled);
+  $('#plannerReturnTime').value = draft.returnTime || '20:00';
+  $('#plannerReturnWrap').hidden = !draft.returnEnabled;
+  $('#plannerReturnSection').hidden = !draft.returnEnabled;
+  $('#plannerBudgetLevel').value = ['saving', 'normal', 'activity'].includes(draft.budgetLevel) ? draft.budgetLevel : 'normal';
+  $('#plannerActivityType').value = draft.activityType || 'Städtetrip';
+  $('#plannerActivity').value = draft.activity || '';
+  $('#plannerTicketStatus').value = draft.ticketStatus || 'Noch nicht geprüft';
+  $('#plannerMeetingPoint').value = draft.meetingPoint || 'Wuppertal Hbf';
+  $('#plannerStatus').value = TRIP_STATUSES.includes(draft.status) ? draft.status : 'Idee';
+  $('#plannerNotes').value = draft.notes || '';
+  renderPlannerBudget();
+}
+
+function renderPlannerBudget() {
+  const market = markets.find(item => item.id === state.tripDraft.marketId);
+  const perPerson = budgetForDraft();
+  const participants = plannerParticipants().filter(person => person.status !== 'Nein');
+  const count = participants.length || state.people.length;
+  $('#plannerBudgetInfo').innerHTML = market ? `<strong>${esc(market.name)}</strong><br>${esc(state.tripDraft.budgetLevel === 'saving' ? 'Sparsam' : state.tripDraft.budgetLevel === 'activity' ? 'Mit Aktivität' : 'Normal')}: <strong>${perPerson} € pro Person</strong> · ${count} Person${count === 1 ? '' : 'en'} · <strong>${perPerson * count} € gesamt</strong>` : 'Bitte zuerst einen Markt auswählen.';
+}
+
+function plannerOptionId(journey) {
+  return `j-${String(journey.departure).replace(/\W/g, '')}-${String(journey.arrival).replace(/\W/g, '')}-${journey.transfers}`;
+}
+
+function transferWarnings(journey) {
+  const publicLegs = (journey?.legs || []).filter(leg => !leg.walking);
+  const warnings = [];
+  for (let index = 1; index < publicLegs.length; index += 1) {
+    const minutes = durationMinutes(publicLegs[index - 1].arrival, publicLegs[index].departure);
+    if (minutes > 0 && minutes < 9) warnings.push(`Knapp: nur ${minutes} Min. Umstieg in ${publicLegs[index - 1].destination}`);
+  }
+  return warnings;
+}
+
+function selectPlannerJourneys(journeys, direction, targetIso) {
+  const normalized = journeys.map(journey => journey?.departure && Array.isArray(journey?.legs) && typeof journey.legs[0]?.origin === 'string' ? journey : normalizeJourney(journey)).filter(Boolean);
+  const unique = [...new Map(normalized.map(journey => [plannerOptionId(journey), journey])).values()];
+  const target = new Date(targetIso).getTime();
+  const timing = journey => {
+    const point = new Date(direction === 'outbound' ? journey.arrival : journey.departure).getTime();
+    const minutes = Math.abs(point - target) / 60000;
+    const wrongSide = direction === 'outbound' ? point > target : point < target;
+    return minutes + (wrongSide ? 240 : 0);
+  };
+  const recommended = [...unique].sort((a, b) => (a.duration + a.transfers * 28 + timing(a) * .35) - (b.duration + b.transfers * 28 + timing(b) * .35))[0];
+  const fewTransfers = [...unique].sort((a, b) => a.transfers - b.transfers || timing(a) - timing(b) || a.duration - b.duration)[0];
+  const fastest = [...unique].sort((a, b) => a.duration - b.duration || timing(a) - timing(b) || a.transfers - b.transfers)[0];
+  const sensible = unique.filter(journey => timing(journey) < 241);
+  const safety = [...(sensible.length ? sensible : unique)].sort((a, b) => direction === 'outbound'
+    ? new Date(a.arrival) - new Date(b.arrival)
+    : new Date(b.departure) - new Date(a.departure))[0];
+  const chosen = [];
+  for (const journey of [recommended, fewTransfers, fastest]) if (journey && !chosen.includes(journey)) chosen.push(journey);
+  if (safety && !chosen.includes(safety)) {
+    if (chosen.length >= 3) {
+      const redundantFew = chosen.findIndex(journey => journey === fewTransfers && journey !== recommended && journey.transfers === recommended?.transfers);
+      chosen[redundantFew >= 0 ? redundantFew : 2] = safety;
+    } else chosen.push(safety);
+  }
+  for (const journey of [...unique].sort((a, b) => timing(a) - timing(b))) if (chosen.length < 3 && !chosen.includes(journey)) chosen.push(journey);
+  const minimumTransfers = unique.length ? Math.min(...unique.map(journey => journey.transfers)) : 0;
+  return chosen.slice(0, 3).map(journey => {
+    const roles = [];
+    if (journey === recommended) roles.push('Empfohlen');
+    if (journey === fewTransfers || journey.transfers === minimumTransfers) roles.push('Wenig Umstiege');
+    if (journey === fastest) roles.push('Schnellste Verbindung');
+    if (journey === safety) roles.push('Sicherheitsverbindung');
+    if (direction === 'return' && journey === safety) roles.push('Letzte sinnvolle Rückfahrt');
+    return { id: plannerOptionId(journey), journey, roles, warnings: transferWarnings(journey) };
+  });
+}
+
+function plannerConnectionCard(option, direction) {
+  const journey = option.journey;
+  const selected = (direction === 'return' ? state.tripDraft.selectedReturn : state.tripDraft.selectedOutbound) === option.id;
+  const first = journey.legs[0];
+  const last = journey.legs.at(-1);
+  const products = [...new Set(journey.legs.filter(leg => !leg.walking).map(legName))].join(' · ') || 'Fußweg';
+  const warnings = option.warnings || transferWarnings(journey);
+  const query = option.query || {};
+  return `<article class="panel connection-card selectable ${selected ? 'selected' : ''}">
+    <div class="option-labels">${(option.roles || []).map(role => `<span class="badge ${role === 'Sicherheitsverbindung' || role === 'Letzte sinnvolle Rückfahrt' ? 'gold' : ''}">${esc(role)}</span>`).join('')}</div>
+    <div class="connection-head"><div><span class="connection-time">${connectionTime(journey.departure)} → ${connectionTime(journey.arrival)}</span><p>${esc(first.origin)} → ${esc(last.destination)}</p></div><strong>${durationLabel(journey.duration)}</strong></div>
+    <div class="connection-meta"><span class="badge">${journey.transfers ? `${journey.transfers}× umsteigen` : 'Direkt'}</span><span class="badge">${esc(products)}</span>${warnings.map(warning => `<span class="badge warning">⚠ ${esc(warning)}</span>`).join('')}</div>
+    <details><summary>Etappen anzeigen</summary><ol class="legs">${journey.legs.map(leg => `<li><span class="leg-time">${connectionTime(leg.departure)}–${connectionTime(leg.arrival)}</span><strong>${esc(legName(leg))}</strong><span>${esc(leg.origin)} → ${esc(leg.destination)}${leg.platform ? ` · Gleis ${esc(leg.platform)}` : ''}</span></li>`).join('')}</ol></details>
+    <div class="card-actions"><button data-select-planner-connection="${esc(direction)}|${esc(option.id)}">${selected ? 'Gewählt ✓' : 'Diese Verbindung wählen'}</button><a class="button-link ghost" href="${esc(buildDbNavigatorUrl(query))}" target="_blank" rel="noopener noreferrer">DB Navigator ↗</a></div>
+  </article>`;
+}
+
+function renderPlannerConnections() {
+  const draft = state.tripDraft;
+  const market = markets.find(item => item.id === draft.marketId);
+  $('#plannerRoute').textContent = market ? `Standard: Wuppertal Hbf → ${market.stationQuery || market.location}${draft.returnEnabled ? ' → Wuppertal Hbf' : ''}` : 'Bitte zuerst einen Markt auswählen.';
+  $('#plannerReturnSection').hidden = !draft.returnEnabled;
+  $('#plannerOutbound').innerHTML = draft.outboundOptions?.length ? draft.outboundOptions.map(option => plannerConnectionCard(option, 'outbound')).join('') : '<p class="muted">Noch keine Hinfahrt geladen.</p>';
+  $('#plannerReturn').innerHTML = draft.returnEnabled ? (draft.returnOptions?.length ? draft.returnOptions.map(option => plannerConnectionCard(option, 'return')).join('') : '<p class="muted">Noch keine Rückfahrt geladen.</p>') : '';
+  $$('[data-select-planner-connection]').forEach(button => button.onclick = () => {
+    const [direction, id] = button.dataset.selectPlannerConnection.split('|');
+    if (direction === 'return') state.tripDraft.selectedReturn = id;
+    else state.tripDraft.selectedOutbound = id;
+    saveAll();
+    renderPlannerConnections();
+  });
+}
+
+async function fetchPlannerJourneys(from, to, date, time, mode, signal) {
+  const data = await fetchJson(buildJourneyUrl(from.id, to.id, date, time, mode), { signal });
+  return Array.isArray(data) ? data : Array.isArray(data?.itineraries) ? data.itineraries : Array.isArray(data?.journeys) ? data.journeys : [];
+}
+
+async function loadPlannerConnections() {
+  syncPlannerConfigFromInputs();
+  const draft = state.tripDraft;
+  const market = markets.find(item => item.id === draft.marketId);
+  const message = $('#plannerConnectionMessage');
+  if (!market || !parseDate(draft.date)) { message.textContent = 'Bitte zuerst Datum und Markt auswählen.'; return; }
+  if (!navigator.onLine) { message.textContent = 'Du bist offline. Zum Prüfen der Verbindungen wird Internet benötigt.'; return; }
+  plannerController?.abort();
+  plannerController = new AbortController();
+  const controller = plannerController;
+  message.textContent = 'Haltestellen und Verbindungen werden über Transitous geladen …';
+  $('#plannerOutbound').innerHTML = '<article class="panel loading-card">Hinfahrt wird gesucht …</article>';
+  if (draft.returnEnabled) $('#plannerReturn').innerHTML = '<article class="panel loading-card">Rückfahrt wird gesucht …</article>';
+  try {
+    const [home, destination] = await Promise.all([
+      resolveStop('Wuppertal Hbf', controller.signal),
+      resolveStop(market.stationQuery || market.location, controller.signal)
+    ]);
+    const outboundQuery = { from: 'Wuppertal Hbf', to: market.stationQuery || market.location, date: draft.date, time: draft.arrival, mode: 'arrival', marketId: market.id };
+    const returnQuery = { from: market.stationQuery || market.location, to: 'Wuppertal Hbf', date: draft.date, time: draft.returnTime, mode: 'departure', marketId: market.id };
+    const requests = [fetchPlannerJourneys(home, destination, draft.date, draft.arrival, 'arrival', controller.signal)];
+    if (draft.returnEnabled) requests.push(fetchPlannerJourneys(destination, home, draft.date, draft.returnTime, 'departure', controller.signal));
+    const [outboundRaw, returnRaw = []] = await Promise.all(requests);
+    if (controller !== plannerController) return;
+    const outbound = selectPlannerJourneys(outboundRaw, 'outbound', `${draft.date}T${draft.arrival}:00+01:00`).map(option => ({ ...option, query: outboundQuery }));
+    const returns = draft.returnEnabled ? selectPlannerJourneys(returnRaw, 'return', `${draft.date}T${draft.returnTime}:00+01:00`).map(option => ({ ...option, query: returnQuery })) : [];
+    draft.outboundOptions = outbound;
+    draft.returnOptions = returns;
+    draft.selectedOutbound = outbound[0]?.id || '';
+    draft.selectedReturn = returns[0]?.id || '';
+    draft.resolvedStops = { home, destination };
+    draft.connectionsCheckedAt = new Date().toISOString();
+    saveAll();
+    message.textContent = outbound.length ? `Geprüft: ${outbound.length} Hinfahrt${draft.returnEnabled ? ` und ${returns.length} Rückfahrt` : ''}. Bitte je eine Verbindung auswählen.` : 'Keine passende Hinfahrt gefunden. Ändere Uhrzeit oder prüfe direkt im DB Navigator.';
+    renderPlannerConnections();
+  } catch (error) {
+    if (controller !== plannerController || error.code === 'CANCELLED') return;
+    message.textContent = friendlyError(error, 'Trip-Verbindungssuche');
+    renderPlannerConnections();
+  }
+}
+
+function connectionSummary(option) {
+  if (!option?.journey) return 'Nicht gewählt';
+  const journey = option.journey;
+  const products = [...new Set(journey.legs.filter(leg => !leg.walking).map(legName))].join(', ');
+  return `${connectionTime(journey.departure)}–${connectionTime(journey.arrival)} · ${durationLabel(journey.duration)} · ${journey.transfers ? `${journey.transfers}× umsteigen` : 'direkt'}${products ? ` · ${products}` : ''}`;
+}
+
+function tripFromDraft() {
+  syncPlannerConfigFromInputs();
+  const draft = state.tripDraft;
+  const market = markets.find(item => item.id === draft.marketId);
   if (!market) return null;
+  const people = plannerParticipants();
+  const budget = budgetForDraft(draft);
+  const countedPeople = people.filter(person => person.status !== 'Nein');
+  const outbound = selectedPlannerOption('outbound', draft);
+  const returnOption = draft.returnEnabled ? selectedPlannerOption('return', draft) : null;
   return {
+    id: editingTripId || makeId('trip'),
+    date: draft.date,
+    people,
     marketId: market.id,
-    date: $('#tripDate').value,
     market: market.name,
+    city: market.city,
     location: market.location,
-    start: $('#tripStart').value,
-    end: $('#tripEnd').value,
-    activity: $('#tripActivity').value.trim(),
-    budget: Math.max(0, Number($('#tripBudget').value) || 0),
-    notes: $('#tripNotes').value.trim(),
-    stop: state.stop?.name || '',
-    createdAt: new Date().toISOString()
+    station: market.stationQuery || market.location,
+    openingHours: marketOpeningHours(market, draft.date),
+    marketUrl: marketLink(market),
+    entry: market.entry,
+    ticketRequirement: ticketRequirement(market),
+    arrival: draft.arrival,
+    returnEnabled: Boolean(draft.returnEnabled),
+    returnTime: draft.returnTime,
+    budgetLevel: draft.budgetLevel,
+    budget,
+    totalBudget: budget * countedPeople.length,
+    activityType: draft.activityType,
+    activity: draft.activity,
+    notes: draft.notes,
+    ticketStatus: draft.ticketStatus,
+    meetingPoint: draft.meetingPoint,
+    status: draft.status,
+    outbound,
+    returnJourney: returnOption,
+    outboundOptions: draft.outboundOptions,
+    returnOptions: draft.returnOptions,
+    updatedAt: new Date().toISOString()
   };
 }
 
-function validateTrip(trip) {
-  if (!trip?.date) return 'Bitte zuerst ein Datum wählen.';
-  const market = markets.find(item => item.id === trip.marketId);
-  const date = parseDate(trip.date);
-  if (!market || !date || !openOn(market, date)) return 'Der gewählte Markt ist an diesem Datum nicht geöffnet.';
-  if (!trip.start || !trip.end || trip.end <= trip.start) return 'Die Endzeit muss nach der Startzeit liegen.';
+function renderPlannerSummary() {
+  const trip = tripFromDraft();
+  if (!trip) { $('#plannerSummary').innerHTML = '<div class="error-banner">Markt fehlt.</div>'; return; }
+  const going = trip.people.filter(person => person.status !== 'Nein');
+  const no = trip.people.filter(person => person.status === 'Nein');
+  $('#plannerSummary').innerHTML = `<div class="summary-grid">
+    <div><span>Datum</span><strong>${esc(formatDate(trip.date))}</strong></div>
+    <div><span>Status</span><strong>${esc(trip.status)}</strong></div>
+    <div class="wide"><span>Personen</span><strong>${esc(going.map(person => `${person.name} (${person.status})`).join(', ') || 'Keine Zusage')}</strong>${no.length ? `<small>Nein: ${esc(no.map(person => person.name).join(', '))}</small>` : ''}</div>
+    <div class="wide"><span>Weihnachtsmarkt</span><strong>${esc(trip.market)}</strong><small>${esc(trip.location)} · ${esc(trip.openingHours)}</small></div>
+    <div><span>Aktivität</span><strong>${esc(trip.activityType)}</strong><small>${esc(trip.activity || 'Keine Zusatzaktivität')}</small></div>
+    <div><span>Budget</span><strong>${trip.budget} € p. P.</strong><small>${trip.totalBudget} € gesamt (${going.length} Personen)</small></div>
+    <div class="wide"><span>Hinfahrt</span><strong>${esc(connectionSummary(trip.outbound))}</strong></div>
+    <div class="wide"><span>Rückfahrt</span><strong>${esc(trip.returnEnabled ? connectionSummary(trip.returnJourney) : 'Nicht geplant')}</strong></div>
+    <div><span>Eintritt</span><strong>${esc(trip.entry)}</strong></div>
+    <div><span>Ticket</span><strong>${esc(trip.ticketRequirement)}</strong><small>Status: ${esc(trip.ticketStatus)}</small></div>
+    <div class="wide"><span>Treffpunkt</span><strong>${esc(trip.meetingPoint || 'Nicht festgelegt')}</strong></div>
+    ${trip.notes ? `<div class="wide"><span>Notizen</span><strong>${esc(trip.notes)}</strong></div>` : ''}
+    <div class="wide important-note"><span>Wichtige Hinweise</span><strong>${trip.outbound?.warnings?.length || trip.returnJourney?.warnings?.length ? esc([...(trip.outbound?.warnings || []), ...(trip.returnJourney?.warnings || [])].join(' · ')) : 'Verbindungen und Marktinformationen kurz vor Abfahrt erneut prüfen.'}</strong></div>
+  </div>`;
+}
+
+function validatePlannerStep(step = plannerStep) {
+  ensurePlannerDate();
+  if (step === 1) {
+    if (!state.people.length || state.people.some(person => !person.name.trim())) return 'Bitte für jede Person einen Namen eingeben.';
+  }
+  if (step === 2) {
+    const date = parseDate(state.tripDraft.date);
+    if (!date) return 'Bitte ein gültiges Datum wählen.';
+    const missing = state.people.filter(person => !state.availability[availabilityKey(date, person.id)]);
+    if (missing.length) return `Bitte Verfügbarkeit eintragen: ${missing.map(person => person.name).join(', ')}.`;
+    if (state.people.every(person => state.availability[availabilityKey(date, person.id)] === 'Nein')) return 'Mindestens eine Person muss Ja oder Vielleicht wählen.';
+  }
+  if (step === 3) {
+    const market = markets.find(item => item.id === state.tripDraft.marketId);
+    const date = parseDate(state.tripDraft.date);
+    if (!market || !date || !openOn(market, date)) return 'Bitte einen an diesem Tag geöffneten Markt verbindlich auswählen.';
+  }
+  if (step === 4) {
+    syncPlannerConfigFromInputs();
+    if (!/^\d{2}:\d{2}$/.test(state.tripDraft.arrival)) return 'Bitte eine gewünschte Ankunft eintragen.';
+    if (state.tripDraft.returnEnabled && !/^\d{2}:\d{2}$/.test(state.tripDraft.returnTime)) return 'Bitte eine Rückfahrtzeit eintragen.';
+    if (!state.tripDraft.meetingPoint) return 'Bitte einen Treffpunkt eintragen.';
+  }
+  if (step === 5) {
+    if (!selectedPlannerOption('outbound')) return 'Bitte Hinfahrt laden und eine Option wählen.';
+    if (state.tripDraft.returnEnabled && !selectedPlannerOption('return')) return 'Bitte Rückfahrt laden und eine Option wählen.';
+  }
   return '';
+}
+
+function setPlannerStep(step, force = false) {
+  if (!force && step > plannerStep) {
+    const error = validatePlannerStep(plannerStep);
+    if (error) { $('#plannerMessage').textContent = error; return false; }
+  }
+  plannerStep = Math.min(6, Math.max(1, step));
+  $('.planner-step[data-step="1"]');
+  $$('.planner-step').forEach(section => { section.hidden = Number(section.dataset.step) !== plannerStep; });
+  $$('[data-progress]').forEach(item => {
+    const value = Number(item.dataset.progress);
+    item.classList.toggle('active', value === plannerStep);
+    item.classList.toggle('done', value < plannerStep);
+  });
+  $('#plannerBack').hidden = plannerStep === 1;
+  $('#plannerNext').hidden = plannerStep === 6;
+  $('#plannerStepLabel').textContent = `Schritt ${plannerStep} von 6`;
+  $('#plannerMessage').textContent = '';
+  if (plannerStep === 1) renderPlannerPeople();
+  if (plannerStep === 2) renderPlannerAvailability();
+  if (plannerStep === 3) renderPlannerMarkets();
+  if (plannerStep === 4) hydratePlannerConfig();
+  if (plannerStep === 5) renderPlannerConnections();
+  if (plannerStep === 6) renderPlannerSummary();
+  return true;
+}
+
+function newPlanner() {
+  plannerController?.abort();
+  editingTripId = '';
+  state.tripDraft = { ...DEFAULT_DRAFT, date: marketBounds().from };
+  saveAll();
+  setPlannerStep(1, true);
+  $('#plannerSaveMessage').textContent = '';
+}
+
+function startPlannerForMarket(marketId) {
+  const market = markets.find(item => item.id === marketId);
+  if (!market) return;
+  editingTripId = '';
+  state.tripDraft = { ...DEFAULT_DRAFT, date: firstDate(market), marketId: market.id };
+  saveAll();
+  setView('trip');
+  setPlannerStep(4, true);
+  $('#plannerMessage').textContent = `${market.name} wurde verbindlich übernommen.`;
+}
+
+function savePlannedTrip() {
+  const error = validatePlannerStep(5);
+  if (error) { $('#plannerSaveMessage').textContent = error; return null; }
+  const trip = tripFromDraft();
+  if (!trip) return null;
+  const existing = state.trips.findIndex(item => item.id === trip.id);
+  if (existing >= 0) trip.createdAt = state.trips[existing].createdAt || trip.updatedAt;
+  else trip.createdAt = trip.updatedAt;
+  if (existing >= 0) state.trips[existing] = trip;
+  else state.trips.push(trip);
+  editingTripId = trip.id;
+  saveAll();
+  renderSavedTrips();
+  $('#plannerSaveMessage').textContent = existing >= 0 ? 'Änderungen lokal gespeichert.' : 'Trip lokal gespeichert.';
+  return trip;
+}
+
+function editSavedTrip(id, targetStep = 4) {
+  const trip = state.trips.find(item => item.id === id);
+  if (!trip) return;
+  editingTripId = trip.id;
+  state.tripDraft = {
+    ...DEFAULT_DRAFT,
+    date: trip.date,
+    marketId: trip.marketId,
+    arrival: trip.arrival || trip.start || '15:00',
+    returnEnabled: Boolean(trip.returnEnabled),
+    returnTime: trip.returnTime || trip.end || '20:00',
+    budgetLevel: trip.budgetLevel || 'normal',
+    activityType: trip.activityType || 'Städtetrip',
+    activity: trip.activity || '', notes: trip.notes || '', ticketStatus: trip.ticketStatus || 'Noch nicht geprüft',
+    meetingPoint: trip.meetingPoint || 'Wuppertal Hbf', status: trip.status || 'Idee',
+    outboundOptions: Array.isArray(trip.outboundOptions) ? trip.outboundOptions : trip.outbound ? [trip.outbound] : [],
+    returnOptions: Array.isArray(trip.returnOptions) ? trip.returnOptions : trip.returnJourney ? [trip.returnJourney] : [],
+    selectedOutbound: trip.outbound?.id || '', selectedReturn: trip.returnJourney?.id || '',
+    connectionsCheckedAt: trip.updatedAt || ''
+  };
+  saveAll();
+  setView('trip');
+  setPlannerStep(targetStep, true);
+}
+
+function deleteSavedTrip(id) {
+  if (!confirm('Diesen Trip wirklich löschen?')) return;
+  state.trips = state.trips.filter(trip => trip.id !== id);
+  if (editingTripId === id) newPlanner();
+  saveAll();
+  renderSavedTrips();
+}
+
+function statusClass(status) {
+  return `status-${String(status || 'Idee').toLocaleLowerCase('de').replaceAll(' ', '-')}`;
+}
+
+function renderSavedTrips() {
+  const sorted = [...state.trips].sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.market).localeCompare(String(b.market), 'de'));
+  $('#savedTrips').innerHTML = sorted.length ? sorted.map(trip => `<article class="card saved-trip">
+    <span class="badge trip-status ${statusClass(trip.status)}">${esc(trip.status || 'Idee')}</span>
+    <h3>${esc(formatDate(trip.date))} · ${esc(trip.market || 'Weihnachtsmarkt')}</h3>
+    <p>${esc(trip.activity || trip.activityType || 'Nur Weihnachtsmarkt')} · ${Number(trip.budget) || 0} € p. P.</p>
+    <p class="muted">${esc((trip.people || []).filter(person => person.status !== 'Nein').map(person => person.name).join(', ') || trip.stop || 'Personen nicht hinterlegt')}</p>
+    <div class="card-actions"><button data-edit-trip="${esc(trip.id)}">Bearbeiten</button><button class="secondary" data-ics-trip="${esc(trip.id)}">.ics</button><button class="ghost" data-check-trip="${esc(trip.id)}">Bahn prüfen</button><button data-delete-trip="${esc(trip.id)}" class="danger">Löschen</button></div>
+  </article>`).join('') : '<p>Noch keine Trips gespeichert.</p>';
+  $$('[data-edit-trip]').forEach(button => button.onclick = () => editSavedTrip(button.dataset.editTrip));
+  $$('[data-check-trip]').forEach(button => button.onclick = () => editSavedTrip(button.dataset.checkTrip, 5));
+  $$('[data-delete-trip]').forEach(button => button.onclick = () => deleteSavedTrip(button.dataset.deleteTrip));
+  $$('[data-ics-trip]').forEach(button => button.onclick = () => {
+    const trip = state.trips.find(item => item.id === button.dataset.icsTrip);
+    if (trip) shareTripIcs(trip);
+  });
+}
+
+function renderTrip() {
+  ensurePlannerDate();
+  renderPlannerPeople();
+  renderPlannerAvailability();
+  renderPlannerMarkets();
+  hydratePlannerConfig();
+  renderPlannerConnections();
+  renderSavedTrips();
+  setPlannerStep(plannerStep, true);
 }
 
 function icsEscape(value) {
@@ -840,24 +1355,56 @@ function foldIcs(text) {
     const parts = [];
     let current = '';
     for (const char of line) {
-      const limit = current.startsWith(' ') ? 75 : 75;
-      if (current && encoder.encode(current + char).length > limit) {
+      if (current && encoder.encode(current + char).length > 75) {
         parts.push(current);
         current = ` ${char}`;
-      } else {
-        current += char;
-      }
+      } else current += char;
     }
     parts.push(current);
     return parts;
   }).join('\r\n');
 }
 
+function icsDateTime(value, fallbackDate, fallbackTime) {
+  const match = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  if (match) return `${match[1]}${match[2]}${match[3]}T${match[4]}${match[5]}00`;
+  return `${String(fallbackDate || '').replaceAll('-', '')}T${String(fallbackTime || '14:00').replace(':', '')}00`;
+}
+
 function makeIcs(trip) {
-  const date = trip.date.replaceAll('-', '');
+  const outbound = trip.outbound?.journey || null;
+  const inbound = trip.returnJourney?.journey || null;
+  const start = icsDateTime(outbound?.departure, trip.date, trip.start || trip.arrival || '14:00');
+  let end = icsDateTime(inbound?.arrival, trip.date, trip.end || trip.returnTime || '20:00');
+  if (end <= start) {
+    const base = parseDate(trip.date);
+    if (base) base.setDate(base.getDate() + 1);
+    end = `${(base ? isoLocal(base) : trip.date).replaceAll('-', '')}T${String(trip.end || trip.returnTime || '20:00').replace(':', '')}00`;
+  }
   const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-  const description = `Aktivität: ${trip.activity || 'keine'}\nBudget pro Person: ${trip.budget} €\nZielhaltestelle: ${trip.stop || 'nicht gewählt'}\n${trip.notes || ''}`;
-  return foldIcs(`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nCALSCALE:GREGORIAN\r\nPRODID:-//Way to Winter Magic V${VERSION}//DE\r\nBEGIN:VEVENT\r\nUID:${Date.now()}-${Math.random().toString(36).slice(2)}@way-to-winter-magic\r\nDTSTAMP:${stamp}\r\nDTSTART;TZID=Europe/Berlin:${date}T${trip.start.replace(':', '')}00\r\nDTEND;TZID=Europe/Berlin:${date}T${trip.end.replace(':', '')}00\r\nSUMMARY:${icsEscape('Weihnachtsmarkt: ' + trip.market)}\r\nLOCATION:${icsEscape(trip.location)}\r\nDESCRIPTION:${icsEscape(description)}\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n`);
+  const people = Array.isArray(trip.people) ? trip.people.map(person => `${person.name} (${person.status || 'ohne Status'})`).join(', ') : '';
+  const outboundText = trip.outbound ? connectionSummary(trip.outbound) : 'nicht gewählt';
+  const returnText = trip.returnEnabled ? connectionSummary(trip.returnJourney) : 'nicht geplant';
+  const marketUrl = trip.marketUrl || '';
+  const outboundDb = trip.outbound?.query ? buildDbNavigatorUrl(trip.outbound.query) : '';
+  const returnDb = trip.returnJourney?.query ? buildDbNavigatorUrl(trip.returnJourney.query) : '';
+  const description = [
+    people ? `Namen: ${people}` : '',
+    `Öffnungszeiten: ${trip.openingHours || 'nicht hinterlegt'}`,
+    `Aktivität: ${trip.activityType ? `${trip.activityType}${trip.activity ? ` – ${trip.activity}` : ''}` : trip.activity || 'keine'}`,
+    `Hinfahrt: ${outboundText}`,
+    `Rückfahrt: ${returnText}`,
+    `Treffpunkt: ${trip.meetingPoint || trip.stop || 'nicht festgelegt'}`,
+    `Budget: ${Number(trip.budget) || 0} € pro Person${Number.isFinite(trip.totalBudget) ? `, ${trip.totalBudget} € gesamt` : ''}`,
+    `Eintritt: ${trip.entry || 'nicht hinterlegt'}`,
+    `Ticketpflicht: ${trip.ticketRequirement || 'nicht hinterlegt'}`,
+    `Ticketstatus: ${trip.ticketStatus || 'nicht geprüft'}`,
+    trip.notes ? `Notizen: ${trip.notes}` : '',
+    marketUrl ? `Marktlink: ${marketUrl}` : '',
+    outboundDb ? `DB Navigator Hinfahrt: ${outboundDb}` : '',
+    returnDb ? `DB Navigator Rückfahrt: ${returnDb}` : ''
+  ].filter(Boolean).join('\n');
+  return foldIcs(`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nCALSCALE:GREGORIAN\r\nPRODID:-//Way to Winter Magic V${VERSION}//DE\r\nBEGIN:VEVENT\r\nUID:${Date.now()}-${Math.random().toString(36).slice(2)}@way-to-winter-magic\r\nDTSTAMP:${stamp}\r\nDTSTART;TZID=Europe/Berlin:${start}\r\nDTEND;TZID=Europe/Berlin:${end}\r\nSUMMARY:${icsEscape('Weihnachtsmarkt: ' + trip.market)}\r\nLOCATION:${icsEscape(trip.location)}\r\nDESCRIPTION:${icsEscape(description)}\r\n${marketUrl ? `URL:${icsEscape(marketUrl)}\r\n` : ''}END:VEVENT\r\nEND:VCALENDAR\r\n`);
 }
 
 function download(url, name) {
@@ -870,16 +1417,13 @@ function download(url, name) {
   if (url.startsWith('blob:')) setTimeout(() => URL.revokeObjectURL(url), 3000);
 }
 
-async function shareIcs() {
-  const trip = tripData();
-  const error = validateTrip(trip);
-  if (error) { $('#tripMessage').textContent = error; return; }
-  const file = new File([makeIcs(trip)], `Weihnachtsmarkt-${trip.date}.ics`, { type: 'text/calendar;charset=utf-8' });
+async function shareTripIcs(trip) {
+  const file = new File([makeIcs(trip)], `Winter-Magic-${trip.date}-${String(trip.market || 'Trip').replace(/[^a-z0-9äöüß-]+/gi, '-')}.ics`, { type: 'text/calendar;charset=utf-8' });
   try {
     if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file], title: trip.market });
     else download(URL.createObjectURL(file), file.name);
-  } catch (shareError) {
-    if (shareError.name !== 'AbortError') download(URL.createObjectURL(file), file.name);
+  } catch (error) {
+    if (error.name !== 'AbortError') download(URL.createObjectURL(file), file.name);
   }
 }
 
@@ -925,7 +1469,8 @@ function sanitizeImported(payload) {
     people: importedPeople,
     availability: migrateAvailability(source.availability || {}, importedPeople, source.people),
     favorites: Array.isArray(source.favorites) ? [...new Set(source.favorites.map(String))].filter(id => markets.some(market => market.id === id)) : [],
-    trips: Array.isArray(source.trips) ? source.trips.filter(trip => trip && parseDate(trip.date) && typeof trip.market === 'string').slice(0, 500) : [],
+    trips: Array.isArray(source.trips) ? source.trips.filter(trip => trip && parseDate(trip.date) && typeof trip.market === 'string').slice(0, 500).map((trip, index) => ({ ...trip, id: String(trip.id || `imported-trip-${index}-${Date.now().toString(36)}`), status: TRIP_STATUSES.includes(trip.status) ? trip.status : 'Idee' })) : [],
+    tripDraft: source.tripDraft && typeof source.tripDraft === 'object' ? { ...DEFAULT_DRAFT, ...source.tripDraft } : { ...DEFAULT_DRAFT },
     stop: source.stop && typeof source.stop.name === 'string' ? source.stop : null,
     filters: source.filters && typeof source.filters === 'object' ? source.filters : {},
     viewMode: source.viewMode === 'list' ? 'list' : 'cards',
@@ -986,29 +1531,44 @@ function bind() {
     $('#connectionTo').value = from;
     $('#connectionMarket').value = '';
   };
-  $('#tripDate').onchange = () => { renderTripMarketOptions(); $('#tripMessage').textContent = ''; };
-  $('#tripMarket').onchange = () => {
-    const market = markets.find(item => item.id === $('#tripMarket').value);
-    if (market) $('#tripBudget').value = market.budget[1];
+  $('#plannerPersonCount').onchange = syncPlannerPersonCount;
+  $('#plannerAddPerson').onclick = () => {
+    if (state.people.length >= 20) return;
+    state.people.push({ id: uid(), name: `Person ${state.people.length + 1}` });
+    saveAll(); renderPlannerPeople(); renderPeople();
   };
-  $('#tripConnection').onclick = () => {
-    const market = markets.find(item => item.id === $('#tripMarket').value);
-    if (!market) {
-      $('#tripMessage').textContent = 'Bitte zuerst einen Markt wählen.';
-      return;
+  $('#plannerDate').onchange = () => {
+    const nextDate = $('#plannerDate').value;
+    if (state.tripDraft.date !== nextDate) {
+      state.tripDraft.date = nextDate;
+      const chosen = markets.find(item => item.id === state.tripDraft.marketId);
+      if (!chosen || !parseDate(nextDate) || !openOn(chosen, parseDate(nextDate))) state.tripDraft.marketId = '';
+      clearPlannerConnections(); saveAll();
     }
-    prepareConnection(market.id, $('#tripDate').value, $('#tripStart').value);
+    renderPlannerAvailability(); renderPlannerMarkets();
   };
-  $('#saveTrip').onclick = () => {
-    const trip = tripData();
-    const error = validateTrip(trip);
-    if (error) { $('#tripMessage').textContent = error; return; }
-    state.trips.push(trip);
-    saveAll();
-    renderTrip();
-    $('#tripMessage').textContent = 'Trip gespeichert.';
+  ['plannerArrival', 'plannerReturnTime'].forEach(id => $(`#${id}`).onchange = () => { syncPlannerConfigFromInputs(); clearPlannerConnections(); saveAll(); renderPlannerConnections(); });
+  $('#plannerReturnEnabled').onchange = () => {
+    syncPlannerConfigFromInputs(); clearPlannerConnections(); saveAll();
+    $('#plannerReturnWrap').hidden = !state.tripDraft.returnEnabled;
+    $('#plannerReturnSection').hidden = !state.tripDraft.returnEnabled;
+    renderPlannerConnections();
   };
-  $('#exportIcs').onclick = shareIcs;
+  ['plannerBudgetLevel', 'plannerActivityType', 'plannerActivity', 'plannerTicketStatus', 'plannerMeetingPoint', 'plannerStatus', 'plannerNotes'].forEach(id => {
+    $(`#${id}`).addEventListener(id === 'plannerActivity' || id === 'plannerMeetingPoint' || id === 'plannerNotes' ? 'input' : 'change', () => { syncPlannerConfigFromInputs(); renderPlannerBudget(); });
+  });
+  $('#plannerBack').onclick = () => setPlannerStep(plannerStep - 1, true);
+  $('#plannerNext').onclick = () => setPlannerStep(plannerStep + 1);
+  $('#newTrip').onclick = newPlanner;
+  $('#loadPlannerConnections').onclick = loadPlannerConnections;
+  $('#recheckPlannerConnections').onclick = loadPlannerConnections;
+  $('#savePlannedTrip').onclick = savePlannedTrip;
+  $('#previewIcs').onclick = () => {
+    const error = validatePlannerStep(5);
+    if (error) { $('#plannerSaveMessage').textContent = error; return; }
+    const trip = tripFromDraft();
+    if (trip) shareTripIcs(trip);
+  };
   $('#exportData').onclick = () => {
     const backup = { app: 'Way to Winter Magic', version: VERSION, exportedAt: new Date().toISOString(), state };
     download(URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' })), 'way-to-winter-magic-sicherung.json');
@@ -1059,7 +1619,7 @@ async function loadMarkets() {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { parseDate, isoLocal, dateRange, migratePeople, migrateAvailability, openOn, score, icsEscape, foldIcs, makeIcs, sanitizeImported, buildGeocodeUrl, normalizePlaces, buildJourneyUrl, durationMinutes, durationLabel, delayMinutes, normalizeJourney, buildDbNavigatorUrl, journeyCard, friendlyError };
+  module.exports = { parseDate, isoLocal, dateRange, migratePeople, migrateAvailability, openOn, score, icsEscape, foldIcs, makeIcs, sanitizeImported, buildGeocodeUrl, normalizePlaces, buildJourneyUrl, durationMinutes, durationLabel, delayMinutes, normalizeJourney, buildDbNavigatorUrl, journeyCard, friendlyError, marketOpeningHours, ticketRequirement, transferWarnings, selectPlannerJourneys, connectionSummary };
 }
 
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {

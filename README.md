@@ -1,28 +1,30 @@
-# Way to Winter Magic V2.3.0
+# Way to Winter Magic V2.4.0
 
-Installierbare GitHub-Pages-PWA für Weihnachtsmarkt-Trips ab Wuppertal.
+Installierbare GitHub-Pages-PWA mit 39 Weihnachtsmärkten und einem zentralen Planungs-Assistenten.
 
-## Neu in V2.3.0
+## Neu in V2.4.0
 
-- DB-Verbindungssuche von der fehlerhaften bisherigen Schnittstelle auf **Transitous / MOTIS 2** umgestellt
-- Haltestellen- und Adresssuche über Transitous
-- Hin- und Rückfahrt über Start/Ziel-Tausch sowie Suche nach Abfahrt oder Ankunft
-- 12-Sekunden-Timeout pro Versuch und ein automatischer Wiederholungsversuch
-- verständliche Hinweise bei Offlinebetrieb, Timeout, Überlastung, Server- und Netzwerkfehlern
-- sichtbarer Button **Erneut versuchen**
-- bis zu 8 erfolgreiche Suchen lokal für die Offline-Anzeige gespeichert
-- Button **Im DB Navigator öffnen** mit Start, Ziel, Datum, Uhrzeit und Zeitbezug
-- Quellenhinweise für Transitous und OpenStreetMap
-- bestehende 39 Märkte, Filter, Favoriten, Timeline, Personen, Trips, Sicherung und `.ics`-Export bleiben erhalten
+Der Bereich **Trip planen** führt durch sechs Schritte:
 
-Die App nutzt im Browser die öffentliche Transitous-API unter `https://api.transitous.org/api/`. Es gibt keinen API-Schlüssel und keinen eigenen Server. Transitous ist ein Community-Dienst auf Best-Effort-Basis. Das Projekt ist deshalb bewusst für leichte, nichtkommerzielle Nutzung ausgelegt.
+1. Personenanzahl und Namen lokal speichern
+2. Datum sowie Ja / Vielleicht / Nein pro Person festlegen
+3. nur die an diesem Tag geöffneten Märkte vergleichen und einen Markt verbindlich auswählen
+4. Ankunft, optionale Rückfahrt, Budgetstufe, Aktivität, Treffpunkt, Ticketstatus, Notizen und Tripstatus festlegen
+5. über Transitous je drei sinnvolle Hin- und Rückfahrten anzeigen und auswählen
+6. Zusammenfassung prüfen, Trip lokal speichern und `.ics` teilen
+
+Die Verbindungsauswahl kennzeichnet Empfehlung, wenige Umstiege, schnellste Verbindung, Sicherheitsverbindung, die letzte sinnvolle Rückfahrt innerhalb der Suche und knappe Umstiege. Ein Button prüft die Verbindung erneut.
+
+Gespeicherte Trips lassen sich bearbeiten, erneut prüfen, löschen und als vollständige `.ics`-Datei exportieren. Die Kalenderdatei enthält Markt, Namen, Adresse, Aktivität, gewählte Verbindungen, Treffpunkt, Budget, Eintritt, Ticketinformationen, Notizen, Marktlink und DB-Navigator-Links.
+
+Die bisherigen Bereiche **Märkte**, **Timeline**, **Bahn** und **Mehr** bleiben erhalten. Erfolgreiche Suchen in der eigenständigen Bahn-Recherche werden weiterhin lokal für die Offline-Anzeige gespeichert.
 
 ## GitHub Pages
 
 1. Den **Inhalt** dieses Ordners in die oberste Ebene des Repositorys hochladen.
 2. **Settings → Pages** öffnen.
 3. **Deploy from a branch**, Branch **main**, Ordner **/(root)** wählen.
-4. Die Seite nach dem Deployment einmal online öffnen. Bei einem Update gegebenenfalls einmal neu laden, damit der neue Service Worker aktiv wird.
+4. Die Seite nach dem Deployment einmal online neu laden, damit der Service Worker V2.4.0 übernimmt.
 
 Alle App-Pfade sind relativ und funktionieren auch in einem GitHub-Pages-Unterordner.
 
@@ -31,12 +33,13 @@ Alle App-Pfade sind relativ und funktionieren auch in einem GitHub-Pages-Unteror
 ```bash
 node tests/smoke.mjs
 python3 tests/e2e_github_pages.py
+python3 tests/live_transitous.py   # optional, benötigt direkten Internetzugriff
 ```
 
-Der E2E-Test startet die App unter einem GitHub-Pages-typischen Unterpfad, simuliert Transitous-Antworten und prüft Haltestellensuche, Abfahrt, Ankunft/Rückfahrt, automatischen Retry, Timeoutanzeige, Offline-Speicher und DB-Navigator-Link. Der Live-Endpunkt kann zusätzlich mit `python3 tests/live_transitous.py` geprüft werden, sofern der Rechner direkten Zugriff auf `api.transitous.org` hat.
+Der E2E-Test verwendet einen GitHub-Pages-typischen Unterpfad und ein Smartphone-Viewport. Er prüft den kompletten Sechs-Schritt-Ablauf, drei Hin- und Rückfahrtoptionen, Sicherheits- und Rückfahrtkennzeichnung, Umstiegswarnung, Zusammenfassung, lokale Speicherung, Bearbeitung, `.ics`, Persistenz und die bestehenden Recherchebereiche. Zusätzlich wird das Desktop-Layout geprüft.
 
-## Datenschutz und Quellen
+## Datenschutz und Datenhinweise
 
-Suchanfragen werden für die Fahrplanauskunft an Transitous übertragen. Erfolgreiche Verbindungsergebnisse werden ausschließlich lokal im Browser gespeichert. Fahrplandaten: [Transitous-Quellen](https://transitous.org/sources/). Ortsdaten: [© OpenStreetMap-Mitwirkende](https://www.openstreetmap.org/copyright).
+Personen, Verfügbarkeiten, Trips und gespeicherte Verbindungen bleiben im lokalen Browser-Speicher. Nur Haltestellen- und Verbindungssuchen werden an Transitous übertragen. Fahrplandaten: [Transitous-Quellen](https://transitous.org/sources/). Ortsdaten: [© OpenStreetMap-Mitwirkende](https://www.openstreetmap.org/copyright).
 
-Markttermine und Quellen: Prüfstand 28.10.2026. Live-Verbindungen können sich ändern und sollten vor der Abfahrt zusätzlich im DB Navigator geprüft werden.
+Bei Märkten ohne veröffentlichte Uhrzeit zeigt der Assistent ausdrücklich **„Noch nicht veröffentlicht – Marktlink prüfen“**. Markt- und Fahrplandaten bitte kurz vor der Abfahrt erneut prüfen.

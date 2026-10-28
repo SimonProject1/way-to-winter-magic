@@ -38,10 +38,10 @@ for (const market of markets) {
 }
 
 const html = fs.readFileSync(new URL('index.html', root), 'utf8');
-for (const id of ['marketSearch', 'cityFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'dateFilter', 'timelineBody', 'tripMarket', 'peopleList', 'stopResults', 'cardView', 'listView', 'connectionFrom', 'connectionTo', 'connectionMarket', 'connectionDate', 'connectionTime', 'connectionMode', 'searchConnections', 'connectionResults', 'savedConnections', 'clearSavedConnections']) {
+for (const id of ['marketSearch', 'cityFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'dateFilter', 'timelineBody', 'peopleList', 'stopResults', 'cardView', 'listView', 'connectionFrom', 'connectionTo', 'connectionMarket', 'connectionDate', 'connectionTime', 'connectionMode', 'searchConnections', 'connectionResults', 'savedConnections', 'clearSavedConnections', 'plannerPersonCount', 'plannerDate', 'plannerAvailability', 'plannerMarkets', 'plannerArrival', 'plannerReturnEnabled', 'plannerBudgetLevel', 'plannerOutbound', 'plannerReturn', 'plannerSummary', 'savePlannedTrip']) {
   assert.ok(html.includes(`id="${id}"`), `UI-Element fehlt: ${id}`);
 }
-assert.ok(html.includes('V2.3.0'), 'Versionshinweis fehlt');
+assert.ok(html.includes('V2.4.0'), 'Versionshinweis fehlt');
 assert.ok(html.includes('Transitous'), 'Transitous-Hinweis fehlt');
 assert.ok(html.includes('Way to Winter Magic'), 'App-Name fehlt');
 
@@ -62,7 +62,7 @@ assert.ok(sw.includes("event.request.mode === 'navigate'"), 'Offline-Navigation-
 
 const appSource = fs.readFileSync(new URL('app.js', root), 'utf8');
 assert.ok(appSource.includes("const STORAGE_PREFIX = 'wtwm:v2:'"), 'Eigener Speicherbereich fehlt');
-assert.ok(appSource.includes("const VERSION = '2.3.0'"), 'JS-Version ist nicht aktuell');
+assert.ok(appSource.includes("const VERSION = '2.4.0'"), 'JS-Version ist nicht aktuell');
 assert.ok(appSource.includes("const API = 'https://api.transitous.org/api'"), 'Transitous-Endpunkt fehlt');
 assert.ok(!appSource.includes('bahn.guru') && !appSource.includes('transport.rest'), 'Alte Bahn-API ist noch enthalten');
 
@@ -99,7 +99,7 @@ assert.equal(availability[`2026-12-01|${migrated[0].id}`], 'Ja');
 const repaired = logic.migratePeople([{ id: 'gleich', name: 'A' }, { id: 'gleich', name: 'B' }]);
 assert.notEqual(repaired[0].id, repaired[1].id, 'Doppelte importierte Personen-IDs wurden nicht repariert');
 
-const ics = logic.makeIcs({ date: '2026-12-05', start: '14:00', end: '20:00', market: 'Test, Markt', location: 'Ort; Platz', activity: 'Museum', budget: 45, stop: 'Hbf', notes: 'Zeile 1\nZeile 2' });
+const ics = logic.makeIcs({ date: '2026-12-05', start: '14:00', end: '20:00', market: 'Test, Markt', location: 'Ort; Platz', activity: 'Museum', budget: 45, stop: 'Hbf', notes: 'Zeile 1\nZeile 2', people: [{ name: 'Alex', status: 'Ja' }], openingHours: '12:00–21:00', entry: 'Kostenlos', ticketRequirement: 'Keine Ticketpflicht', ticketStatus: 'Nicht nötig' });
 assert.ok(ics.includes('DTSTART;TZID=Europe/Berlin:20261205T140000'));
 assert.ok(ics.includes('SUMMARY:Weihnachtsmarkt: Test\\, Markt'));
 assert.ok(ics.includes('LOCATION:Ort\\; Platz'));
@@ -150,4 +150,19 @@ assert.ok(renderedJourney.includes('+5 Min.'), 'Verspätung wird nicht dargestel
 assert.ok(renderedJourney.includes('RE 49'), 'Linie wird nicht dargestellt');
 assert.ok(renderedJourney.includes('Im DB Navigator öffnen'), 'DB-Navigator-Button fehlt');
 
-console.log(`V2.3.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, ${markets.filter(market => market.new).length} neu, DB-Verbindungssuche geprüft.`);
+const plannerJourneys = [
+  { ...rawTransitousJourney, startTime: '2026-12-05T13:00:00+01:00', endTime: '2026-12-05T13:40:00+01:00' },
+  { ...rawTransitousJourney, transfers: 1, startTime: '2026-12-05T13:30:00+01:00', endTime: '2026-12-05T14:20:00+01:00' },
+  { ...rawTransitousJourney, transfers: 0, startTime: '2026-12-05T13:55:00+01:00', endTime: '2026-12-05T14:35:00+01:00' },
+  { ...rawTransitousJourney, transfers: 2, startTime: '2026-12-05T14:00:00+01:00', endTime: '2026-12-05T14:30:00+01:00' }
+].map((journey, index) => ({ ...journey, legs: [{ ...journey.legs[0], startTime: journey.startTime, endTime: journey.endTime, scheduledStartTime: journey.startTime, scheduledEndTime: journey.endTime, routeShortName: `RE ${index + 1}` }] }));
+const plannerOptions = logic.selectPlannerJourneys(plannerJourneys, 'outbound', '2026-12-05T15:00:00+01:00');
+assert.equal(plannerOptions.length, 3, 'Planer muss drei Verbindungsoptionen auswählen');
+assert.ok(plannerOptions.some(option => option.roles.includes('Empfohlen')), 'Empfohlene Verbindung fehlt');
+assert.ok(plannerOptions.some(option => option.roles.includes('Sicherheitsverbindung')), 'Sicherheitsverbindung fehlt');
+assert.equal(logic.ticketRequirement({ entry: '10 Euro' }), 'Ticket erforderlich');
+assert.equal(logic.ticketRequirement({ entry: 'Kostenlos' }), 'Keine Ticketpflicht');
+assert.equal(logic.marketOpeningHours({}, '2026-12-05'), 'Noch nicht veröffentlicht – Marktlink prüfen');
+assert.ok(ics.includes('Namen: Alex (Ja)') && ics.includes('Ticketstatus: Nicht nötig'), 'Erweiterte ICS-Angaben fehlen');
+
+console.log(`V2.4.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, ${markets.filter(market => market.new).length} neu, DB-Verbindungssuche geprüft.`);

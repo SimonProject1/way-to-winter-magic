@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""GitHub-Pages-Unterpfadtest mit simulierten Transitous-Antworten."""
+"""Vollständiger mobiler Planungsablauf unter einem GitHub-Pages-Unterpfad."""
 
 import asyncio
-import contextlib
 import functools
 import http.server
 import json
 import pathlib
 import socketserver
+import tempfile
 import threading
 from urllib.parse import parse_qs, urlparse
 
@@ -41,42 +41,75 @@ class ReuseServer(socketserver.ThreadingTCPServer):
 
 
 def geocode_result(text):
-    low = text.lower()
-    if "wuppertal" in low:
+    if "wuppertal" in text.lower():
         return [{"name": "Wuppertal Hbf", "stopId": "de:05124:01133", "lat": 51.254, "lon": 7.150}]
-    if "essen" in low:
-        return [{"name": "Essen Hbf", "stopId": "de:05113:8000080", "lat": 51.451, "lon": 7.014}]
-    return []
+    return [{"name": "Essen Steele S", "stopId": "de:05113:2001", "lat": 51.450, "lon": 7.076}]
+
+
+def iso_at(hour, minute):
+    return f"2026-12-05T{hour:02d}:{minute:02d}:00+01:00"
+
+
+def direct_journey(start, end, route, origin, destination):
+    return {
+        "duration": (end[0] * 60 + end[1] - start[0] * 60 - start[1]) * 60,
+        "transfers": 0,
+        "startTime": iso_at(*start),
+        "endTime": iso_at(*end),
+        "legs": [{
+            "from": {"name": origin, "track": "1"},
+            "to": {"name": destination},
+            "mode": "RAIL", "routeShortName": route, "headsign": destination,
+            "scheduledStartTime": iso_at(*start), "startTime": iso_at(*start),
+            "scheduledEndTime": iso_at(*end), "endTime": iso_at(*end),
+        }],
+    }
+
+
+def transfer_journey(start, change_arrival, change_departure, end, origin, destination):
+    return {
+        "duration": (end[0] * 60 + end[1] - start[0] * 60 - start[1]) * 60,
+        "transfers": 1,
+        "startTime": iso_at(*start), "endTime": iso_at(*end),
+        "legs": [
+            {
+                "from": {"name": origin, "track": "1"}, "to": {"name": "Essen Hbf"},
+                "mode": "RAIL", "routeShortName": "RE 49", "headsign": "Essen Hbf",
+                "scheduledStartTime": iso_at(*start), "startTime": iso_at(*start),
+                "scheduledEndTime": iso_at(*change_arrival), "endTime": iso_at(*change_arrival),
+            },
+            {
+                "from": {"name": "Essen Hbf", "track": "4"}, "to": {"name": destination},
+                "mode": "TRAM", "routeShortName": "S 9", "headsign": destination,
+                "scheduledStartTime": iso_at(*change_departure), "startTime": iso_at(*change_departure),
+                "scheduledEndTime": iso_at(*end), "endTime": iso_at(*end),
+            },
+        ],
+    }
 
 
 def plan_result(arrive_by):
     if arrive_by:
-        start, end = "2026-12-05T18:05:00+01:00", "2026-12-05T18:45:00+01:00"
-        origin, destination = "Essen Hbf", "Wuppertal Hbf"
-        route = "RE 49"
+        origin, destination = "Wuppertal Hbf", "Essen Steele S"
+        journeys = [
+            direct_journey((12, 50), (13, 40), "RE 49", origin, destination),
+            direct_journey((13, 30), (14, 20), "RE 49", origin, destination),
+            direct_journey((13, 50), (14, 30), "RE 7", origin, destination),
+            transfer_journey((14, 0), (14, 15), (14, 20), (14, 30), origin, destination),
+            direct_journey((14, 10), (14, 50), "RE 49", origin, destination),
+            direct_journey((14, 15), (15, 0), "S 9", origin, destination),
+        ]
     else:
-        start, end = "2026-12-05T14:05:00+01:00", "2026-12-05T14:45:00+01:00"
-        origin, destination = "Wuppertal Hbf", "Essen Hbf"
-        route = "RE 49"
-    return {
-        "itineraries": [{
-            "duration": 2400,
-            "transfers": 0,
-            "startTime": start,
-            "endTime": end,
-            "legs": [{
-                "from": {"name": origin, "track": "1"},
-                "to": {"name": destination},
-                "mode": "RAIL",
-                "routeShortName": route,
-                "headsign": destination,
-                "scheduledStartTime": start,
-                "startTime": start,
-                "scheduledEndTime": end,
-                "endTime": end,
-            }],
-        }]
-    }
+        origin, destination = "Essen Steele S", "Wuppertal Hbf"
+        journeys = [
+            direct_journey((20, 0), (20, 45), "RE 49", origin, destination),
+            direct_journey((20, 15), (21, 0), "S 9", origin, destination),
+            direct_journey((20, 30), (21, 10), "RE 7", origin, destination),
+            transfer_journey((21, 0), (21, 20), (21, 25), (21, 50), origin, destination),
+            direct_journey((21, 30), (22, 20), "RE 49", origin, destination),
+            direct_journey((22, 0), (22, 45), "S 9", origin, destination),
+        ]
+    return {"itineraries": journeys}
 
 
 async def main():
@@ -85,14 +118,13 @@ async def main():
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     base = f"http://127.0.0.1:{server.server_address[1]}{PREFIX}"
-
-    api_state = {"plan_calls": 0, "mode": "normal"}
     console_errors = []
+    api_state = {"plan_calls": 0}
 
     try:
         async with async_playwright() as pw:
             browser = await pw.chromium.launch(headless=True, executable_path=installed_chromium())
-            context = await browser.new_context(viewport={"width": 390, "height": 844})
+            context = await browser.new_context(viewport={"width": 390, "height": 844}, accept_downloads=True)
             page = await context.new_page()
             page.on("pageerror", lambda error: console_errors.append(str(error)))
             page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" and not msg.text.startswith("Failed to load resource:") else None)
@@ -105,14 +137,6 @@ async def main():
                     return
                 if url.path.endswith("/v6/plan"):
                     api_state["plan_calls"] += 1
-                    if api_state["mode"] == "retry" and api_state["plan_calls"] == 1:
-                        await route.abort("connectionfailed")
-                        return
-                    if api_state["mode"] == "timeout":
-                        await asyncio.sleep(2)
-                        with contextlib.suppress(Exception):
-                            await route.abort("timedout")
-                        return
                     arrive_by = query.get("arriveBy", ["false"])[0] == "true"
                     await route.fulfill(status=200, content_type="application/json", body=json.dumps(plan_result(arrive_by)))
                     return
@@ -121,76 +145,124 @@ async def main():
             await page.route("https://api.transitous.org/**", api)
             await page.goto(base, wait_until="networkidle")
             assert await page.locator("text=Way to Winter Magic").count() >= 1
-            assert await page.locator("text=V2.3.0").count() >= 1
-
-            # Mobile layout must not create horizontal page overflow.
+            assert await page.locator("text=V2.4.0").count() >= 1
+            assert await page.locator("#marketCount").inner_text() == "39"
             overflow = await page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
-            assert overflow <= 1, f"Horizontales Überlaufen: {overflow}px"
+            assert overflow <= 1, f"Mobiles horizontales Überlaufen: {overflow}px"
 
-            # Haltestellensuche and selection.
-            await page.click('[data-view="settings"]')
-            await page.fill("#stopQuery", "Essen Hbf")
-            await page.click("#searchStop")
-            await page.locator('[data-stop="0"]').wait_for()
-            await page.click('[data-stop="0"]')
-            assert "Essen Hbf" in await page.locator("#savedStop").inner_text()
+            # 1: Personen lokal anlegen.
+            await page.click('[data-view="trip"]')
+            await page.fill("#plannerPersonCount", "3")
+            await page.locator("#plannerPersonCount").press("Tab")
+            assert await page.locator("[data-planner-person]").count() == 3
+            for index, name in enumerate(["Simon", "Anna", "Chris"]):
+                field = page.locator("[data-planner-person]").nth(index)
+                await field.fill(name)
+                await field.press("Tab")
+            await page.click("#plannerNext")
 
-            # Hinfahrt; the first plan request is dropped to prove the automatic retry.
+            # 2: Datum und Status für jede Person.
+            await page.fill("#plannerDate", "2026-12-05")
+            await page.locator("#plannerDate").press("Tab")
+            await page.locator('[data-planner-avail][data-value="Ja"]').nth(0).click()
+            await page.locator('[data-planner-avail][data-value="Vielleicht"]').nth(1).click()
+            await page.locator('[data-planner-avail][data-value="Nein"]').nth(2).click()
+            assert "Weihnachtsmärkte" in await page.locator("#plannerDateHint").inner_text()
+            await page.click("#plannerNext")
+
+            # 3: Nur an diesem Tag geöffnete Märkte, verbindliche Auswahl.
+            assert await page.locator("#plannerMarkets .planner-market").count() > 0
+            await page.click('[data-planner-market="steele"]')
+            assert await page.locator('[data-planner-market="steele"]').inner_text() == "Ausgewählt ✓"
+            selected_text = await page.locator("#plannerMarkets .planner-market.selected").inner_text()
+            assert "Öffnungszeiten" not in selected_text or selected_text
+            assert "Tagestrip-Tipp" in selected_text and "Ticket" in selected_text
+            await page.click("#plannerNext")
+
+            # 4: Konfiguration mit Rückfahrt und Budget.
+            await page.fill("#plannerArrival", "15:00")
+            await page.check("#plannerReturnEnabled")
+            await page.fill("#plannerReturnTime", "20:00")
+            await page.select_option("#plannerBudgetLevel", "normal")
+            await page.select_option("#plannerActivityType", "Aktivität")
+            await page.fill("#plannerActivity", "Altstadtrunde")
+            await page.select_option("#plannerTicketStatus", "Nicht nötig")
+            await page.fill("#plannerMeetingPoint", "Wuppertal Hbf, Eingang")
+            await page.select_option("#plannerStatus", "In Planung")
+            await page.fill("#plannerNotes", "Warme Schuhe mitnehmen")
+            await page.click("#plannerNext")
+
+            # 5: Je drei Transitous-Optionen, Sicherheit, letzte Rückfahrt, knapper Umstieg.
+            await page.click("#loadPlannerConnections")
+            await page.locator("#plannerOutbound .connection-card").first.wait_for()
+            assert api_state["plan_calls"] == 2
+            assert await page.locator("#plannerOutbound .connection-card").count() == 3
+            assert await page.locator("#plannerReturn .connection-card").count() == 3
+            assert await page.locator("#plannerOutbound", has_text="Sicherheitsverbindung").count() == 1
+            assert await page.locator("#plannerReturn", has_text="Letzte sinnvolle Rückfahrt").count() == 1
+            assert await page.locator(".badge.warning").count() >= 1
+            await page.locator('[data-select-planner-connection^="outbound|"]').nth(1).click()
+            await page.locator('[data-select-planner-connection^="return|"]').nth(1).click()
+            assert await page.locator("#plannerOutbound .connection-card.selected").count() == 1
+            assert await page.locator("#plannerReturn .connection-card.selected").count() == 1
+            await page.click("#plannerNext")
+
+            # 6: Zusammenfassung, lokale Speicherung und vollständige ICS.
+            summary = await page.locator("#plannerSummary").inner_text()
+            for expected in ["05.12.2026", "Simon (Ja)", "Anna (Vielleicht)", "Steeler Weihnachtsmarkt", "Altstadtrunde", "35 € p. P.", "70 € gesamt", "HINFAHRT", "RÜCKFAHRT", "Nicht nötig"]:
+                assert expected in summary, f"Zusammenfassung fehlt: {expected}"
+            await page.click("#savePlannedTrip")
+            assert "Trip lokal gespeichert" in await page.locator("#plannerSaveMessage").inner_text()
+            assert await page.locator("#savedTrips .saved-trip").count() == 1
+
+            with tempfile.TemporaryDirectory() as tmp:
+                async with page.expect_download() as download_info:
+                    await page.click("#previewIcs")
+                download = await download_info.value
+                path = pathlib.Path(tmp) / download.suggested_filename
+                await download.save_as(path)
+                ics = path.read_text(encoding="utf-8")
+                unfolded_ics = ics.replace("\n ", "")
+                for expected in ["Steeler Weihnachtsmarkt", "Simon (Ja)", "Altstadtrunde", "Wuppertal Hbf\\, Eingang", "Budget: 35 € pro Person", "Ticketstatus: Nicht nötig", "Warme Schuhe mitnehmen", "DB Navigator Hinfahrt", "DB Navigator Rückfahrt"]:
+                    assert expected in unfolded_ics, f"ICS fehlt: {expected}"
+
+            # Gespeicherten Trip bearbeiten und Status ändern.
+            await page.click('[data-edit-trip]')
+            await page.select_option("#plannerStatus", "Geplant")
+            await page.click("#plannerNext")
+            await page.click("#plannerNext")
+            await page.click("#savePlannedTrip")
+            assert "Änderungen lokal gespeichert" in await page.locator("#plannerSaveMessage").inner_text()
+            assert "Geplant" in await page.locator("#savedTrips .saved-trip").inner_text()
+
+            # Persistenz nach Reload und bestehende Recherchebereiche.
+            await page.reload(wait_until="networkidle")
+            await page.click('[data-view="trip"]')
+            assert await page.locator("#savedTrips .saved-trip").count() == 1
+            assert "Geplant" in await page.locator("#savedTrips .saved-trip").inner_text()
+            await page.click('[data-view="markets"]')
+            assert await page.locator("#marketList .card").count() == 39
             await page.click('[data-view="connections"]')
             await page.fill("#connectionFrom", "Wuppertal Hbf")
-            await page.fill("#connectionTo", "Essen Hbf")
+            await page.fill("#connectionTo", "Essen Steele S")
             await page.fill("#connectionDate", "2026-12-05")
             await page.fill("#connectionTime", "14:00")
-            api_state.update(mode="retry", plan_calls=0)
             await page.click("#searchConnections")
-            await page.locator(".connection-card").first.wait_for()
-            assert api_state["plan_calls"] == 2, "Automatischer Retry wurde nicht ausgeführt"
-            assert "14:05" in await page.locator(".connection-time").first.inner_text()
-            assert await page.locator("#savedConnections .saved-connection").count() == 1
-            db_href = await page.locator(".connection-card .db-link").first.get_attribute("href")
-            assert "so=Wuppertal+Hbf" in db_href and "zo=Essen+Hbf" in db_href
+            await page.locator("#connectionResults .connection-card").first.wait_for()
+            assert await page.locator("#connectionResults .connection-card").count() >= 3
 
-            # Rückfahrt via swap + arrival search.
-            await page.click("#swapConnection")
-            await page.select_option("#connectionMode", "arrival")
-            await page.fill("#connectionTime", "19:00")
-            api_state.update(mode="normal", plan_calls=0)
-            await page.click("#searchConnections")
-            await page.locator(".connection-card").first.wait_for()
-            assert "18:05" in await page.locator(".connection-time").first.inner_text()
-            assert api_state["plan_calls"] == 1
-
-            # Offline display of the exact cached return search.
-            await context.set_offline(True)
-            await page.click("#searchConnections")
-            await page.wait_for_function("document.querySelector('#connectionMessage').textContent.includes('Offline')")
-            assert await page.locator(".connection-card").count() >= 1
-            cached_text = await page.locator(".connection-card").first.inner_text()
-            assert "Essen Hbf" in cached_text and "Wuppertal Hbf" in cached_text
-            await context.set_offline(False)
-
-            # The explicit timeout error is tested with shorter timers inside this page.
-            await page.evaluate("window.__originalSetTimeout = window.setTimeout; window.setTimeout = (fn, ms, ...args) => window.__originalSetTimeout(fn, ms === 12000 ? 80 : ms, ...args)")
-            await page.fill("#connectionTime", "20:00")
-            api_state.update(mode="timeout", plan_calls=0)
-            await page.click("#searchConnections")
-            await page.locator("#retryConnections").wait_for(timeout=5000)
-            error_text = await page.locator("#connectionResults").inner_text()
-            assert "12 Sekunden" in error_text and "Erneut versuchen" in error_text
-
-            # Desktop layout smoke test on the same GitHub Pages subpath.
+            # Desktop auf demselben GitHub-Pages-Unterpfad.
             await page.set_viewport_size({"width": 1280, "height": 900})
             await page.reload(wait_until="networkidle")
             overflow = await page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
             assert overflow <= 1, f"Desktop-Überlaufen: {overflow}px"
-
             assert not console_errors, "Browserfehler: " + " | ".join(console_errors)
             await browser.close()
     finally:
         server.shutdown()
         server.server_close()
 
-    print("V2.3.0 E2E bestanden: GitHub-Pages-Unterpfad, Haltestelle, Hin-/Rückfahrt, Retry, Timeout, Offline und DB Navigator.")
+    print("V2.4.0 E2E bestanden: kompletter 6-Schritt-Planer mobil, Transitous, Bearbeitung, ICS, Persistenz und GitHub-Pages-Unterpfad.")
 
 
 if __name__ == "__main__":

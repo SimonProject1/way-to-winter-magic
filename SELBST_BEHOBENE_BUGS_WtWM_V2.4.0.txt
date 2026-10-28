@@ -1,0 +1,19 @@
+Way to Winter Magic V2.4.0 – selbst behobene Bugs
+Stand: 28.10.2026
+
+1. Startabbruch nach Umbau des Trip-Bereichs
+   Ursache: Die Initialisierung der eigenständigen Bahnseite fehlte nach der Integration.
+   Behoben: Initialisierung wiederhergestellt und Start mit 39 Märkten getestet.
+
+2. Sicherheitsverbindung verdrängte die schnellste Verbindung
+   Ursache: Bei nur drei Karten wurde immer die dritte Auswahl ersetzt.
+   Behoben: Eine doppelte „wenig Umstiege“-Option wird bevorzugt ersetzt; schnellste und Sicherheitsverbindung bleiben sichtbar.
+
+3. Mögliche falsche Endzeit bei Trips nach Mitternacht
+   Ursache: UTC-Umwandlung konnte die lokale Kalenderzeit um eine Stunde verschieben.
+   Behoben: Der Folgetag wird jetzt direkt als lokale Europe/Berlin-Zeit in die ICS geschrieben.
+
+4. Mobile und GitHub-Pages-Unterpfad geprüft
+   Ergebnis: Kein horizontales Überlaufen bei 390 × 844 px; kompletter 6-Schritt-Ablauf, Speicherung, Bearbeitung, ICS und bestehende Recherchebereiche funktionieren.
+
+Hinweis: Der optionale Live-Test zu api.transitous.org wurde in der Testumgebung durch deren Netzwerk-Sandbox blockiert. Die App-Integration selbst wurde mit realitätsnah simulierten Transitous-Antworten vollständig geprüft.

@@ -14,7 +14,7 @@
 <body>
   <header class="hero">
     <div>
-      <p class="eyebrow">Weihnachtsmarkt-Tripplaner · V2.3.0</p>
+      <p class="eyebrow">Weihnachtsmarkt-Tripplaner · V2.4.0</p>
       <h1>Way to Winter Magic</h1>
       <p>39 geprüfte Ziele ab Wuppertal – gemeinsam planen, vergleichen und die passende Verbindung finden.</p>
     </div>
@@ -25,7 +25,7 @@
     <button data-view="home" class="active"><span>⌂</span>Start</button>
     <button data-view="markets"><span>★</span>Märkte</button>
     <button data-view="timeline"><span>▦</span>Timeline</button>
-    <button data-view="trip"><span>✦</span>Trip</button>
+    <button data-view="trip"><span>✦</span>Trip planen</button>
     <button data-view="connections"><span>🚆</span>Bahn</button>
     <button data-view="settings"><span>⚙</span>Mehr</button>
   </nav>
@@ -38,8 +38,8 @@
         <article><span>Gemeinsame Tage</span><strong id="commonCount">0</strong></article>
       </div>
       <article class="panel intro-panel">
-        <div><p class="eyebrow dark">Neu in V2.3.0</p><h2>Verbindungen mit Transitous</h2><p>Wähle Markt, Datum und Uhrzeit. Erfolgreiche Suchen bleiben auch offline sichtbar.</p></div>
-        <button data-jump="connections">Verbindung suchen</button>
+        <div><p class="eyebrow dark">Neu in V2.4.0</p><h2>Der zentrale Planungs-Assistent</h2><p>Personen, Termin, Markt, Budget, Bahn und Kalenderdatei in einem geführten Ablauf.</p></div>
+        <button data-jump="trip">Trip planen</button>
       </article>
       <article class="panel"><h2>Passende nächste Termine</h2><div id="nextDates" class="cards compact"></div></article>
       <article class="panel"><h2>Top-Empfehlungen</h2><div id="topMarkets" class="cards"></div></article>
@@ -76,21 +76,70 @@
     </section>
 
     <section id="trip" class="view">
-      <article class="panel">
-        <p class="eyebrow dark">Fest einplanen</p><h2>Trip und .ics-Datei</h2>
-        <div class="form-grid">
-          <label>Datum<input type="date" id="tripDate" min="2026-10-30" max="2027-01-10"></label>
-          <label>Weihnachtsmarkt<select id="tripMarket"></select></label>
-          <label>Startzeit<input type="time" id="tripStart" value="14:00"></label>
-          <label>Endzeit<input type="time" id="tripEnd" value="20:00"></label>
-          <label>Aktivität / Städtetrip<input id="tripActivity" placeholder="z. B. Altstadt oder Museum"></label>
-          <label>Budget pro Person<input type="number" id="tripBudget" min="0" step="1" value="45"></label>
-          <label class="wide">Notizen<textarea id="tripNotes" rows="3"></textarea></label>
+      <article class="panel planner-shell" aria-labelledby="plannerHeading">
+        <div class="section-head planner-title"><div><p class="eyebrow dark">Zentraler Bereich</p><h2 id="plannerHeading">Trip planen</h2><p class="muted">Schritt für Schritt zum fertigen Weihnachtsmarkt-Trip.</p></div><button id="newTrip" class="ghost compact-button">Neu beginnen</button></div>
+        <ol id="plannerProgress" class="planner-progress" aria-label="Planungsfortschritt">
+          <li data-progress="1">Personen</li><li data-progress="2">Datum</li><li data-progress="3">Markt</li><li data-progress="4">Trip</li><li data-progress="5">Bahn</li><li data-progress="6">Prüfen</li>
+        </ol>
+
+        <div class="planner-step" data-step="1">
+          <p class="eyebrow dark">Schritt 1 von 6</p><h3>Wer fährt mit?</h3>
+          <div class="form-grid compact-form"><label>Anzahl Personen<input id="plannerPersonCount" type="number" min="1" max="20" value="2" inputmode="numeric"></label></div>
+          <div id="plannerPeople" class="planner-people"></div>
+          <button id="plannerAddPerson" class="ghost">+ Person hinzufügen</button>
+          <p class="muted">Namen werden nur lokal auf diesem Gerät gespeichert und können später unter „Mehr“ geändert werden.</p>
         </div>
-        <div class="actions"><button id="saveTrip">Trip lokal speichern</button><button id="exportIcs" class="secondary">.ics erstellen / teilen</button><button id="tripConnection" class="ghost">DB-Verbindung suchen</button></div>
-        <p id="tripMessage" class="status" aria-live="polite"></p>
+
+        <div class="planner-step" data-step="2" hidden>
+          <p class="eyebrow dark">Schritt 2 von 6</p><h3>Datum und Verfügbarkeit</h3>
+          <div class="form-grid compact-form"><label>Datum<input id="plannerDate" type="date" min="2026-10-30" max="2027-01-10"></label></div>
+          <div id="plannerAvailability" class="availability-list"></div>
+          <p id="plannerDateHint" class="status" aria-live="polite"></p>
+        </div>
+
+        <div class="planner-step" data-step="3" hidden>
+          <p class="eyebrow dark">Schritt 3 von 6</p><h3>Geöffneten Markt auswählen</h3>
+          <p class="muted">Es erscheinen ausschließlich Märkte, die am gewählten Datum geöffnet sind.</p>
+          <div id="plannerMarkets" class="cards planner-markets"></div>
+        </div>
+
+        <div class="planner-step" data-step="4" hidden>
+          <p class="eyebrow dark">Schritt 4 von 6</p><h3>Trip konfigurieren</h3>
+          <div class="form-grid">
+            <label>Gewünschte Ankunft am Markt<input id="plannerArrival" type="time" value="15:00"></label>
+            <label class="check planner-check"><input id="plannerReturnEnabled" type="checkbox"> Rückfahrt mitplanen</label>
+            <label id="plannerReturnWrap" hidden>Gewünschte Rückfahrt ab Markt<input id="plannerReturnTime" type="time" value="20:00"></label>
+            <label>Budgetstufe<select id="plannerBudgetLevel"><option value="saving">Sparsam</option><option value="normal">Normal</option><option value="activity">Mit Aktivität</option></select></label>
+            <label>Art<select id="plannerActivityType"><option value="Städtetrip">Städtetrip</option><option value="Aktivität">Aktivität</option><option value="Nur Weihnachtsmarkt">Nur Weihnachtsmarkt</option></select></label>
+            <label>Aktivität / Ziel<input id="plannerActivity" placeholder="z. B. Altstadt, Museum oder Eisbahn"></label>
+            <label>Ticketstatus<select id="plannerTicketStatus"><option>Noch nicht geprüft</option><option>Nicht nötig</option><option>Noch nicht gekauft</option><option>Gekauft</option><option>Reserviert</option></select></label>
+            <label>Treffpunkt<input id="plannerMeetingPoint" value="Wuppertal Hbf" placeholder="z. B. Eingang Wuppertal Hbf"></label>
+            <label>Status<select id="plannerStatus"><option>Idee</option><option>In Planung</option><option>Geplant</option><option>Besucht</option><option>Abgesagt</option></select></label>
+            <label class="wide">Notizen<textarea id="plannerNotes" rows="3" placeholder="Was soll nicht vergessen werden?"></textarea></label>
+          </div>
+          <div id="plannerBudgetInfo" class="info-box"></div>
+        </div>
+
+        <div class="planner-step" data-step="5" hidden>
+          <p class="eyebrow dark">Schritt 5 von 6</p><h3>Bahnverbindungen</h3>
+          <p id="plannerRoute" class="muted"></p>
+          <div class="actions"><button id="loadPlannerConnections">Drei Optionen laden</button><button id="recheckPlannerConnections" class="ghost">Erneut prüfen</button></div>
+          <p id="plannerConnectionMessage" class="status" aria-live="polite"></p>
+          <h4>Hinfahrt · Ankunft am Markt</h4><div id="plannerOutbound" class="connections planner-connections"></div>
+          <div id="plannerReturnSection" hidden><h4>Rückfahrt · Abfahrt vom Markt</h4><div id="plannerReturn" class="connections planner-connections"></div></div>
+        </div>
+
+        <div class="planner-step" data-step="6" hidden>
+          <p class="eyebrow dark">Schritt 6 von 6</p><h3>Zusammenfassung prüfen</h3>
+          <div id="plannerSummary" class="trip-summary"></div>
+          <div class="actions"><button id="savePlannedTrip">Trip verbindlich speichern</button><button id="previewIcs" class="secondary">.ics erstellen / teilen</button></div>
+          <p id="plannerSaveMessage" class="status" aria-live="polite"></p>
+        </div>
+
+        <p id="plannerMessage" class="status" aria-live="polite"></p>
+        <div class="planner-nav"><button id="plannerBack" class="ghost">Zurück</button><span id="plannerStepLabel">Schritt 1 von 6</span><button id="plannerNext">Weiter</button></div>
       </article>
-      <article class="panel"><h2>Gespeicherte Trips</h2><div id="savedTrips" class="cards compact"></div></article>
+      <article class="panel"><div class="section-head"><div><p class="eyebrow dark">Lokal gespeichert</p><h2>Meine Trips</h2></div></div><div id="savedTrips" class="cards compact"></div></article>
     </section>
 
     <section id="connections" class="view">
@@ -135,7 +184,7 @@
   </main>
 
   <dialog id="marketDialog"><button class="close" aria-label="Schließen">×</button><div id="marketDetail"></div></dialog>
-  <footer>Offline-PWA · Transitous-Verbindungssuche · Offline-Speicher · Datenstand 28.10.2026 · V2.3.0</footer>
+  <footer>Offline-PWA · Transitous-Verbindungssuche · Offline-Speicher · Datenstand 28.10.2026 · V2.4.0</footer>
   <script src="app.js" defer></script>
 </body>
 </html>
