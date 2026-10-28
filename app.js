@@ -1,4 +1,4 @@
-const VERSION = '3.0.0';
+const VERSION = '3.1.0';
 const rewardEngine = typeof WTWM_REWARDS !== 'undefined' ? WTWM_REWARDS : require('./rewards.js');
 const { AREAS: REWARD_AREAS, STICKERS, evaluateRewards } = rewardEngine;
 const API = 'https://api.transitous.org/api';
@@ -1527,18 +1527,120 @@ function currentRewards() {
 }
 
 function medalMarkup(sticker, options = {}) {
-  const size = options.size === 'large' ? 'large' : 'small';
+  const size = ['large', 'mini'].includes(options.size) ? options.size : 'small';
   const locked = options.locked ?? !sticker.unlocked;
   const isNew = Boolean(options.isNew ?? (sticker.unlocked && !sticker.seen));
-  const colors = sticker.colors || ['#173c32', '#d6aa52', '#fff8e9'];
-  return `<div class="premium-medal ${size} ${locked ? 'locked' : 'unlocked'} ${isNew ? 'newly-unlocked' : ''}" data-variant="${locked ? 'locked' : isNew ? 'new' : 'unlocked'}" style="--medal-dark:${esc(colors[0])};--medal-gold:${esc(colors[1])};--medal-light:${esc(colors[2])}" role="img" aria-label="${esc(sticker.name)} – ${locked ? 'gesperrt' : isNew ? 'neu freigeschaltet' : 'freigeschaltet'}">
-    <span class="medal-ribbon" aria-hidden="true"></span><span class="medal-disc"><span class="medal-icon" aria-hidden="true">${esc(sticker.icon)}</span></span>${locked ? '<span class="medal-lock" aria-hidden="true">●</span>' : ''}${isNew ? '<span class="medal-new">Neu</span>' : ''}
+  const progress = Math.max(0, Math.min(100, Number(options.progress ?? (sticker.target ? sticker.value / sticker.target * 100 : 0))));
+  const source = locked ? sticker.imageLocked : isNew ? sticker.imageNew : size === 'large' ? sticker.imageLarge : sticker.imageSmall;
+  const responsiveSource = !locked && !isNew && size !== 'large' ? ` srcset="${esc(sticker.imageSmall)} 320w, ${esc(sticker.image)} 800w" sizes="${size === 'mini' ? '58px' : '76px'}"` : '';
+  return `<div class="premium-medal ${size} ${locked ? 'locked' : 'unlocked'} ${isNew ? 'newly-unlocked' : ''}" style="--sticker-progress:${progress}" data-variant="${locked ? 'locked' : isNew ? 'new' : size}" role="img" aria-label="${esc(sticker.name)} – ${locked ? `gesperrt, Fortschritt ${Math.round(progress)} Prozent` : isNew ? 'neu freigeschaltet' : 'freigeschaltet'}">
+    <img class="sticker-art" src="${esc(source)}"${responsiveSource} alt="" ${size === 'large' ? '' : 'loading="lazy"'} decoding="async">${locked ? '<span class="medal-progress" aria-hidden="true"></span>' : ''}${isNew ? '<span class="medal-new">Neu</span>' : ''}
   </div>`;
 }
 
 function rewardDate(value) {
   const date = value ? new Date(value) : null;
   return date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString('de-DE', { day:'2-digit', month:'long', year:'numeric' }) : 'Noch nicht freigeschaltet';
+}
+
+function rewardIdsEarnedOnTrip(tripId) {
+  const visited = state.trips.filter(trip => trip?.status === 'Besucht').sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.id).localeCompare(String(b.id)));
+  const index = visited.findIndex(trip => String(trip.id) === String(tripId));
+  if (index < 0) return [];
+  const beforeTrips = visited.slice(0, index);
+  const throughTrips = visited.slice(0, index + 1);
+  const beforeIds = new Set(beforeTrips.map(trip => String(trip.id)));
+  const throughIds = new Set(throughTrips.map(trip => String(trip.id)));
+  const beforeJournal = state.journal.filter(entry => beforeIds.has(String(entry.tripId)));
+  const throughJournal = state.journal.filter(entry => throughIds.has(String(entry.tripId)));
+  const before = new Set(evaluateRewards(beforeTrips, beforeJournal, markets, {}).filter(sticker => sticker.unlocked).map(sticker => sticker.id));
+  return evaluateRewards(throughTrips, throughJournal, markets, {}).filter(sticker => sticker.unlocked && !before.has(sticker.id)).map(sticker => sticker.id);
+}
+
+function loadCanvasImage(source) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('Stickergrafik konnte nicht geladen werden'));
+    image.src = source;
+  });
+}
+
+function canvasFile(canvas, name) {
+  return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(new File([blob], name, { type:'image/png' })) : reject(new Error('Teilen-Grafik konnte nicht erstellt werden')), 'image/png', .95));
+}
+
+function fillWrappedText(context, text, x, y, maxWidth, lineHeight, maxLines = 4) {
+  const words = String(text || '').split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (context.measureText(test).width > maxWidth && line) { lines.push(line); line = word; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  lines.slice(0, maxLines).forEach((value, index) => context.fillText(index === maxLines - 1 && lines.length > maxLines ? `${value}…` : value, x, y + index * lineHeight));
+  return y + Math.min(lines.length, maxLines) * lineHeight;
+}
+
+async function shareFileOrDownload(file, title, text) {
+  try {
+    if (navigator.canShare?.({ files:[file] })) await navigator.share({ files:[file], title, text });
+    else download(URL.createObjectURL(file), file.name);
+  } catch (error) {
+    if (error.name !== 'AbortError') download(URL.createObjectURL(file), file.name);
+  }
+}
+
+async function shareSticker(id) {
+  const sticker = currentRewards().find(item => item.id === id);
+  if (!sticker?.unlocked) return;
+  const canvas = document.createElement('canvas');
+  canvas.width = 1200; canvas.height = 1200;
+  const context = canvas.getContext('2d');
+  const gradient = context.createLinearGradient(0, 0, 1200, 1200);
+  gradient.addColorStop(0, '#08291f'); gradient.addColorStop(.58, '#173c32'); gradient.addColorStop(1, '#3f1e24');
+  context.fillStyle = gradient; context.fillRect(0, 0, 1200, 1200);
+  context.strokeStyle = '#e2b65e'; context.lineWidth = 8; context.strokeRect(38, 38, 1124, 1124);
+  const image = await loadCanvasImage(sticker.imageShare);
+  context.drawImage(image, 362, 86, 476, 576);
+  context.textAlign = 'center'; context.fillStyle = '#f3ca78'; context.font = '700 34px Georgia, serif'; context.fillText('WAY TO WINTER MAGIC', 600, 726);
+  context.fillStyle = '#fff8e9'; context.font = '700 70px Georgia, serif'; fillWrappedText(context, sticker.name, 600, 824, 980, 80, 2);
+  context.fillStyle = '#e9ddc4'; context.font = '32px system-ui, sans-serif'; context.fillText(`Freigeschaltet · ${rewardDate(sticker.unlockedAt)}`, 600, 1010);
+  context.fillStyle = '#f3ca78'; context.font = '700 26px system-ui, sans-serif'; context.fillText(sticker.effectLabel, 600, 1070);
+  const file = await canvasFile(canvas, `winter-magic-sticker-${sticker.id}.png`);
+  await shareFileOrDownload(file, sticker.name, `Mein freigeschalteter Way-to-Winter-Magic-Sticker: ${sticker.name}`);
+}
+
+async function shareJournalEntry(entryId) {
+  const entry = state.journal.find(item => String(item.id) === String(entryId));
+  const trip = entry && state.trips.find(item => String(item.id) === String(entry.tripId));
+  if (!entry || !trip) return;
+  const earned = rewardIdsEarnedOnTrip(trip.id).map(id => STICKERS.find(sticker => sticker.id === id)).filter(Boolean).slice(0, 3);
+  const canvas = document.createElement('canvas');
+  canvas.width = 1200; canvas.height = 1200;
+  const context = canvas.getContext('2d');
+  const gradient = context.createLinearGradient(0, 0, 1200, 1200);
+  gradient.addColorStop(0, '#fffdf8'); gradient.addColorStop(1, '#ead9b6');
+  context.fillStyle = gradient; context.fillRect(0, 0, 1200, 1200);
+  context.fillStyle = '#0b3026'; context.fillRect(0, 0, 1200, 176);
+  context.textAlign = 'center'; context.fillStyle = '#f3ca78'; context.font = '700 31px Georgia, serif'; context.fillText('WAY TO WINTER MAGIC · WINTERTAGEBUCH', 600, 100);
+  context.fillStyle = '#173c32'; context.font = '700 63px Georgia, serif'; fillWrappedText(context, trip.market, 600, 260, 1030, 72, 2);
+  context.fillStyle = '#742f2f'; context.font = '700 31px system-ui, sans-serif'; context.fillText(`${trip.city || 'Winter Magic'} · ${formatDate(entry.date || trip.date)}`, 600, 403);
+  context.fillStyle = '#bd7d13'; context.font = '44px system-ui, sans-serif'; context.fillText('★'.repeat(Number(entry.rating) || 0) + '☆'.repeat(Math.max(0, 5 - (Number(entry.rating) || 0))), 600, 466);
+  context.fillStyle = '#21362f'; context.font = 'italic 39px Georgia, serif'; fillWrappedText(context, `„${entry.moment}“`, 600, 548, 1000, 50, 4);
+  if (earned.length) {
+    const images = await Promise.all(earned.map(sticker => loadCanvasImage(sticker.imageShare)));
+    const size = earned.length === 1 ? 300 : 240;
+    const gap = 34;
+    const total = images.length * size + (images.length - 1) * gap;
+    images.forEach((image, index) => context.drawImage(image, (1200 - total) / 2 + index * (size + gap), 785, size, size * 1.21));
+  } else {
+    context.fillStyle = '#0b3026'; context.font = '700 30px system-ui, sans-serif'; context.fillText('Ein magischer Wintermoment', 600, 950);
+  }
+  const file = await canvasFile(canvas, `wintertagebuch-${String(trip.market).replace(/[^a-z0-9äöüß-]+/gi, '-')}.png`);
+  await shareFileOrDownload(file, trip.market, `Mein Wintermoment bei ${trip.market}`);
 }
 
 function renderWinterMagic() {
@@ -1558,7 +1660,7 @@ function renderWinterMagic() {
         const ratio = Math.min(100, Math.round(sticker.value / sticker.target * 100));
         const newSticker = sticker.unlocked && !sticker.seen;
         return `<button class="sticker-card ${sticker.unlocked ? 'unlocked' : 'locked'} ${newSticker ? 'new' : ''}" data-sticker="${esc(sticker.id)}" aria-label="${esc(sticker.name)} öffnen">
-          ${medalMarkup(sticker, { size:'small', locked:!sticker.unlocked, isNew:newSticker })}
+          ${medalMarkup(sticker, { size:'small', locked:!sticker.unlocked, isNew:newSticker, progress:ratio })}
           <span class="sticker-copy"><strong>${esc(sticker.name)}</strong><small>${sticker.unlocked ? `Freigeschaltet · ${rewardDate(sticker.unlockedAt)}` : `${Math.min(sticker.value, sticker.target)} / ${sticker.target} ${esc(sticker.unit)}`}</small><span class="mini-progress"><i style="width:${ratio}%"></i></span></span>
         </button>`;
       }).join('')}</div>
@@ -1577,9 +1679,10 @@ function showStickerDetail(id) {
     sticker = currentRewards().find(item => item.id === id);
   }
   const ratio = Math.min(100, Math.round(sticker.value / sticker.target * 100));
-  $('#stickerDetail').innerHTML = `<div class="sticker-detail-head">${medalMarkup(sticker, { size:'large', locked:!sticker.unlocked, isNew:false })}<div><p class="eyebrow dark">${sticker.unlocked ? 'Freigeschaltet' : 'Noch gesperrt'}</p><h2>${esc(sticker.name)}</h2><p>${esc(sticker.description)}</p></div></div>
+  $('#stickerDetail').innerHTML = `<div class="sticker-detail-head">${medalMarkup(sticker, { size:'large', locked:!sticker.unlocked, isNew:false, progress:ratio })}<div><p class="eyebrow dark">${sticker.unlocked ? 'Freigeschaltet' : 'Noch gesperrt'}</p><h2>${esc(sticker.name)}</h2><p>${esc(sticker.description)}</p><div class="sticker-detail-actions"><button data-share-sticker="${esc(sticker.id)}" ${sticker.unlocked ? '' : 'disabled'}>${sticker.unlocked ? 'Sticker teilen' : 'Nach Freischaltung teilbar'}</button></div></div></div>
     <div class="sticker-progress-detail"><div><strong>${Math.min(sticker.value, sticker.target)} / ${sticker.target}</strong><span>${esc(sticker.unit)}</span></div><span class="mini-progress"><i style="width:${ratio}%"></i></span></div>
     <div class="sticker-specs"><div><span>Motiv</span><strong>${esc(sticker.motif)}</strong></div><div><span>Material</span><strong>${esc(sticker.material)}</strong></div><div><span>Band</span><strong>${esc(sticker.ribbon)}</strong></div><div><span>Rahmen</span><strong>${esc(sticker.frame)}</strong></div><div><span>Freischalteffekt</span><strong>${esc(sticker.effectLabel)}</strong></div><div><span>Freischaltdatum</span><strong>${esc(rewardDate(sticker.unlockedAt))}</strong></div></div>`;
+  $('[data-share-sticker]')?.addEventListener('click', () => shareSticker(sticker.id));
   $('#stickerDialog').showModal();
   renderWinterMagic();
 }
@@ -1605,10 +1708,14 @@ function renderJournal() {
     const trip = state.trips.find(item => String(item.id) === String(entry.tripId));
     if (!trip) return '';
     const stars = '★'.repeat(Number(entry.rating) || 0) + '☆'.repeat(Math.max(0, 5 - (Number(entry.rating) || 0)));
-    return `<article class="journal-card"><div class="journal-date"><span>${esc(formatDate(entry.date || trip.date, { day:'2-digit', month:'short' }))}</span><small>${esc(parseDate(entry.date || trip.date)?.getFullYear() || '')}</small></div><div class="journal-copy"><p class="eyebrow dark">${esc(trip.city || 'Winter Magic')}</p><h3>${esc(trip.market)}</h3><div class="journal-rating" aria-label="${Number(entry.rating) || 0} von 5 Sternen">${stars}</div><blockquote>${esc(entry.moment)}</blockquote><p class="journal-meta">${esc(entry.weather || 'Winterlich')}${entry.treat ? ` · ${esc(entry.treat)}` : ''}${entry.night ? ' · ☾ Night Magic' : ''}</p>${entry.souvenir ? `<p><strong>Entdeckung:</strong> ${esc(entry.souvenir)}</p>` : ''}<div class="card-actions"><button data-edit-journal="${esc(trip.id)}">Bearbeiten</button><button class="ghost" data-delete-journal="${esc(entry.id)}">Eintrag löschen</button></div></div></article>`;
+    const earned = rewardIdsEarnedOnTrip(trip.id).map(id => currentRewards().find(sticker => sticker.id === id)).filter(Boolean);
+    const stickers = earned.length ? `<div class="journal-stickers"><span>Bei diesem Besuch freigeschaltet</span><div>${earned.map(sticker => `<button class="journal-sticker" data-sticker="${esc(sticker.id)}" aria-label="${esc(sticker.name)} öffnen">${medalMarkup(sticker, { size:'mini', locked:false, isNew:false })}<small>${esc(sticker.name)}</small></button>`).join('')}</div></div>` : '';
+    return `<article class="journal-card"><div class="journal-date"><span>${esc(formatDate(entry.date || trip.date, { day:'2-digit', month:'short' }))}</span><small>${esc(parseDate(entry.date || trip.date)?.getFullYear() || '')}</small></div><div class="journal-copy"><p class="eyebrow dark">${esc(trip.city || 'Winter Magic')}</p><h3>${esc(trip.market)}</h3><div class="journal-rating" aria-label="${Number(entry.rating) || 0} von 5 Sternen">${stars}</div><blockquote>${esc(entry.moment)}</blockquote><p class="journal-meta">${esc(entry.weather || 'Winterlich')}${entry.treat ? ` · ${esc(entry.treat)}` : ''}${entry.night ? ' · ☾ Night Magic' : ''}</p>${entry.souvenir ? `<p><strong>Entdeckung:</strong> ${esc(entry.souvenir)}</p>` : ''}${stickers}<div class="card-actions"><button data-edit-journal="${esc(trip.id)}">Bearbeiten</button><button class="secondary" data-share-journal="${esc(entry.id)}">Moment teilen</button><button class="ghost" data-delete-journal="${esc(entry.id)}">Eintrag löschen</button></div></div></article>`;
   }).join('') : '<div class="empty journal-empty"><strong>Noch keine Wintermomente.</strong><br>Markiere einen gespeicherten Trip als besucht – danach öffnet sich dein Abschlussdialog.</div>';
   $$('[data-edit-journal]').forEach(button => button.onclick = () => openCompletionDialog(button.dataset.editJournal));
   $$('[data-delete-journal]').forEach(button => button.onclick = () => deleteDiaryEntry(button.dataset.deleteJournal));
+  $$('[data-share-journal]').forEach(button => button.onclick = () => shareJournalEntry(button.dataset.shareJournal));
+  $$('#journalEntries [data-sticker]').forEach(button => button.onclick = () => showStickerDetail(button.dataset.sticker));
 }
 
 function markTripVisited(id) {
@@ -1696,6 +1803,21 @@ function showUnlocks(ids) {
   if (!activeUnlock) showNextUnlock();
 }
 
+function unlockEffectMarkup(effect) {
+  const effects = {
+    spark:['spark',8], snowglobes:['globe',5], trail:['waypoint',10], silverpath:['silver-star',20],
+    goldlantern:['gold-light',30], master:['master-star',39], castle:['castle-light',10], forest:['forest-light',12],
+    lantern:['lantern-ray',12], steam:['steam-curl',8], cozy:['cozy-snow',14], train:['train-light',9],
+    city:['city-rise',5], curtain:['curtain-part',2], weekend:['weekend-flake',9], moon:['moon-reflection',14]
+  };
+  const [kind, count] = effects[effect] || ['spark',8];
+  return Array.from({ length:count }, (_, index) => {
+    const x = 8 + (index * 37) % 84;
+    const y = 9 + (index * 29) % 76;
+    return `<span class="effect-particle ${kind}" data-n="${index + 1}" style="--i:${index};--count:${count};--x:${x}%;--y:${y}%" aria-hidden="true"></span>`;
+  }).join('');
+}
+
 function showNextUnlock() {
   activeUnlock = unlockQueue.shift() || '';
   if (!activeUnlock) { $('#unlockCelebration').hidden = true; return; }
@@ -1704,6 +1826,7 @@ function showNextUnlock() {
   const overlay = $('#unlockCelebration');
   overlay.className = `unlock-celebration effect-${sticker.effect}`;
   $('#unlockMedal').innerHTML = medalMarkup(sticker, { size:'large', locked:false, isNew:true });
+  $('#unlockEffectScene').innerHTML = unlockEffectMarkup(sticker.effect);
   $('#unlockTitle').textContent = sticker.name;
   $('#unlockEffect').textContent = sticker.effectLabel;
   overlay.hidden = false;

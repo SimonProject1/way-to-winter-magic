@@ -1,0 +1,39 @@
+Way to Winter Magic V3.1.0 – selbst behobene Bugs
+Stand: 28.10.2026
+
+1. Mehrere Stickermotive waren gegenüber den 16 festgelegten Einzelvorgaben zu stark vereinfacht.
+   Behoben: alle 16 Motive vollständig und detailreich neu gezeichnet.
+
+2. Pro Sticker existierten nur gesperrte und freigeschaltete Dateien.
+   Behoben: je Sticker sechs eigenständige SVGs – freigeschaltet, gesperrt, neu, klein, groß und hochauflösend zum Teilen; insgesamt 96 Dateien.
+
+3. Geschwungene Namensbänder und realistische Premium-Materialwirkung waren nicht ausreichend ausgearbeitet.
+   Behoben: neue Namensbänder, doppelte räumliche Metallrahmen, Emaille-, Gold-, Silber-, Bronze-, Schnee-, Glas- und Lichtdetails.
+
+4. Gesperrte Sticker zeigten den Fortschritt nur als separaten Balken.
+   Behoben: dunkle Motivsilhouette, matter Metallrahmen, Schloss und direkt an der Medaille wachsender Goldring.
+
+5. Freischaltungen nutzten überwiegend generische Partikel.
+   Behoben: 16 motivbezogene Effekte mit den geforderten Stückzahlen und Abläufen, einschließlich 5 Schneekugeln, 10 Wegpunkten, 20 Silbersternen, 30 Lichtpunkten und 39 Meistersternen.
+
+6. Teilen verwendete keine eigene hochauflösende Stickerquelle.
+   Behoben: Sticker- und Tagebuch-PNGs laden nun die jeweilige 1600 × 1920 Teilen-SVG.
+
+7. Offline waren nur 32 Stickerdateien fest vorgeladen.
+   Behoben: alle 96 Varianten sind im V3.1.0-Service-Worker-Cache enthalten.
+
+8. Mehrere sichtbare Versionshinweise waren nach der Überarbeitung noch auf dem vorherigen Stand stehen geblieben.
+   Behoben: App, Startseite, Footer, Sicherung, Service Worker, Tests und Dokumentation einheitlich auf V3.1.0 aktualisiert.
+
+Prüfergebnis:
+- Smoke-/Logiktests: bestanden
+- 96 SVG-Dateien: vorhanden, eindeutig, XML-valide und im Browser gerendert
+- Mobil 390 × 844 px: bestanden, kein horizontales Überlaufen
+- Desktop 1280 × 900 px: bestanden, kein horizontales Überlaufen
+- Album, Tagebuch, Detailansichten und Freischaltmomente: bestanden
+- Hochauflösendes Sticker- und Tagebuch-Teilen: bestanden
+- Lokale Speicherung, Export, Löschung, Import und Wiederherstellung: bestanden
+- GitHub-Pages-Unterpfad und Offline-PWA: bestanden
+- 39 Märkte sowie bisherige Planer-, Verbindungs- und ICS-Funktionen: bestanden
+
+Hinweis: Der optionale direkte Live-Aufruf des externen Transitous-Dienstes ist von dessen Verfügbarkeit und Zugriffspolitik abhängig. Die App-Integration wurde mit realitätsnahen API-Antworten vollständig getestet; Offline- und Fehlerverhalten sind bestanden.

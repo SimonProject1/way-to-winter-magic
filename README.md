@@ -1,8 +1,8 @@
-# Way to Winter Magic V3.0.0
+# Way to Winter Magic V3.1.0
 
 Installierbare GitHub-Pages-PWA mit 39 Weihnachtsmärkten, Reiseplanung, Transitous-Verbindungssuche, Winterzauber-Album und lokalem Wintertagebuch.
 
-## Neu in V3.0.0
+## Neu in V3.1.0
 
 ### Winterzauber-Album
 
@@ -13,16 +13,20 @@ Das Album ist in vier Bereiche gegliedert und zeigt für jeden Sticker einen For
 3. **Reiseabenteuer**
 4. **Saisonmomente**
 
-Alle Medaillen verwenden den Way-to-Winter-Magic-Premiumstil: transparente Außenfläche, leicht gewölbte Sammelmedaille, doppelter Metallrahmen, Dunkelgrün, Warmgold, Cremeweiß und dezentes Weihnachtsrot. Jeder Sticker besitzt eine gesperrte, freigeschaltete und neue Variante sowie eine kleine Album- und große Detaildarstellung.
+Alle 16 Motive wurden vollständig nach den individuellen Motivvorgaben neu gezeichnet. Jede leicht gewölbte Sammelmedaille verwendet transparente Außenflächen, zwei räumliche Metallrahmen, tiefes Dunkelgrün, Warmgold, Cremeweiß, dezentes Weihnachtsrot, geprägten Schnee, Materialreflexe und ein geschwungenes Namensband.
+
+Pro Sticker liegen sechs eigenständige SVG-Grafikdateien vor: **freigeschaltet, gesperrt, neu, klein, groß und hochauflösend zum Teilen** – insgesamt 96 Dateien. Album, Tagebuch, Detailansichten, Freischaltmomente und PNG-Teilen nutzen automatisch die passende Variante. Gesperrte Medaillen besitzen dunkle Motivsilhouetten, matte Metallrahmen, ein Schloss und einen sichtbar anwachsenden Goldring.
+
+Die 16 Freischaltanimationen sind an das jeweilige Motiv gekoppelt: unter anderem fünf Schneekugeln, zehn Wegpunkte, zwanzig Silbersterne, dreißig Laternenlichter, 39 Meistersterne, ein einfahrender Regionalzug, öffnende Samtvorhänge und Lichtspiegelungen auf nassem Pflaster. Der reduzierte Bewegungsmodus bleibt vollständig unterstützt.
 
 | Sticker | Fortschrittsziel |
 |---|---:|
 | Der erste Zauber | 1 besuchter Markt |
 | Fünf magische Momente | 5 besuchte Märkte |
-| Winterwanderer Bronze | 3 besuchte Märkte |
-| Winterwanderer Silber | 7 besuchte Märkte |
-| Winterwanderer Gold | 12 besuchte Märkte |
-| Winter-Magic-Meister | 20 besuchte Märkte |
+| Winterwanderer Bronze | 10 unterschiedliche besuchte Märkte |
+| Winterwanderer Silber | 20 unterschiedliche besuchte Märkte |
+| Winterwanderer Gold | 30 unterschiedliche besuchte Märkte |
+| Winter-Magic-Meister | alle 39 unterschiedlichen Märkte |
 | Schlosszauber | 1 Schlossmarkt |
 | Waldweihnacht | 1 Naturmarkt |
 | Lichterjäger | 3 Lichtermärkte |
@@ -74,7 +78,7 @@ Trips, Personen, Verfügbarkeiten, Favoriten, Tagebuch, Stickerfortschritt, Frei
 1. Den **Inhalt dieses Ordners** in die oberste Ebene des Repositorys laden.
 2. **Settings → Pages** öffnen.
 3. **Deploy from a branch**, Branch **main**, Ordner **/(root)** wählen.
-4. Nach dem Deployment einmal online neu laden, damit der Service Worker V3.0.0 übernimmt.
+4. Nach dem Deployment einmal online neu laden, damit der Service Worker V3.1.0 übernimmt.
 
 Alle Pfade sind relativ und funktionieren auch in einem GitHub-Pages-Unterordner.
 
@@ -86,4 +90,4 @@ python3 tests/e2e_github_pages.py
 python3 tests/live_transitous.py   # optional; benötigt direkten Internetzugriff
 ```
 
-Die Tests prüfen Datenbestand, Stickerdefinitionen, Fortschrittslogik, Premiumvarianten, Abschlussdialog, Tagebuch, Freischaltungen, lokale Persistenz, mobile und Desktop-Darstellung, GitHub-Pages-Unterpfad, Offline-Start, Planungsablauf, Bahnoptionen und `.ics`-Export.
+Die Tests prüfen Datenbestand, alle 96 Stickerdateien, Fortschrittslogik, motivbezogene Freischalteffekte, Abschlussdialog, Album, Tagebuch, hochauflösendes Teilen, lokale Persistenz, Sicherung/Wiederherstellung, mobile und Desktop-Darstellung, GitHub-Pages-Unterpfad, Offline-Start, Planungsablauf, Bahnoptionen und `.ics`-Export.
