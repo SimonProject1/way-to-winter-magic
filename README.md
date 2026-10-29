@@ -1,34 +1,34 @@
-# Way to Winter Magic V3.4.0
+# Way to Winter Magic V4.0.2
 
-Installierbare GitHub-Pages-PWA für Weihnachtsmarkt-Trips ab Wuppertal.
+Installierbare GitHub-Pages-App für 39 Weihnachtsmärkte ab Wuppertal.
 
 ## Funktionen
 
-- 39 geprüfte Weihnachtsmarkt-Ziele mit Filtern und Detailansicht
-- Schrittweiser Tripplaner für Personen, Datum, Markt, Budget und Bahn
-- Hin- und Rückfahrten über Transitous
-- Lokale Favoriten, Verfügbarkeiten, Trips und gespeicherte Verbindungen
-- Winterzauber-Album mit 16 Stickern und verständlichem Fortschritt
-- Sticker-Details mit Bedeutung, Freischaltbedingung, Freischaltdatum und zugehörigen Besuchen
-- Wintertagebuch mit Bewertung, Erinnerungen und Teilen-Funktion
-- Datensicherung als JSON und Kalenderexport als ICS
-- Offline-Start nach dem ersten vollständigen Online-Aufruf
+- Weihnachtsmärkte suchen, filtern und vergleichen
+- Verfügbarkeiten gemeinsam planen
+- Trip-Assistent mit Budget, Hin- und Rückfahrt
+- Verbindungssuche über Transitous und DB-Navigator-Links
+- 16 sammelbare Sticker mit Fortschritt, Freischaltdatum und zugehörigen Besuchen
+- Wintertagebuch, Teilen-Funktion, ICS-Export und Datensicherung
+- lokale Speicherung und Offline-Start
 
-## GitHub Pages veröffentlichen
+## Stickerdateien
 
-1. Den **Inhalt** dieser ZIP in die oberste Ebene eines GitHub-Repositorys kopieren.
-2. In GitHub **Settings → Pages** öffnen.
-3. **Deploy from a branch**, Branch **main**, Ordner **/(root)** auswählen.
-4. Die veröffentlichte Seite einmal vollständig online öffnen. Danach steht die App auch offline zur Verfügung.
+- 96 echte WebP-Dateien in `assets/stickers/`
+- sechs WebP-Varianten je Sticker
+- keine Sticker-SVG-Dateien und keine produktiven Sticker-SVG-Referenzen
 
-`start_url`, `scope`, Service Worker und alle Dateipfade sind relativ und funktionieren deshalb auch unter einem GitHub-Pages-Unterpfad.
+## GitHub Pages
 
-## Lokale Prüfung
+1. Den Inhalt dieses Ordners in die oberste Ebene des Repositorys laden.
+2. Unter **Settings → Pages** „Deploy from a branch“, Branch **main**, Ordner **/(root)** wählen.
+3. Nach dem Deployment einmal online neu laden, damit der Cache der V4.0.2 aktiv wird.
+
+## Tests
 
 ```bash
 node tests/smoke.mjs
 python3 tests/e2e_github_pages.py
-python3 tests/live_transitous.py   # optional, benötigt direkten Internetzugriff
+python3 tests/sticker_dialog_responsive.py
+python3 tests/live_transitous.py   # optional, benötigt Internetzugriff
 ```
-
-Die automatisierten Prüfungen decken Datenintegrität, Tripplanung, Sticker, Tagebuch, Teilen, Sicherung/Wiederherstellung, mobile und Desktop-Darstellung, Offline-Start sowie den Betrieb unter einem GitHub-Pages-Unterpfad ab.

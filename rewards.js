@@ -7,37 +7,37 @@
 
   const AREAS = [
     { id: 'magic', name: 'Magische Meilensteine', subtitle: 'Deine großen Winter-Magic-Momente' },
-    { id: 'worlds', name: 'Zauberwelten', subtitle: 'Besondere Orte und Lieblingsgefühle' },
+    { id: 'worlds', name: 'Zauberwelten', subtitle: 'Besondere Kulissen und Lieblingsgefühle' },
     { id: 'journeys', name: 'Reiseabenteuer', subtitle: 'Unterwegs mit Bahn und Entdeckergeist' },
-    { id: 'season', name: 'Saisonmomente', subtitle: 'Einmalige Augenblicke deiner Wintersaison' }
+    { id: 'season', name: 'Saisonmomente', subtitle: 'Einmalige Augenblicke im Winterlicht' }
   ];
 
   const art = id => ({
-    image:`./assets/stickers/${id}-unlocked.svg`, imageLocked:`./assets/stickers/${id}-locked.svg`,
-    imageNew:`./assets/stickers/${id}-new.svg`, imageSmall:`./assets/stickers/${id}-small.svg`,
-    imageLarge:`./assets/stickers/${id}-large.svg`, imageShare:`./assets/stickers/${id}-share.svg`
+    image:`./assets/stickers/${id}-unlocked.webp`, imageLocked:`./assets/stickers/${id}-locked.webp`,
+    imageNew:`./assets/stickers/${id}-new.webp`, imageSmall:`./assets/stickers/${id}-small.webp`,
+    imageLarge:`./assets/stickers/${id}-large.webp`, imageShare:`./assets/stickers/${id}-share.webp`
   });
 
   const STICKERS = [
-    { id:'first-magic', kind:'milestone', ...art('first-magic'), area:'magic', name:'Der erste Zauber', target:1, unit:'besuchter Markt', effect:'spark', meaning:'Der Beginn deiner persönlichen Weihnachtsmarkt-Saison.', condition:'Besuche deinen ersten Weihnachtsmarkt.' },
-    { id:'five-moments', kind:'milestone', ...art('five-moments'), area:'magic', name:'Fünf magische Momente', target:5, unit:'unterschiedliche Märkte', effect:'snowglobes', meaning:'Fünf verschiedene Wintererlebnisse gehören jetzt zu deiner Sammlung.', condition:'Besuche fünf unterschiedliche Weihnachtsmärkte.' },
-    { id:'winter-bronze', kind:'milestone', ...art('winter-bronze'), area:'magic', name:'Winterwanderer Bronze', target:10, unit:'unterschiedliche Märkte', effect:'trail', meaning:'Du bist zu einem erfahrenen Weihnachtsmarkt-Entdecker geworden.', condition:'Besuche zehn unterschiedliche Weihnachtsmärkte.' },
-    { id:'winter-silver', kind:'milestone', ...art('winter-silver'), area:'magic', name:'Winterwanderer Silber', target:20, unit:'unterschiedliche Märkte', effect:'silverpath', meaning:'Deine Winterreise führt dich zu immer neuen Lieblingsorten.', condition:'Besuche zwanzig unterschiedliche Weihnachtsmärkte.' },
-    { id:'winter-gold', kind:'milestone', ...art('winter-gold'), area:'magic', name:'Winterwanderer Gold', target:30, unit:'unterschiedliche Märkte', effect:'goldlantern', meaning:'Dreißig Winterziele machen deine Sammlung außergewöhnlich.', condition:'Besuche dreißig unterschiedliche Weihnachtsmärkte.' },
-    { id:'winter-master', kind:'milestone', ...art('winter-master'), area:'magic', name:'Winter-Magic-Meister', target:39, unit:'unterschiedliche Märkte', effect:'master', meaning:'Du hast die gesamte Way-to-Winter-Magic-Sammlung bereist.', condition:'Besuche alle 39 unterschiedlichen Weihnachtsmärkte.' },
+    { id:'first-magic', kind:'milestone', ...art('first-magic'), area:'magic', name:'Der erste Zauber', target:1, unit:'besuchter Markt', effect:'spark', meaning:'Dein erster gesammelter Wintermoment.', condition:'Besuche deinen ersten Weihnachtsmarkt.' },
+    { id:'five-moments', kind:'milestone', ...art('five-moments'), area:'magic', name:'Fünf magische Momente', target:5, unit:'unterschiedliche Märkte', effect:'snowglobes', meaning:'Fünf verschiedene Weihnachtsmärkte gehören jetzt zu deinen Erinnerungen.', condition:'Besuche fünf unterschiedliche Weihnachtsmärkte.' },
+    { id:'winter-bronze', kind:'milestone', ...art('winter-bronze'), area:'magic', name:'Winterwanderer Bronze', target:10, unit:'unterschiedliche Märkte', effect:'trail', meaning:'Du hast den ersten großen Meilenstein deiner Winterreise erreicht.', condition:'Besuche zehn unterschiedliche Weihnachtsmärkte.' },
+    { id:'winter-silver', kind:'milestone', ...art('winter-silver'), area:'magic', name:'Winterwanderer Silber', target:20, unit:'unterschiedliche Märkte', effect:'silverpath', meaning:'Deine Wintersaison führt bereits durch viele besondere Orte.', condition:'Besuche zwanzig unterschiedliche Weihnachtsmärkte.' },
+    { id:'winter-gold', kind:'milestone', ...art('winter-gold'), area:'magic', name:'Winterwanderer Gold', target:30, unit:'unterschiedliche Märkte', effect:'goldlantern', meaning:'Du bist ein erfahrener Winterwanderer mit einer großen Sammlung.', condition:'Besuche dreißig unterschiedliche Weihnachtsmärkte.' },
+    { id:'winter-master', kind:'milestone', ...art('winter-master'), area:'magic', name:'Winter-Magic-Meister', target:39, unit:'unterschiedliche Märkte', effect:'master', meaning:'Du hast alle Weihnachtsmärkte dieser Sammlung besucht.', condition:'Besuche alle 39 unterschiedlichen Weihnachtsmärkte.' },
 
-    { id:'castle-magic', kind:'theme', ...art('castle-magic'), area:'worlds', name:'Schlosszauber', target:1, unit:'Schlossmarkt', effect:'castle', meaning:'Ein Weihnachtsmarkt mit märchenhafter Schlosskulisse.', condition:'Besuche einen Weihnachtsmarkt an einem Schloss.' },
-    { id:'forest-christmas', kind:'theme', ...art('forest-christmas'), area:'worlds', name:'Waldweihnacht', target:1, unit:'Naturmarkt', effect:'forest', meaning:'Winterstimmung mitten in Wald und Natur.', condition:'Besuche einen naturnahen Weihnachtsmarkt.' },
-    { id:'light-hunter', kind:'theme', ...art('light-hunter'), area:'worlds', name:'Lichterjäger', target:3, unit:'Lichtermärkte', effect:'lantern', meaning:'Du hast besonders eindrucksvoll beleuchtete Märkte entdeckt.', condition:'Besuche drei Märkte mit besonderer Beleuchtung.' },
-    { id:'taste-journey', kind:'theme', ...art('taste-journey'), area:'worlds', name:'Genussreise', target:3, unit:'Genussmärkte', effect:'steam', meaning:'Deine Winterreise ist auch eine Reise durch besondere Genüsse.', condition:'Besuche drei Märkte mit besonderem Genussangebot.' },
-    { id:'cozy-collector', kind:'theme', ...art('cozy-collector'), area:'worlds', name:'Cozy Collector', target:5, unit:'cozy Märkte', effect:'cozy', meaning:'Du sammelst die gemütlichsten Wintermomente.', condition:'Besuche fünf besonders gemütliche Märkte.' },
+    { id:'castle-magic', kind:'theme', ...art('castle-magic'), area:'worlds', name:'Schlosszauber', target:1, unit:'Schlossmarkt', effect:'castle', meaning:'Eine festliche Schlosskulisse gehört zu deinen Wintermomenten.', condition:'Besuche einen Weihnachtsmarkt an einem Schloss.' },
+    { id:'forest-christmas', kind:'theme', ...art('forest-christmas'), area:'worlds', name:'Waldweihnacht', target:1, unit:'Naturmarkt', effect:'forest', meaning:'Du hast Weihnachtsstimmung mitten in der Natur erlebt.', condition:'Besuche einen naturnahen Weihnachtsmarkt.' },
+    { id:'light-hunter', kind:'theme', ...art('light-hunter'), area:'worlds', name:'Lichterjäger', target:3, unit:'Lichtermärkte', effect:'lantern', meaning:'Besondere Beleuchtung prägt deine gesammelten Wintermomente.', condition:'Besuche drei Märkte mit besonderer Beleuchtung.' },
+    { id:'taste-journey', kind:'theme', ...art('taste-journey'), area:'worlds', name:'Genussreise', target:3, unit:'Genussmärkte', effect:'steam', meaning:'Deine Winterreise ist auch eine kulinarische Entdeckungstour.', condition:'Besuche drei Märkte mit besonderem Genussangebot.' },
+    { id:'cozy-collector', kind:'theme', ...art('cozy-collector'), area:'worlds', name:'Cozy Collector', target:5, unit:'cozy Märkte', effect:'cozy', meaning:'Du hast fünf besonders gemütliche Winterorte gesammelt.', condition:'Besuche fünf besonders gemütliche Märkte.' },
 
-    { id:'de-ticket-pro', kind:'theme', ...art('de-ticket-pro'), area:'journeys', name:'Deutschlandticket-Profi', target:3, unit:'Bahntrips', effect:'train', meaning:'Du verbindest Winterausflüge entspannt mit der Bahn.', condition:'Schließe drei besuchte Trips mit gespeicherter Bahnverbindung ab.' },
-    { id:'city-collector', kind:'theme', ...art('city-collector'), area:'journeys', name:'Städtesammler', target:5, unit:'verschiedene Städte', effect:'city', meaning:'Deine Weihnachtsmarkt-Reise führt durch viele verschiedene Städte.', condition:'Besuche Weihnachtsmärkte in fünf verschiedenen Städten.' },
+    { id:'de-ticket-pro', kind:'theme', ...art('de-ticket-pro'), area:'journeys', name:'Deutschlandticket-Profi', target:3, unit:'Bahntrips', effect:'train', meaning:'Du verbindest Winterausflüge und Bahnreisen miteinander.', condition:'Schließe drei besuchte Trips mit gespeicherter Bahnverbindung ab.' },
+    { id:'city-collector', kind:'theme', ...art('city-collector'), area:'journeys', name:'Städtesammler', target:5, unit:'verschiedene Städte', effect:'city', meaning:'Deine Winterreise führt durch mehrere Städte.', condition:'Besuche Weihnachtsmärkte in fünf verschiedenen Städten.' },
 
-    { id:'premiere-night', kind:'theme', ...art('premiere-night'), area:'season', name:'Premierenabend', target:1, unit:'Eröffnungstag', effect:'curtain', meaning:'Du warst dabei, als ein Weihnachtsmarkt seine Saison eröffnet hat.', condition:'Besuche einen Markt an seinem ersten Öffnungstag.' },
-    { id:'winter-weekend', kind:'theme', ...art('winter-weekend'), area:'season', name:'Winterwochenende', target:3, unit:'Wochenendbesuche', effect:'weekend', meaning:'Mehrere Wochenendtage wurden zu kleinen Winterreisen.', condition:'Sammle drei Marktbesuche an Samstagen oder Sonntagen.' },
-    { id:'night-magic', kind:'theme', ...art('night-magic'), area:'season', name:'Night Magic', target:1, unit:'Abendmoment', effect:'moon', meaning:'Ein Weihnachtsmarkt-Abend bleibt als besonderer Nachtmoment erhalten.', condition:'Halte einen Marktbesuch bei Nacht im Wintertagebuch fest.' }
+    { id:'premiere-night', kind:'theme', ...art('premiere-night'), area:'season', name:'Premierenabend', target:1, unit:'Eröffnungstag', effect:'curtain', meaning:'Du warst gleich zum Saisonauftakt dabei.', condition:'Besuche einen Markt an seinem ersten Öffnungstag.' },
+    { id:'winter-weekend', kind:'theme', ...art('winter-weekend'), area:'season', name:'Winterwochenende', target:3, unit:'Wochenendbesuche', effect:'weekend', meaning:'Mehrere Wochenenden wurden zu besonderen Wintermomenten.', condition:'Sammle drei Marktbesuche an Samstagen oder Sonntagen.' },
+    { id:'night-magic', kind:'theme', ...art('night-magic'), area:'season', name:'Night Magic', target:1, unit:'Abendmoment', effect:'moon', meaning:'Du hast einen Weihnachtsmarkt im Abendlicht erlebt.', condition:'Halte einen Marktbesuch bei Nacht im Wintertagebuch fest.' }
   ];
 
   function localDate(iso) {

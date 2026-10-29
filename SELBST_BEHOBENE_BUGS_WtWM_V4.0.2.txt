@@ -1,0 +1,7 @@
+Way to Winter Magic V4.0.2 – selbst behobene Bugs
+
+- Interne Gestaltungs- und Entwicklungstexte waren in Startseite, Album, Sticker-Details, Freischaltfenster und Teilen-Grafik sichtbar. Sie wurden durch nutzerrelevante Inhalte ersetzt.
+- Sticker-Details zeigten bisher keine Bedeutung und keine zugehörigen Besuche. Beide Angaben sind jetzt enthalten.
+- Der responsive Sticker-Dialog wurde an die neuen Inhalte angepasst und gegen Überdeckung, horizontalen Überlauf sowie unerreichbare Inhalte abgesichert.
+- Versionshinweise und Offline-Cache waren uneinheitlich. App, Service Worker, Tests und Dokumentation verwenden jetzt V4.0.2.
+- Die Projektprüfung wurde erweitert: 96 echte WebP-Stickergrafiken, keine Sticker-SVG-Dateien und keine produktiven Sticker-SVG-Referenzen.

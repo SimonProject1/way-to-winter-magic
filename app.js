@@ -1,4 +1,4 @@
-const VERSION = '3.4.0';
+const VERSION = '4.0.2';
 const rewardEngine = typeof WTWM_REWARDS !== 'undefined' ? WTWM_REWARDS : require('./rewards.js');
 const { AREAS: REWARD_AREAS, STICKERS, evaluateRewards } = rewardEngine;
 const API = 'https://api.transitous.org/api';
@@ -27,13 +27,13 @@ const S = {
     }
   },
   set(key, value) {
-    try { localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value)); } catch {}
+    try { localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value)); } catch { /* private mode/quota */ }
   },
   remove(key) {
     try {
       localStorage.removeItem(STORAGE_PREFIX + key);
       localStorage.removeItem(key);
-    } catch {}
+    } catch { /* private mode */ }
   }
 };
 
@@ -239,9 +239,9 @@ function showDetail(id, dateIso = '') {
   const hours = marketOpeningHours(market, dateIso);
   const source = market.sourceUrl?.startsWith('https://')
     ? `<a class="source" href="${esc(market.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(market.sourceLabel || 'Marktquelle öffnen')} ↗</a>`
-    : `<span>${esc(market.sourceLabel || 'Marktinformation')}</span>`;
+    : `<span>${esc(market.sourceLabel || 'Quelle im Bestand')}</span>`;
   $('#marketDetail').innerHTML = `
-    <p class="eyebrow dark">${market.new ? 'Neu aufgenommenes Ziel' : 'Geprüftes Ziel'}</p>
+    <p class="eyebrow dark">${market.new ? 'Neu in V2' : 'Geprüfter Bestand'}</p>
     <h2>${esc(market.name)}</h2>
     <p><strong>${esc(market.location)}</strong></p>
     <div class="detail-grid">
@@ -1546,52 +1546,43 @@ function rewardDate(value) {
   return date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString('de-DE', { day:'2-digit', month:'long', year:'numeric' }) : 'Noch nicht freigeschaltet';
 }
 
-function relatedVisitsForSticker(sticker) {
+function stickerRelatedVisits(sticker) {
   const marketMap = new Map(markets.map(market => [String(market.id), market]));
-  const journalMap = new Map(state.journal.filter(Boolean).map(entry => [String(entry.tripId), entry]));
+  const journalByTrip = new Map(state.journal.filter(Boolean).map(entry => [String(entry.tripId), entry]));
   const seenMarkets = new Set();
   let visits = state.trips
     .filter(trip => trip?.status === 'Besucht')
     .sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.id).localeCompare(String(b.id)))
     .filter(trip => {
       const key = String(trip.marketId || trip.market || trip.id);
-      if (!key || seenMarkets.has(key)) return false;
+      if (seenMarkets.has(key)) return false;
       seenMarkets.add(key);
       return true;
-    });
-  const match = trip => {
-    const market = marketMap.get(String(trip.marketId)) || {};
-    const tags = Array.isArray(market.tags) ? market.tags : [];
-    if (sticker.id === 'castle-magic') return tags.includes('schloss');
-    if (sticker.id === 'forest-christmas') return tags.some(tag => ['natur', 'wald'].includes(tag));
-    if (sticker.id === 'light-hunter') return tags.includes('licht') || Number(market.light) >= 5;
-    if (sticker.id === 'taste-journey') return tags.includes('essen') || Number(market.food) >= 5;
-    if (sticker.id === 'cozy-collector') return tags.includes('cozy') || Number(market.cozy) >= 4;
-    if (sticker.id === 'de-ticket-pro') return Boolean(trip.outbound?.journey);
-    if (sticker.id === 'premiere-night') return Boolean((market.dates?.[0] || market.from) && trip.date === (market.dates?.[0] || market.from));
-    if (sticker.id === 'winter-weekend') { const date = parseDate(trip.date); return Boolean(date && [0, 6].includes(date.getDay())); }
-    if (sticker.id === 'night-magic') return Boolean(journalMap.get(String(trip.id))?.night) || String(trip.returnTime || trip.end || '') >= '20:00';
-    return true;
+    })
+    .map(trip => ({ trip, market:marketMap.get(String(trip.marketId)) || {} }));
+  const tags = item => Array.isArray(item.market.tags) ? item.market.tags : [];
+  const matches = {
+    'castle-magic': item => tags(item).includes('schloss'),
+    'forest-christmas': item => tags(item).some(tag => ['natur','wald'].includes(tag)),
+    'light-hunter': item => tags(item).includes('licht') || Number(item.market.light) >= 5,
+    'taste-journey': item => tags(item).includes('essen') || Number(item.market.food) >= 5,
+    'cozy-collector': item => tags(item).includes('cozy') || Number(item.market.cozy) >= 4,
+    'de-ticket-pro': item => Boolean(item.trip.outbound?.journey),
+    'premiere-night': item => item.trip.date === (item.market.dates?.[0] || item.market.from),
+    'winter-weekend': item => { const date = parseDate(item.trip.date); return Boolean(date && [0,6].includes(date.getDay())); },
+    'night-magic': item => Boolean(journalByTrip.get(String(item.trip.id))?.night) || String(item.trip.returnTime || item.trip.end || '') >= '20:00'
   };
-  visits = visits.filter(match);
+  if (matches[sticker.id]) visits = visits.filter(matches[sticker.id]);
   if (sticker.id === 'city-collector') {
     const seenCities = new Set();
-    visits = visits.filter(trip => {
-      const city = String(trip.city || '');
+    visits = visits.filter(item => {
+      const city = String(item.trip.city || item.market.city || '');
       if (!city || seenCities.has(city)) return false;
       seenCities.add(city);
       return true;
     });
   }
   return visits;
-}
-
-function relatedVisitsMarkup(sticker) {
-  const visits = relatedVisitsForSticker(sticker);
-  const items = visits.length
-    ? `<ul>${visits.map(trip => `<li><strong>${esc(trip.market || 'Weihnachtsmarkt')}</strong><span>${esc(formatDate(trip.date))}${trip.city ? ` · ${esc(trip.city)}` : ''}</span></li>`).join('')}</ul>`
-    : '<p>Noch keine passenden Besuche.</p>';
-  return `<section class="sticker-visits" aria-labelledby="stickerVisitsHeading"><h3 id="stickerVisitsHeading">Zugehörige Besuche (${visits.length})</h3>${items}</section>`;
 }
 
 function rewardIdsEarnedOnTrip(tripId) {
@@ -1659,7 +1650,7 @@ async function shareSticker(id) {
   context.textAlign = 'center'; context.fillStyle = '#f3ca78'; context.font = '700 34px Georgia, serif'; context.fillText('WAY TO WINTER MAGIC', 600, 726);
   context.fillStyle = '#fff8e9'; context.font = '700 70px Georgia, serif'; fillWrappedText(context, sticker.name, 600, 824, 980, 80, 2);
   context.fillStyle = '#e9ddc4'; context.font = '32px system-ui, sans-serif'; context.fillText(`Freigeschaltet · ${rewardDate(sticker.unlockedAt)}`, 600, 1010);
-  context.fillStyle = '#f3ca78'; context.font = '700 26px system-ui, sans-serif'; fillWrappedText(context, sticker.meaning, 600, 1070, 980, 34, 2);
+  context.fillStyle = '#f3ca78'; context.font = '700 26px system-ui, sans-serif'; fillWrappedText(context, sticker.meaning, 600, 1062, 980, 31, 2);
   const file = await canvasFile(canvas, `winter-magic-sticker-${sticker.id}.png`);
   await shareFileOrDownload(file, sticker.name, `Mein freigeschalteter Way-to-Winter-Magic-Sticker: ${sticker.name}`);
 }
@@ -1731,11 +1722,18 @@ function showStickerDetail(id) {
     sticker = currentRewards().find(item => item.id === id);
   }
   const ratio = Math.min(100, Math.round(sticker.value / sticker.target * 100));
-  $('#stickerDetail').innerHTML = `<div class="sticker-detail-head">${medalMarkup(sticker, { size:'large', locked:!sticker.unlocked, isNew:false, progress:ratio })}<div><p class="eyebrow dark">${sticker.unlocked ? 'Freigeschaltet' : 'Noch gesperrt'}</p><h2>${esc(sticker.name)}</h2><p>${esc(sticker.meaning)}</p><div class="sticker-detail-actions"><button data-share-sticker="${esc(sticker.id)}" ${sticker.unlocked ? '' : 'disabled'}>${sticker.unlocked ? 'Sticker teilen' : 'Nach Freischaltung teilbar'}</button></div></div></div>
-    <div class="sticker-progress-detail"><div><strong>${Math.min(sticker.value, sticker.target)} / ${sticker.target}</strong><span>${esc(sticker.unit)}</span></div><span class="mini-progress"><i style="width:${ratio}%"></i></span></div>
-    <div class="sticker-specs"><div><span>Bedeutung</span><strong>${esc(sticker.meaning)}</strong></div><div><span>Freischaltbedingung</span><strong>${esc(sticker.condition)}</strong></div><div><span>Fortschritt</span><strong>${Math.min(sticker.value, sticker.target)} / ${sticker.target} ${esc(sticker.unit)}</strong></div><div><span>Freischaltdatum</span><strong>${esc(rewardDate(sticker.unlockedAt))}</strong></div></div>${relatedVisitsMarkup(sticker)}`;
+  const detail = $('#stickerDetail');
+  const visits = stickerRelatedVisits(sticker);
+  const visitsMarkup = visits.length ? `<ul>${visits.map(({ trip }) => `<li><strong>${esc(trip.market || 'Weihnachtsmarkt')}</strong><span>${esc(formatDate(trip.date))}${trip.city ? ` · ${esc(trip.city)}` : ''}</span></li>`).join('')}</ul>` : '<p class="muted">Noch keine passenden Besuche auf diesem Gerät gespeichert.</p>';
+  detail.innerHTML = `<div class="sticker-detail-head"><div class="sticker-detail-art">${medalMarkup(sticker, { size:'large', locked:!sticker.unlocked, isNew:false, progress:ratio })}</div><div class="sticker-detail-copy"><p class="eyebrow dark" id="stickerDetailStatus">${sticker.unlocked ? 'Freigeschaltet' : 'Noch gesperrt'}</p><h2 id="stickerDetailTitle">${esc(sticker.name)}</h2><div class="sticker-facts"><section><span>Bedeutung</span><p id="stickerMeaning">${esc(sticker.meaning)}</p></section><section><span>Freischaltbedingung</span><p id="stickerDetailDescription">${esc(sticker.condition)}</p></section></div><div class="sticker-detail-actions"><button data-share-sticker="${esc(sticker.id)}" ${sticker.unlocked ? '' : 'disabled'}>${sticker.unlocked ? 'Sticker teilen' : 'Nach Freischaltung teilbar'}</button></div></div></div>
+    <section class="sticker-progress-detail" aria-label="Aktueller Fortschritt"><span class="sticker-section-label">Aktueller Fortschritt</span><div><strong>${Math.min(sticker.value, sticker.target)} / ${sticker.target}</strong><span>${esc(sticker.unit)}</span></div><span class="mini-progress"><i style="width:${ratio}%"></i></span></section>
+    <div class="sticker-meta"><div><span>Freischaltdatum</span><strong>${esc(rewardDate(sticker.unlockedAt))}</strong></div></div>
+    <section class="sticker-visits" aria-labelledby="stickerVisitsTitle"><h3 id="stickerVisitsTitle">Zugehörige Besuche</h3>${visitsMarkup}</section>`;
   $('[data-share-sticker]')?.addEventListener('click', () => shareSticker(sticker.id));
-  $('#stickerDialog').showModal();
+  const dialog = $('#stickerDialog');
+  dialog.showModal();
+  detail.scrollTop = 0;
+  $('#stickerDialog .close').focus({ preventScroll:true });
   renderWinterMagic();
 }
 

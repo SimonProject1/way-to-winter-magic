@@ -64,8 +64,16 @@ async def assert_dialog(page, sticker_id, sticker_name, unlocked, viewport):
     assert await page.locator("#stickerDetailTitle").inner_text() == sticker_name
     actual_status = await page.locator("#stickerDetailStatus").inner_text()
     assert actual_status.casefold() == expected_status.casefold(), f"Status falsch: {sticker_name}, erwartet {expected_status}, erhalten {actual_status}, Viewport {viewport}"
-    description = await page.locator("#stickerDetailDescription").inner_text()
-    assert description.strip(), f"Leere Beschreibung: {sticker_name}"
+    meaning = await page.locator("#stickerMeaning").inner_text()
+    condition = await page.locator("#stickerDetailDescription").inner_text()
+    assert meaning.strip(), f"Leere Bedeutung: {sticker_name}"
+    assert condition.strip(), f"Leere Freischaltbedingung: {sticker_name}"
+    detail_text = await page.locator("#stickerDetail").inner_text()
+    detail_text_folded = detail_text.casefold()
+    for required in ("Bedeutung", "Freischaltbedingung", "Aktueller Fortschritt", "Freischaltdatum", "Zugehörige Besuche"):
+        assert required.casefold() in detail_text_folded, f"Nutzerfeld fehlt: {required} / {sticker_name}"
+    for forbidden in ("Motiv", "Material", "Band", "Rahmen", "Freischalteffekt"):
+        assert forbidden.casefold() not in detail_text_folded, f"Interner Text sichtbar: {forbidden} / {sticker_name}"
     share = page.locator("[data-share-sticker]")
     assert await share.inner_text() == expected_button
     assert await share.is_enabled() is unlocked
@@ -82,7 +90,8 @@ async def assert_dialog(page, sticker_id, sticker_name, unlocked, viewport):
         "copy": ".sticker-detail-copy",
         "status": "#stickerDetailStatus",
         "title": "#stickerDetailTitle",
-        "description": "#stickerDetailDescription",
+        "meaning": "#stickerMeaning",
+        "condition": "#stickerDetailDescription",
         "close": "#stickerDialog .close",
     }.items():
         box = await page.locator(selector).bounding_box()
@@ -90,7 +99,7 @@ async def assert_dialog(page, sticker_id, sticker_name, unlocked, viewport):
         boxes[key] = box
 
     assert not overlaps(boxes["art"], boxes["copy"]), f"Artwork/Text überlappt: {sticker_name} bei {viewport}"
-    for key in ("status", "title", "description"):
+    for key in ("status", "title", "meaning", "condition"):
         box = boxes[key]
         copy = boxes["copy"]
         assert box["x"] >= copy["x"] - 1 and box["x"] + box["width"] <= copy["x"] + copy["width"] + 1, f"Text horizontal abgeschnitten: {key} / {sticker_name}"
@@ -167,7 +176,7 @@ async def main():
         server.shutdown()
         server.server_close()
 
-    print(f"V4.0.1 Sticker-Dialogtest bestanden: {checked} Dialogöffnungen, 16 Sticker, gesperrt/freigeschaltet, {len(VIEWPORTS)} Bildschirmgrößen, Fortschritt, Teilen-Hinweis, Scrollen und Schließen geprüft.")
+    print(f"V4.0.2 Sticker-Dialogtest bestanden: {checked} Dialogöffnungen, 16 Sticker, gesperrt/freigeschaltet, {len(VIEWPORTS)} Bildschirmgrößen, Fortschritt, Teilen-Hinweis, Scrollen und Schließen geprüft.")
 
 
 if __name__ == "__main__":
