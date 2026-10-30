@@ -1,4 +1,4 @@
-const VERSION = '5.1.0';
+const VERSION = '5.2.0';
 const rewardEngine = typeof WTWM_REWARDS !== 'undefined' ? WTWM_REWARDS : require('./rewards.js');
 const { AREAS: REWARD_AREAS, STICKERS, evaluateRewards } = rewardEngine;
 const API = 'https://api.transitous.org/api';

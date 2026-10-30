@@ -1,0 +1,12 @@
+WAY TO WINTER MAGIC V5.2.0 – SELBST BEHOBENE BUGS
+
+1. Weiße rechteckige Hintergründe bei Sticker- und Medaillen-Artworks entfernt.
+2. Alle 96 Stickerdateien als transparente WebP-Dateien mit echtem Alpha-Kanal neu erzeugt.
+3. Gesperrte Varianten behalten die erkennbare Motivsilhouette und Transparenz.
+4. Neue-, kleine-, große-, Album- und Teilen-Varianten auf identische Motivausrichtung gebracht.
+5. Fehlende Navigationsgrößen nav-markets-192.webp und nav-trip-192.webp hochwertig skaliert und nachgeschärft.
+6. Fehlende Mehr-Navigation in 96 px und 192 px ergänzt.
+7. Homescreen-Kurzname auf WtWM gekürzt.
+8. Service-Worker-Cache auf V5.2.0 erhöht, damit alte Sticker nicht aus dem Browsercache zurückkehren.
+9. Alle lokalen Asset-Pfade gegen den ZIP-Inhalt geprüft.
+10. Sticker-SVG-Dateien und produktive Sticker-SVG-Verweise ausgeschlossen.

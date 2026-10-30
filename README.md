@@ -1,8 +1,8 @@
-# Way to Winter Magic V5.1.0
+# Way to Winter Magic V5.2.0
 
 Installierbare GitHub-Pages-PWA für 39 Weihnachtsmärkte ab Wuppertal.
 
-## Neu in V5.1.0
+## Neu in V5.2.0
 
 - kompakter Winterweg-Hero: 300–360 px auf Desktop und 250–290 px auf Smartphones
 - App-Name, kurzer Untertitel und direkte Aktion **Trip planen** im Hero
@@ -28,7 +28,7 @@ Installierbare GitHub-Pages-PWA für 39 Weihnachtsmärkte ab Wuppertal.
 
 1. Den **Inhalt dieses Ordners** in die oberste Ebene des Repositorys laden.
 2. Unter **Settings → Pages** „Deploy from a branch“, Branch **main**, Ordner **/(root)** wählen.
-3. Nach dem Deployment einmal online neu laden, damit der Cache `way-to-winter-magic-v5.1.0` aktiviert wird.
+3. Nach dem Deployment einmal online neu laden, damit der Cache `way-to-winter-magic-v5.2.0` aktiviert wird.
 
 ## Tests
 

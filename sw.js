@@ -1,4 +1,4 @@
-const CACHE = 'way-to-winter-magic-v5.1.0';
+const CACHE = 'way-to-winter-magic-v5.2.0';
 const ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,7 @@ const ASSETS = [
   './rewards.js',
   './manifest.webmanifest',
   './data/markets.json',
-  './icons/icon.svg',
+  './icons/icon-192.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './assets/artwork/actions/action-trip-plan-320.webp',
