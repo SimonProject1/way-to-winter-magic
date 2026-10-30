@@ -1,0 +1,13 @@
+Way to Winter Magic V5.1.0 – selbst behobene Bugs
+
+- Der Hero war auf großen Bildschirmen zu hoch und wirkte randlos. Er ist jetzt auf 300–360 px begrenzt, auf Smartphones auf 250–290 px, einheitlich abgerundet, gold konturiert und leicht beschattet.
+- App-Name und Beschreibung waren vom Bild getrennt; eine direkte Hero-Aktion fehlte. App-Name, Kurztext und „Trip planen“ liegen jetzt kompakt und lesbar im Hero.
+- Hero-Zuschnitte konnten Laternen, Tannen, Ortschaft oder Weg ungünstig abschneiden. Die responsive Cover-Position wurde für Desktop und Smartphone neu fokussiert.
+- Die fünf Navigationsbereiche waren nicht über alle Breiten gleichmäßig und kompakt. Sie sind jetzt gleich breit verteilt, ohne Desktop-Scrollleiste, mit 62-px-Artworks auf Desktop und 40–42 px auf Smartphones.
+- Das hervorgehobene mobile „Trip planen“ verwendete ein abweichend großes Artwork. Alle fünf mobilen Artworks liegen jetzt im gewünschten Größenbereich; die mittlere Aktion bleibt über die Form hervorgehoben.
+- Die Startseiten-Aktion war auf schmalen Smartphones zu groß beziehungsweise untereinander angeordnet. Sie ist jetzt kleiner und bleibt auch bei 320 px kompakt horizontal.
+- Markt-, Assistenten-, Navigations- und Hauptaktions-Artworks hatten unterschiedliche Rahmen und Rundungen. Rundung, feine Goldkontur, Schatten und Cover-Zuschnitt sind vereinheitlicht.
+- Bei 320 px verursachte der Umschalter im Bereich „Zauber“ fünf Pixel horizontalen Seitenüberlauf. Button-Padding und Textumbruch wurden korrigiert.
+- Interne Gestaltungs-/Entwicklungstexte, produktive Sticker-SVG-Verweise und Sticker-SVG-Dateien wurden erneut ausgeschlossen.
+
+Prüfungen bestanden: Smoke/Logik; vollständiger Planer-E2E-Ablauf mobil und Desktop; Offline-Start; lokale Speicherung; Sicherung/Wiederherstellung; ICS; 39 Märkte; Transitous-Antwortverarbeitung; 160 Sticker-Dialogprüfungen; 9 Layoutbreiten von 320 bis 1440 px; alle Hauptansichten und optionale Werkzeuge ohne horizontalen Seitenüberlauf.

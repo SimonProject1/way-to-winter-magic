@@ -354,7 +354,7 @@ async def main():
                 backup_path = pathlib.Path(tmp) / backup_download.suggested_filename
                 await backup_download.save_as(backup_path)
                 backup = json.loads(backup_path.read_text(encoding='utf-8'))
-                assert backup['version'] == '5.0.0'
+                assert backup['version'] == '5.1.0'
                 assert len(backup['state']['journal']) == 1 and len(backup['state']['trips']) == 1
                 assert len(backup['state']['rewardMeta']) >= 2
                 await page.evaluate("localStorage.setItem('wtwm:v2:journal','[]'); localStorage.setItem('wtwm:v2:trips','[]'); localStorage.setItem('wtwm:v2:rewardMeta','{}')")
@@ -429,7 +429,7 @@ async def main():
         server.shutdown()
         server.server_close()
 
-    print("V5.0.0 E2E bestanden: kompletter Planer mobil/desktop, sechs Meilenstein-Medaillen, zehn freie Themen-Sticker, individuelle Freischalteffekte, Teilen, Persistenz, Wiederherstellung, Offline-Start und GitHub-Pages-Unterpfad.")
+    print("V5.1.0 E2E bestanden: kompletter Planer mobil/desktop, sechs Meilenstein-Medaillen, zehn freie Themen-Sticker, individuelle Freischalteffekte, Teilen, Persistenz, Wiederherstellung, Offline-Start und GitHub-Pages-Unterpfad.")
 
 
 if __name__ == "__main__":

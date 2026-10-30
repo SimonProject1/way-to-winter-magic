@@ -1,19 +1,17 @@
-# Way to Winter Magic V5.0.0
+# Way to Winter Magic V5.1.0
 
 Installierbare GitHub-Pages-PWA für 39 Weihnachtsmärkte ab Wuppertal.
 
-## Neu in V5.0.0
+## Neu in V5.1.0
 
-- Hauptnavigation auf **Start, Märkte, Trip planen, Zauber und Mehr** reduziert
-- **Trip planen** auf Smartphones mittig und hervorgehoben
-- Timeline und Bahn vollständig als optionale Werkzeuge unter **Mehr** erhalten
-- neuer responsiver Winterweg-Hero für Desktop, Tablet und Smartphone
-- fünf Artwork-Navigationssymbole und zentrale Artwork-Aktion „Trip planen“
-- sechs Artwork-Kopfbilder im Planungs-Assistenten
-- sieben wiederverwendbare Markt-Artwork-Kategorien
-- visuelle Startseite mit nächstem Trip, Empfehlung und Winterfortschritt
-- 41 optimierte responsive WebP-Artwork-Dateien unter `assets/artwork/`
-- vollständiger Offline-Cache für alle 137 Dateien unter `assets/`
+- kompakter Winterweg-Hero: 300–360 px auf Desktop und 250–290 px auf Smartphones
+- App-Name, kurzer Untertitel und direkte Aktion **Trip planen** im Hero
+- einheitliche Rundung, feine Goldkontur und dezenter Schatten für Hero und Artworks
+- fünf gleichmäßig verteilte Navigationsziele ohne Desktop-Scrollleiste
+- Navigations-Artworks mit 62 px auf Desktop und 40–42 px auf Smartphones
+- mittig hervorgehobenes **Trip planen** in der mobilen unteren Navigation
+- kleinere, auf Smartphones horizontal aufgebaute Startseiten-Aktion
+- responsive Zuschnitts- und Überlaufprüfungen für 320 bis 1440 px Breite
 
 ## Unverändert enthalten
 
@@ -30,13 +28,14 @@ Installierbare GitHub-Pages-PWA für 39 Weihnachtsmärkte ab Wuppertal.
 
 1. Den **Inhalt dieses Ordners** in die oberste Ebene des Repositorys laden.
 2. Unter **Settings → Pages** „Deploy from a branch“, Branch **main**, Ordner **/(root)** wählen.
-3. Nach dem Deployment einmal online neu laden, damit der Cache `way-to-winter-magic-v5.0.0` aktiviert wird.
+3. Nach dem Deployment einmal online neu laden, damit der Cache `way-to-winter-magic-v5.1.0` aktiviert wird.
 
 ## Tests
 
 ```bash
 node tests/smoke.mjs
 python3 tests/e2e_github_pages.py
+python3 tests/artwork_layout_responsive.py
 python3 tests/sticker_dialog_responsive.py
 python3 tests/live_transitous.py   # optional, benötigt direkten Internetzugriff
 ```

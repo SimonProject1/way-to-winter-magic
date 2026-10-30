@@ -88,7 +88,7 @@ for (const category of ['castle','forest','oldtown','lights','industrial','city'
 
 const appSource = fs.readFileSync(new URL('app.js', root), 'utf8');
 assert.ok(appSource.includes("const STORAGE_PREFIX = 'wtwm:v2:'"), 'Eigener Speicherbereich fehlt');
-assert.ok(appSource.includes("const VERSION = '5.0.0'"), 'JS-Version ist nicht aktuell');
+assert.ok(appSource.includes("const VERSION = '5.1.0'"), 'JS-Version ist nicht aktuell');
 assert.ok(appSource.includes("state.tripDraft.marketId = selected ? '' : marketId"), 'Marktauswahl kann nicht wieder aufgehoben werden');
 assert.ok(appSource.includes("S.set('plannerMarketFilters', state.plannerFilters)"), 'Planerfilter werden nicht lokal gespeichert');
 assert.ok(appSource.includes("const API = 'https://api.transitous.org/api'"), 'Transitous-Endpunkt fehlt');
@@ -267,4 +267,4 @@ assert.equal(logic.score(markets.find(market => market.id === 'steele')).toFixed
 assert.equal(logic.marketOpeningHours({}, '2026-12-05'), 'Noch nicht veröffentlicht – Marktlink prüfen');
 assert.ok(ics.includes('Namen: Alex (Ja)') && ics.includes('Ticketstatus: Nicht nötig'), 'Erweiterte ICS-Angaben fehlen');
 
-console.log(`V5.0.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, 6 Meilenstein-Medaillen, 10 freie Themen-Sticker mit 96 Grafikvarianten, Planerfilter und DB-Verbindungssuche geprüft.`);
+console.log(`V5.1.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, 6 Meilenstein-Medaillen, 10 freie Themen-Sticker mit 96 Grafikvarianten, Planerfilter und DB-Verbindungssuche geprüft.`);

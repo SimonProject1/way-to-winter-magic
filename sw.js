@@ -1,4 +1,4 @@
-const CACHE = 'way-to-winter-magic-v5.0.0';
+const CACHE = 'way-to-winter-magic-v5.1.0';
 const ASSETS = [
   './',
   './index.html',
