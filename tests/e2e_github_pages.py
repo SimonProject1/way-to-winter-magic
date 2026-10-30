@@ -145,8 +145,14 @@ async def main():
             await page.route("https://api.transitous.org/**", api)
             await page.goto(base, wait_until="networkidle")
             assert await page.locator("text=Way to Winter Magic").count() >= 1
-            assert await page.locator("text=V4.0.2").count() >= 1
+            assert await page.locator("text=Way to Winter Magic").count() >= 1
             assert await page.locator("#marketCount").inner_text() == "39"
+            assert await page.locator('.tabs button').count() == 5
+            assert await page.locator('.tabs button').nth(2).get_attribute('data-view') == 'trip'
+            assert await page.locator('.tabs [data-view="timeline"]').count() == 0
+            assert await page.locator('.tabs [data-view="connections"]').count() == 0
+            assert await page.locator('.tabs img').evaluate_all("els => els.length === 5 && els.every(img => img.complete && img.naturalWidth > 0)")
+            assert await page.locator('.hero-art img').evaluate("img => img.complete && img.naturalWidth > 0")
             overflow = await page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
             assert overflow <= 1, f"Mobiles horizontales Überlaufen: {overflow}px"
 
@@ -183,7 +189,8 @@ async def main():
                 "ticket für den weihnachtsmarkt", "🎟 keine ticketpflicht", "verbindlich auswählen", "details"
             ], f"Kompaktkarte enthält unerwartete Angaben: {compact_lines}"
             compact_box = await compact_locator.bounding_box()
-            assert compact_box and compact_box["height"] <= 245, f"Kompaktkarte ist zu hoch: {compact_box}"
+            assert compact_box and compact_box["height"] <= 410, f"Kompaktkarte ist zu hoch: {compact_box}"
+            assert await compact_locator.locator('.planner-market-art img').count() == 1
             await page.locator('#plannerMarkets [data-detail="steele"]').click()
             detail_text = await page.locator("#marketDetail").inner_text()
             for expected in ["Kaiser-Otto-Platz", "Öffnungszeiten am 05.12.2026", "Noch nicht veröffentlicht", "Eintritt", "Kostenlos", "Ticket für den Weihnachtsmarkt", "Keine Ticketpflicht", "Licht", "Trip-Tipp"]:
@@ -347,7 +354,7 @@ async def main():
                 backup_path = pathlib.Path(tmp) / backup_download.suggested_filename
                 await backup_download.save_as(backup_path)
                 backup = json.loads(backup_path.read_text(encoding='utf-8'))
-                assert backup['version'] == '4.0.2'
+                assert backup['version'] == '5.0.0'
                 assert len(backup['state']['journal']) == 1 and len(backup['state']['trips']) == 1
                 assert len(backup['state']['rewardMeta']) >= 2
                 await page.evaluate("localStorage.setItem('wtwm:v2:journal','[]'); localStorage.setItem('wtwm:v2:trips','[]'); localStorage.setItem('wtwm:v2:rewardMeta','{}')")
@@ -372,7 +379,8 @@ async def main():
             assert await page.locator(".journal-card").count() == 1
             await page.click('[data-view="markets"]')
             assert await page.locator("#marketList .card").count() == 39
-            await page.click('[data-view="connections"]')
+            await page.click('[data-view="settings"]')
+            await page.click('[data-tool-view="connections"]')
             await page.fill("#connectionFrom", "Wuppertal Hbf")
             await page.fill("#connectionTo", "Essen Steele S")
             await page.fill("#connectionDate", "2026-12-05")
@@ -391,7 +399,7 @@ async def main():
             assert await page.evaluate("async () => { await navigator.serviceWorker.ready; return true; }")
             await context.set_offline(True)
             await page.reload(wait_until="domcontentloaded")
-            assert await page.locator("text=V4.0.2").count() >= 1
+            assert await page.locator("text=Way to Winter Magic").count() >= 1
             assert await page.locator("#marketCount").inner_text() == "39"
             await page.click('[data-view="wintermagic"]')
             await page.locator('.sticker-card img.sticker-art').first.wait_for()
@@ -403,7 +411,17 @@ async def main():
                 for (const src of paths) if (!(await caches.match(new URL(src, location.href)))) missing.push(src);
                 return { count: paths.length, missing };
             }""")
-            assert offline_cache_check == {"count": 96, "missing": []}, f"Artwork fehlt offline: {offline_cache_check}"
+            assert offline_cache_check == {"count": 96, "missing": []}, f"Sticker-Artwork fehlt offline: {offline_cache_check}"
+            general_artwork_cache = await page.evaluate("""async () => {
+                const paths = [...document.querySelectorAll('img[src*="assets/artwork"], source[srcset*="assets/artwork"]')]
+                  .flatMap(el => (el.getAttribute('src') || el.getAttribute('srcset') || '').split(',').map(part => part.trim().split(' ')[0]))
+                  .filter(Boolean);
+                const unique = [...new Set(paths)];
+                const missing = [];
+                for (const src of unique) if (!(await caches.match(new URL(src, location.href)))) missing.push(src);
+                return { count: unique.length, missing };
+            }""")
+            assert general_artwork_cache["count"] >= 20 and general_artwork_cache["missing"] == [], f"Neue Artworks fehlen offline: {general_artwork_cache}"
             await context.set_offline(False)
             assert not console_errors, "Browserfehler: " + " | ".join(console_errors)
             await browser.close()
@@ -411,7 +429,7 @@ async def main():
         server.shutdown()
         server.server_close()
 
-    print("V4.0.2 E2E bestanden: kompletter Planer mobil/desktop, sechs Meilenstein-Medaillen, zehn freie Themen-Sticker, individuelle Freischalteffekte, Teilen, Persistenz, Wiederherstellung, Offline-Start und GitHub-Pages-Unterpfad.")
+    print("V5.0.0 E2E bestanden: kompletter Planer mobil/desktop, sechs Meilenstein-Medaillen, zehn freie Themen-Sticker, individuelle Freischalteffekte, Teilen, Persistenz, Wiederherstellung, Offline-Start und GitHub-Pages-Unterpfad.")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,11 @@
+Way to Winter Magic V5.0.0 – selbst behobene Bugs
+
+- Überfüllte 7-Punkte-Navigation auf fünf Hauptziele reduziert; Timeline und Bahn bleiben unter „Mehr“ vollständig erreichbar.
+- Aktiver Navigationsstatus für optionale Werkzeuge korrigiert: Bei Timeline/Bahn bleibt „Mehr“ markiert.
+- Mobile Überlagerung zwischen Planer-Navigation und neuer Bottom-Navigation durch größeren Sicherheitsabstand behoben.
+- Markt-Kartenlayout nach Artwork-Einbau für Karten- und Listenansicht auf Smartphone, Tablet und Desktop repariert.
+- Alle neuen responsiven Artwork-Quellen in den Offline-Cache aufgenommen; sämtliche 137 Asset-Dateien werden vorab gecacht.
+- Interne Versions-/Gestaltungstexte wie „Neu in V2“ und „Zentraler Bereich“ aus der sichtbaren Oberfläche entfernt.
+- Bildpfade, GitHub-Pages-Unterpfad, lokale Speicherung, Sicherung, ICS, Sticker und Offline-Start erneut geprüft.
+
+Tests: Smoke/Logik bestanden; kompletter mobiler und Desktop-E2E-Ablauf bestanden; 160 responsive Sticker-Dialogprüfungen bestanden; Offline-Cache vollständig. Der direkte Transitous-Liveaufruf war in der Testumgebung durch deren externe URL-Richtlinie gesperrt; die Verarbeitung wurde im E2E-Test mit realistischen Transitous-Antworten vollständig geprüft.

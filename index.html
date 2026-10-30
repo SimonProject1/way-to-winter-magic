@@ -13,37 +13,49 @@
 </head>
 <body>
   <header class="hero">
-    <div>
-      <p class="eyebrow">Weihnachtsmarkt-Tripplaner · V4.0.2</p>
+    <picture class="hero-art" aria-hidden="true">
+      <source media="(max-width: 600px)" srcset="assets/artwork/hero/hero-winter-path-mobile-720.webp">
+      <source media="(max-width: 1024px)" srcset="assets/artwork/hero/hero-winter-path-tablet-1200.webp">
+      <img src="assets/artwork/hero/hero-winter-path-desktop-1600.webp" alt="" width="1536" height="700" fetchpriority="high">
+    </picture>
+    <div class="hero-shade" aria-hidden="true"></div>
+    <div class="hero-copy">
+      <p class="eyebrow">Dein Weg in die Wintermagie</p>
       <h1>Way to Winter Magic</h1>
       <p>39 geprüfte Ziele ab Wuppertal – gemeinsam planen, vergleichen und die passende Verbindung finden.</p>
     </div>
-    <button id="installBtn" hidden>App installieren</button>
+    <button id="installBtn" class="hero-install" hidden>App installieren</button>
   </header>
 
   <nav class="tabs" aria-label="Hauptnavigation">
-    <button data-view="home" class="active"><span>⌂</span>Start</button>
-    <button data-view="markets"><span>★</span>Märkte</button>
-    <button data-view="timeline"><span>▦</span>Timeline</button>
-    <button data-view="trip"><span>✦</span>Trip planen</button>
-    <button data-view="connections"><span>🚆</span>Bahn</button>
-    <button data-view="wintermagic"><span>❉</span>Zauber</button>
-    <button data-view="settings"><span>⚙</span>Mehr</button>
+    <button data-view="home" class="active"><picture><source srcset="assets/artwork/navigation/nav-start-192.webp 2x"><img src="assets/artwork/navigation/nav-start-96.webp" alt="" width="48" height="48"></picture><span>Start</span></button>
+    <button data-view="markets"><picture><source srcset="assets/artwork/navigation/nav-markets-192.webp 2x"><img src="assets/artwork/navigation/nav-markets-96.webp" alt="" width="48" height="48"></picture><span>Märkte</span></button>
+    <button data-view="trip" class="primary-nav"><picture><source srcset="assets/artwork/navigation/nav-trip-192.webp 2x"><img src="assets/artwork/navigation/nav-trip-96.webp" alt="" width="54" height="54"></picture><span>Trip planen</span></button>
+    <button data-view="wintermagic"><picture><source srcset="assets/artwork/navigation/nav-magic-192.webp 2x"><img src="assets/artwork/navigation/nav-magic-96.webp" alt="" width="48" height="48"></picture><span>Zauber</span></button>
+    <button data-view="settings"><picture><source srcset="assets/artwork/navigation/nav-more-192.webp 2x"><img src="assets/artwork/navigation/nav-more-96.webp" alt="" width="48" height="48"></picture><span>Mehr</span></button>
   </nav>
 
   <main>
     <section id="home" class="view active">
-      <div class="grid stats">
+      <div class="grid stats" aria-label="Saisonüberblick">
         <article><span>Märkte</span><strong id="marketCount">0</strong></article>
         <article><span>Favoriten</span><strong id="favCount">0</strong></article>
         <article><span>Gemeinsame Tage</span><strong id="commonCount">0</strong></article>
       </div>
-      <article class="panel intro-panel">
-        <div><p class="eyebrow dark">Deine Wintersaison</p><h2>Planen, besuchen und Erinnerungen sammeln</h2><p>Finde passende Weihnachtsmärkte, plane deine Fahrt und halte deine schönsten Wintermomente fest.</p></div>
-        <button data-jump="trip">Trip planen</button>
+      <article class="panel intro-panel artwork-intro">
+        <div><p class="eyebrow dark">Deine Wintersaison</p><h2>Von der Idee zum magischen Wintertag</h2><p>Wähle Personen, Datum, Markt und Verbindung – alles in einem geführten Ablauf.</p></div>
+        <button class="trip-artwork-action" data-jump="trip" aria-label="Trip planen">
+          <picture><source srcset="assets/artwork/actions/action-trip-plan-640.webp 2x"><img src="assets/artwork/actions/action-trip-plan-320.webp" alt="" width="150" height="150"></picture>
+          <span>Trip planen</span>
+        </button>
       </article>
-      <article class="panel"><h2>Passende nächste Termine</h2><div id="nextDates" class="cards compact"></div></article>
-      <article class="panel"><h2>Top-Empfehlungen</h2><div id="topMarkets" class="cards"></div></article>
+      <div class="home-showcase">
+        <article class="panel home-feature" id="nextTripHome" aria-live="polite"></article>
+        <article class="panel home-feature" id="recommendationHome" aria-live="polite"></article>
+        <article class="panel home-feature progress-feature" id="winterProgressHome" aria-live="polite"></article>
+      </div>
+      <article class="panel home-dates"><div class="section-head"><div><p class="eyebrow dark">Gemeinsam Zeit?</p><h2>Passende nächste Termine</h2></div><button class="ghost compact-button" data-jump="timeline">Timeline öffnen</button></div><div id="nextDates" class="cards compact"></div></article>
+      <div id="topMarkets" class="home-hidden-bind" hidden></div>
     </section>
 
     <section id="markets" class="view">
@@ -55,7 +67,7 @@
           <label>Geöffnet am<input id="dateFilter" type="date" min="2026-10-30" max="2027-01-10"></label>
           <label>Max. ÖPNV-Fahrzeit<select id="travelFilter"><option value="999">Beliebig</option><option value="45">bis 45 Min.</option><option value="60">bis 1 Std.</option><option value="90">bis 1,5 Std.</option><option value="120">bis 2 Std.</option><option value="150">bis 2,5 Std.</option><option value="180">bis 3 Std.</option></select></label>
           <label>Max. Distanz<select id="distanceFilter"><option value="999">Beliebig</option><option value="15">bis 15 km</option><option value="25">bis 25 km</option><option value="40">bis 40 km</option><option value="60">bis 60 km</option><option value="100">bis 100 km</option></select></label>
-          <label>Wunschfilter<select id="featureFilter"><option value="all">Alle</option><option value="free">Kostenlos</option><option value="cozy">Besonders cozy</option><option value="light">Top-Beleuchtung</option><option value="food">Starkes Essen</option><option value="small">Klein & ruhig</option><option value="historic">Historische Kulisse</option><option value="craft">Kunsthandwerk</option><option value="family">Familienfreundlich</option><option value="long">Lange Saison</option><option value="new">Neu in V2</option><option value="favorites">Nur Favoriten</option></select></label>
+          <label>Wunschfilter<select id="featureFilter"><option value="all">Alle</option><option value="free">Kostenlos</option><option value="cozy">Besonders cozy</option><option value="light">Top-Beleuchtung</option><option value="food">Starkes Essen</option><option value="small">Klein & ruhig</option><option value="historic">Historische Kulisse</option><option value="craft">Kunsthandwerk</option><option value="family">Familienfreundlich</option><option value="long">Lange Saison</option><option value="new">Neu dabei</option><option value="favorites">Nur Favoriten</option></select></label>
           <label>Sortierung<select id="sortFilter"><option value="score">Empfehlung</option><option value="travel">Fahrzeit</option><option value="distance">Distanz</option><option value="city">Stadt A–Z</option><option value="start">Startdatum</option></select></label>
         </div>
         <p id="filterSummary" class="status" aria-live="polite"></p>
@@ -63,9 +75,9 @@
       <div id="marketList" class="cards"></div>
     </section>
 
-    <section id="timeline" class="view">
+    <section id="timeline" class="view optional-tool-view">
       <article class="panel">
-        <div class="section-head"><div><p class="eyebrow dark">Gemeinsam frei?</p><h2>Verfügbarkeiten</h2></div></div>
+        <div class="section-head"><div><p class="eyebrow dark">Optionales Werkzeug</p><h2>Timeline & Verfügbarkeiten</h2></div><button class="ghost compact-button" data-jump="settings">Zurück zu Mehr</button></div>
         <p class="muted">Für jede Person Ja, Vielleicht oder Nein wählen. Geöffnete Märkte werden automatisch gezählt.</p>
         <div class="timeline-toolbar">
           <label>Von<input type="date" id="timelineFrom"></label>
@@ -78,12 +90,13 @@
 
     <section id="trip" class="view">
       <article class="panel planner-shell" aria-labelledby="plannerHeading">
-        <div class="section-head planner-title"><div><p class="eyebrow dark">Zentraler Bereich</p><h2 id="plannerHeading">Trip planen</h2><p class="muted">Schritt für Schritt zum fertigen Weihnachtsmarkt-Trip.</p></div><button id="newTrip" class="ghost compact-button">Neu beginnen</button></div>
+        <div class="section-head planner-title"><div><p class="eyebrow dark">Geführte Planung</p><h2 id="plannerHeading">Trip planen</h2><p class="muted">Schritt für Schritt zum fertigen Weihnachtsmarkt-Trip.</p></div><button id="newTrip" class="ghost compact-button">Neu beginnen</button></div>
         <ol id="plannerProgress" class="planner-progress" aria-label="Planungsfortschritt">
           <li data-progress="1">Personen</li><li data-progress="2">Datum</li><li data-progress="3">Markt</li><li data-progress="4">Trip</li><li data-progress="5">Bahn</li><li data-progress="6">Prüfen</li>
         </ol>
 
         <div class="planner-step" data-step="1">
+          <picture class="assistant-art"><source media="(min-width: 760px)" srcset="assets/artwork/assistant/assistant-people-1200.webp"><img src="assets/artwork/assistant/assistant-people-640.webp" alt="" width="640" height="240" loading="lazy"></picture>
           <p class="eyebrow dark">Schritt 1 von 6</p><h3>Wer fährt mit?</h3>
           <div class="form-grid compact-form"><label>Anzahl Personen<input id="plannerPersonCount" type="number" min="1" max="20" value="2" inputmode="numeric"></label></div>
           <div id="plannerPeople" class="planner-people"></div>
@@ -92,6 +105,7 @@
         </div>
 
         <div class="planner-step" data-step="2" hidden>
+          <picture class="assistant-art"><source media="(min-width: 760px)" srcset="assets/artwork/assistant/assistant-date-1200.webp"><img src="assets/artwork/assistant/assistant-date-640.webp" alt="" width="640" height="240" loading="lazy"></picture>
           <p class="eyebrow dark">Schritt 2 von 6</p><h3>Datum und Verfügbarkeit</h3>
           <div class="form-grid compact-form"><label>Datum<input id="plannerDate" type="date" min="2026-10-30" max="2027-01-10"></label></div>
           <div id="plannerAvailability" class="availability-list"></div>
@@ -99,6 +113,7 @@
         </div>
 
         <div class="planner-step" data-step="3" hidden>
+          <picture class="assistant-art"><source media="(min-width: 760px)" srcset="assets/artwork/assistant/assistant-market-1200.webp"><img src="assets/artwork/assistant/assistant-market-640.webp" alt="" width="640" height="240" loading="lazy"></picture>
           <p class="eyebrow dark">Schritt 3 von 6</p><h3>Geöffneten Markt auswählen</h3>
           <p class="muted">Es erscheinen ausschließlich Märkte, die am gewählten Datum geöffnet sind.</p>
           <details class="planner-filter">
@@ -107,7 +122,7 @@
               <label class="wide">Suche<input id="plannerMarketSearch" type="search" placeholder="Markt, Ort oder Stichwort"></label>
               <label>Stadt<select id="plannerCityFilter"><option value="all">Alle Städte</option></select></label>
               <label>Max. ÖPNV-Fahrzeit<select id="plannerTravelFilter"><option value="999">Beliebig</option><option value="45">bis 45 Min.</option><option value="60">bis 1 Std.</option><option value="90">bis 1,5 Std.</option><option value="120">bis 2 Std.</option><option value="150">bis 2,5 Std.</option><option value="180">bis 3 Std.</option></select></label>
-              <label>Wunschfilter<select id="plannerFeatureFilter"><option value="all">Alle</option><option value="free">Kostenlos</option><option value="cozy">Besonders cozy</option><option value="light">Top-Beleuchtung</option><option value="food">Starkes Essen</option><option value="small">Klein & ruhig</option><option value="historic">Historische Kulisse</option><option value="craft">Kunsthandwerk</option><option value="family">Familienfreundlich</option><option value="long">Lange Saison</option><option value="new">Neu in V2</option><option value="favorites">Nur Favoriten</option></select></label>
+              <label>Wunschfilter<select id="plannerFeatureFilter"><option value="all">Alle</option><option value="free">Kostenlos</option><option value="cozy">Besonders cozy</option><option value="light">Top-Beleuchtung</option><option value="food">Starkes Essen</option><option value="small">Klein & ruhig</option><option value="historic">Historische Kulisse</option><option value="craft">Kunsthandwerk</option><option value="family">Familienfreundlich</option><option value="long">Lange Saison</option><option value="new">Neu dabei</option><option value="favorites">Nur Favoriten</option></select></label>
               <label>Sortierung<select id="plannerSortFilter"><option value="score">Empfehlung</option><option value="travel">Fahrzeit</option><option value="distance">Distanz</option><option value="city">Stadt A–Z</option></select></label>
               <button id="resetPlannerFilters" class="ghost" type="button">Filter zurücksetzen</button>
             </div>
@@ -118,6 +133,7 @@
         </div>
 
         <div class="planner-step" data-step="4" hidden>
+          <picture class="assistant-art"><source media="(min-width: 760px)" srcset="assets/artwork/assistant/assistant-config-1200.webp"><img src="assets/artwork/assistant/assistant-config-640.webp" alt="" width="640" height="240" loading="lazy"></picture>
           <p class="eyebrow dark">Schritt 4 von 6</p><h3>Trip konfigurieren</h3>
           <div class="form-grid">
             <label>Gewünschte Ankunft am Markt<input id="plannerArrival" type="time" value="15:00"></label>
@@ -135,6 +151,7 @@
         </div>
 
         <div class="planner-step" data-step="5" hidden>
+          <picture class="assistant-art"><source media="(min-width: 760px)" srcset="assets/artwork/assistant/assistant-transit-1200.webp"><img src="assets/artwork/assistant/assistant-transit-640.webp" alt="" width="640" height="240" loading="lazy"></picture>
           <p class="eyebrow dark">Schritt 5 von 6</p><h3>Bahnverbindungen</h3>
           <p id="plannerRoute" class="muted"></p>
           <div class="actions"><button id="loadPlannerConnections">Drei Optionen laden</button><button id="recheckPlannerConnections" class="ghost">Erneut prüfen</button></div>
@@ -144,6 +161,7 @@
         </div>
 
         <div class="planner-step" data-step="6" hidden>
+          <picture class="assistant-art"><source media="(min-width: 760px)" srcset="assets/artwork/assistant/assistant-review-1200.webp"><img src="assets/artwork/assistant/assistant-review-640.webp" alt="" width="640" height="240" loading="lazy"></picture>
           <p class="eyebrow dark">Schritt 6 von 6</p><h3>Zusammenfassung prüfen</h3>
           <div id="plannerSummary" class="trip-summary"></div>
           <div class="actions"><button id="savePlannedTrip">Trip verbindlich speichern</button><button id="previewIcs" class="secondary">.ics erstellen / teilen</button></div>
@@ -156,10 +174,9 @@
       <article class="panel"><div class="section-head"><div><p class="eyebrow dark">Lokal gespeichert</p><h2>Meine Trips</h2></div></div><div id="savedTrips" class="cards compact"></div></article>
     </section>
 
-    <section id="connections" class="view">
+    <section id="connections" class="view optional-tool-view">
       <article class="panel connection-search" aria-labelledby="connectionHeading">
-        <p class="eyebrow dark">Offene Fahrplandaten über Transitous</p>
-        <h2 id="connectionHeading">DB-Verbindungssuche</h2>
+        <div class="section-head"><div><p class="eyebrow dark">Optionales Werkzeug · Transitous</p><h2 id="connectionHeading">Bahnverbindung suchen</h2></div><button class="ghost compact-button" data-jump="settings">Zurück zu Mehr</button></div>
         <p class="muted">Start und Ziel werden über Transitous aufgelöst. Bei einem kurzen Ausfall folgt automatisch ein zweiter Versuch.</p>
         <div class="form-grid">
           <label>Start<input id="connectionFrom" value="Wuppertal Hbf" placeholder="z. B. Wuppertal Hbf" autocomplete="off"></label>
@@ -197,6 +214,7 @@
     </section>
 
     <section id="settings" class="view">
+      <article class="panel optional-tools"><p class="eyebrow dark">Zusätzliche Werkzeuge</p><h2>Mehr Möglichkeiten</h2><p class="muted">Timeline und Bahn bleiben vollständig verfügbar und sind auch in „Trip planen“ integriert.</p><div class="tool-cards"><button data-tool-view="timeline"><span aria-hidden="true">▦</span><strong>Timeline</strong><small>Gemeinsame Tage und Verfügbarkeiten</small></button><button data-tool-view="connections"><span aria-hidden="true">↗</span><strong>Bahn</strong><small>Verbindungen gezielt suchen und offline speichern</small></button></div></article>
       <article class="panel"><h2>Personen</h2><p class="muted">Lege hier die Personen für gemeinsame Planung und Verfügbarkeiten fest.</p><div id="peopleList"></div><button id="addPerson">Person hinzufügen</button></article>
       <article class="panel">
         <h2>Zielhaltestelle</h2>
@@ -239,7 +257,7 @@
     <div class="unlock-card"><div id="unlockEffectScene" class="unlock-effect-scene" aria-hidden="true"></div><button id="closeUnlock" class="close" aria-label="Schließen">×</button><p class="eyebrow">Neu freigeschaltet</p><div id="unlockMedal"></div><h2 id="unlockTitle"></h2><p id="unlockEffect"></p><button id="unlockContinue">Im Album ansehen</button></div>
   </div>
 
-  <footer>Offline nutzbar · Verbindungssuche mit Transitous · Lokale Speicherung · Datenstand 28.10.2026 · V4.0.2</footer>
+  <footer>Offline nutzbar · Verbindungssuche mit Transitous · Lokale Speicherung · Datenstand 28.10.2026</footer>
   <script src="rewards.js" defer></script>
   <script src="app.js" defer></script>
 </body>

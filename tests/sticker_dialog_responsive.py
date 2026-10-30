@@ -176,7 +176,7 @@ async def main():
         server.shutdown()
         server.server_close()
 
-    print(f"V4.0.2 Sticker-Dialogtest bestanden: {checked} Dialogöffnungen, 16 Sticker, gesperrt/freigeschaltet, {len(VIEWPORTS)} Bildschirmgrößen, Fortschritt, Teilen-Hinweis, Scrollen und Schließen geprüft.")
+    print(f"V5.0.0 Sticker-Dialogtest bestanden: {checked} Dialogöffnungen, 16 Sticker, gesperrt/freigeschaltet, {len(VIEWPORTS)} Bildschirmgrößen, Fortschritt, Teilen-Hinweis, Scrollen und Schließen geprüft.")
 
 
 if __name__ == "__main__":

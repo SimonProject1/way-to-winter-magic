@@ -1,4 +1,4 @@
-const VERSION = '4.0.2';
+const VERSION = '5.0.0';
 const rewardEngine = typeof WTWM_REWARDS !== 'undefined' ? WTWM_REWARDS : require('./rewards.js');
 const { AREAS: REWARD_AREAS, STICKERS, evaluateRewards } = rewardEngine;
 const API = 'https://api.transitous.org/api';
@@ -202,19 +202,48 @@ function score(market) {
   return market.light * 0.35 + market.food * 0.2 + market.cozy * 0.3 + market.special * 0.15;
 }
 
+const MARKET_ART = {
+  castle: { label: 'Schloss & Burg', file: 'market-castle' },
+  forest: { label: 'Wald & Natur', file: 'market-forest' },
+  oldtown: { label: 'Fachwerk & Altstadt', file: 'market-oldtown' },
+  lights: { label: 'Lichtmarkt', file: 'market-lights' },
+  industrial: { label: 'Industriekultur', file: 'market-industrial' },
+  city: { label: 'Großstadt', file: 'market-city' },
+  harbor: { label: 'Wasser & Hafen', file: 'market-harbor' }
+};
+
+function marketCategory(market) {
+  const tags = market.tags || [];
+  if (tags.includes('wasser')) return MARKET_ART.harbor;
+  if (tags.includes('industrie')) return MARKET_ART.industrial;
+  if (tags.includes('schloss') || tags.includes('mittelalter')) return MARKET_ART.castle;
+  if (tags.includes('natur') || tags.includes('cozy') && (tags.includes('klein') || tags.includes('wochenende'))) return MARKET_ART.forest;
+  if (tags.includes('historisch') || tags.includes('altstadt') || tags.includes('tradition')) return MARKET_ART.oldtown;
+  if (tags.includes('licht')) return MARKET_ART.lights;
+  return MARKET_ART.city;
+}
+
+function marketPicture(market, className = 'market-art') {
+  const art = marketCategory(market);
+  return `<picture class="${className}" title="${esc(art.label)}"><source media="(min-width:760px)" srcset="assets/artwork/markets/${art.file}-960.webp"><img src="assets/artwork/markets/${art.file}-480.webp" alt="" width="480" height="300" loading="lazy"></picture>`;
+}
+
 function marketCard(market) {
   const favorite = state.favorites.includes(market.id);
-  return `<article class="card">
+  return `<article class="card market-card">
+    ${marketPicture(market)}
     <button class="fav ${favorite ? 'on' : ''}" data-fav="${esc(market.id)}" aria-label="${favorite ? 'Favorit entfernen' : 'Als Favorit speichern'}">♥</button>
-    ${market.new ? '<span class="badge new">Neu</span>' : ''}
-    <h3>${esc(market.name)}</h3>
-    <p>${esc(market.city)} · ${esc(market.location)}</p>
-    <span class="badge">🚆 ca. ${market.travel} Min.</span>
-    <span class="badge">↗ ca. ${market.distanceKm} km</span>
-    <span class="badge gold">${esc(market.entry)}</span>
-    <p class="muted">${esc(formatMarketDates(market))}</p>
-    <p>Cozy ${stars(market.cozy)}<br>Licht ${stars(market.light)} · Essen ${stars(market.food)}</p>
-    <div class="card-actions"><button data-detail="${esc(market.id)}">Details</button><button class="ghost" data-plan="${esc(market.id)}">Planen</button><button class="ghost" data-connection="${esc(market.id)}">Bahn</button></div>
+    ${market.new ? '<span class="badge new">Neu dabei</span>' : ''}
+    <div class="market-card-copy">
+      <h3>${esc(market.name)}</h3>
+      <p>${esc(market.city)} · ${esc(market.location)}</p>
+      <span class="badge">🚆 ca. ${market.travel} Min.</span>
+      <span class="badge">↗ ca. ${market.distanceKm} km</span>
+      <span class="badge gold">${esc(market.entry)}</span>
+      <p class="muted">${esc(formatMarketDates(market))}</p>
+      <p>Cozy ${stars(market.cozy)}<br>Licht ${stars(market.light)} · Essen ${stars(market.food)}</p>
+      <div class="card-actions"><button data-detail="${esc(market.id)}">Details</button><button class="ghost" data-plan="${esc(market.id)}">Planen</button><button class="ghost" data-connection="${esc(market.id)}">Bahn</button></div>
+    </div>
   </article>`;
 }
 
@@ -241,7 +270,8 @@ function showDetail(id, dateIso = '') {
     ? `<a class="source" href="${esc(market.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(market.sourceLabel || 'Marktquelle öffnen')} ↗</a>`
     : `<span>${esc(market.sourceLabel || 'Quelle im Bestand')}</span>`;
   $('#marketDetail').innerHTML = `
-    <p class="eyebrow dark">${market.new ? 'Neu in V2' : 'Geprüfter Bestand'}</p>
+    ${marketPicture(market, 'detail-market-art')}
+    <p class="eyebrow dark">${market.new ? 'Neu dabei' : 'Bewährtes Ziel'}</p>
     <h2>${esc(market.name)}</h2>
     <p><strong>${esc(market.location)}</strong></p>
     <div class="detail-grid">
@@ -972,6 +1002,7 @@ function filteredPlannerMarkets(date, filters = state.plannerFilters) {
 function plannerMarketCard(market) {
   const selected = state.tripDraft.marketId === market.id;
   return `<article class="card planner-market ${selected ? 'selected' : ''}">
+    ${marketPicture(market, 'planner-market-art')}
     ${selected ? '<span class="badge gold selected-badge">✓ Verbindlich ausgewählt</span>' : ''}
     <h3>${esc(market.name)}</h3>
     <div class="planner-key-facts" role="list" aria-label="Kompakte Marktinformationen">
@@ -1914,22 +1945,36 @@ function applyMotionPreference() {
 
 function renderHome() {
   const commonDates = allSeasonDates().filter(common);
+  const today = isoLocal(new Date());
+  const futureTrips = state.trips.filter(trip => trip.status !== 'Abgesagt' && trip.status !== 'Besucht' && parseDate(trip.date)).sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  const nextTrip = futureTrips.find(trip => trip.date >= today) || futureTrips[0];
+  const recommendation = markets.find(market => state.favorites.includes(market.id)) || [...markets].sort((a, b) => score(b) - score(a) || a.travel - b.travel)[0];
+  const visitedIds = new Set(state.trips.filter(trip => trip.status === 'Besucht').map(trip => String(trip.marketId || trip.market)));
+  const rewards = currentRewards();
+  const unlocked = rewards.filter(sticker => sticker.unlocked).length;
   $('#marketCount').textContent = markets.length;
   $('#favCount').textContent = state.favorites.length;
   $('#commonCount').textContent = commonDates.length;
+  $('#nextTripHome').innerHTML = nextTrip ? `<p class="eyebrow dark">Nächster Trip</p><h2>${esc(formatDate(nextTrip.date, { weekday:'long', day:'2-digit', month:'long' }))}</h2><p><strong>${esc(nextTrip.market || 'Weihnachtsmarkt')}</strong></p><p class="muted">${esc(nextTrip.status || 'In Planung')} · ${esc(nextTrip.meetingPoint || nextTrip.stop || 'Treffpunkt noch offen')}</p><button data-home-edit-trip="${esc(nextTrip.id)}">Trip öffnen</button>` : `<p class="eyebrow dark">Nächster Trip</p><h2>Noch alles offen</h2><p>Starte deine erste Planung und speichere Datum, Markt und Verbindung an einem Ort.</p><button data-home-start-trip>Ersten Trip planen</button>`;
+  $('#recommendationHome').innerHTML = recommendation ? `${marketPicture(recommendation, 'home-market-art')}<div class="home-feature-copy"><p class="eyebrow dark">Unsere Empfehlung</p><h2>${esc(recommendation.name)}</h2><p>${esc(recommendation.city)} · ca. ${recommendation.travel} Min. ab Wuppertal</p><div class="card-actions"><button data-detail="${esc(recommendation.id)}">Ansehen</button><button class="ghost" data-plan="${esc(recommendation.id)}">Planen</button></div></div>` : '';
+  $('#winterProgressHome').innerHTML = `<p class="eyebrow dark">Winterfortschritt</p><h2>${visitedIds.size} von ${markets.length} Märkten erlebt</h2><div class="home-progress" aria-label="${visitedIds.size} von ${markets.length} Märkten"><i style="width:${Math.round(visitedIds.size / markets.length * 100)}%"></i></div><p><strong>${unlocked} von ${rewards.length}</strong> Stickern freigeschaltet</p><button class="ghost" data-home-magic>Zum Winterzauber</button>`;
   $('#nextDates').innerHTML = commonDates.slice(0, 4).map(date => {
     const open = markets.filter(market => openOn(market, date));
-    return `<article class="card"><strong>${date.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: 'long' })}</strong><p>${open.length} Märkte geöffnet</p><p class="muted">${esc(open.slice(0, 3).map(market => market.name).join(', '))}${open.length > 3 ? ` +${open.length - 3}` : ''}</p></article>`;
-  }).join('') || '<p>Tragt in der Timeline eure Verfügbarkeit ein.</p>';
-  $('#topMarkets').innerHTML = [...markets].sort((a, b) => score(b) - score(a) || a.travel - b.travel).slice(0, 3).map(marketCard).join('');
+    return `<article class="card date-card"><strong>${date.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: 'long' })}</strong><p>${open.length} Märkte geöffnet</p><p class="muted">${esc(open.slice(0, 3).map(market => market.name).join(', '))}${open.length > 3 ? ` +${open.length - 3}` : ''}</p></article>`;
+  }).join('') || '<p class="muted">Trage Verfügbarkeiten in der optionalen Timeline unter „Mehr“ ein.</p>';
+  $('#topMarkets').innerHTML = '';
+  $('[data-home-start-trip]')?.addEventListener('click', () => setView('trip'));
+  $('[data-home-edit-trip]')?.addEventListener('click', event => editSavedTrip(event.currentTarget.dataset.homeEditTrip));
+  $('[data-home-magic]')?.addEventListener('click', () => setView('wintermagic'));
   bindCards();
 }
 
 function setView(id) {
   $$('.tabs button,.view').forEach(element => element.classList.remove('active'));
-  $(`.tabs button[data-view="${CSS.escape(id)}"]`)?.classList.add('active');
+  const navId = id === 'timeline' || id === 'connections' ? 'settings' : id;
+  $(`.tabs button[data-view="${CSS.escape(navId)}"]`)?.classList.add('active');
   $(`#${CSS.escape(id)}`)?.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: state.preferences.reducedMotion ? 'auto' : 'smooth' });
 }
 
 function renderAll() {
@@ -1968,6 +2013,7 @@ function sanitizeImported(payload) {
 function bind() {
   $$('.tabs button').forEach(button => button.onclick = () => setView(button.dataset.view));
   $$('[data-jump]').forEach(button => button.onclick = () => setView(button.dataset.jump));
+  $$('[data-tool-view]').forEach(button => button.onclick = () => setView(button.dataset.toolView));
   $('#cardView').onclick = () => setMarketView('cards');
   $('#listView').onclick = () => setMarketView('list');
   ['marketSearch', 'cityFilter', 'dateFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'sortFilter'].forEach(id => {
@@ -2129,7 +2175,7 @@ async function loadMarkets() {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { parseDate, isoLocal, dateRange, migratePeople, migrateAvailability, openOn, score, icsEscape, foldIcs, makeIcs, sanitizeImported, buildGeocodeUrl, normalizePlaces, buildJourneyUrl, durationMinutes, durationLabel, delayMinutes, normalizeJourney, buildDbNavigatorUrl, journeyCard, friendlyError, marketOpeningHours, ticketRequirement, transferWarnings, selectPlannerJourneys, connectionSummary, STICKERS, evaluateRewards };
+  module.exports = { parseDate, isoLocal, dateRange, migratePeople, migrateAvailability, openOn, score, marketCategory, icsEscape, foldIcs, makeIcs, sanitizeImported, buildGeocodeUrl, normalizePlaces, buildJourneyUrl, durationMinutes, durationLabel, delayMinutes, normalizeJourney, buildDbNavigatorUrl, journeyCard, friendlyError, marketOpeningHours, ticketRequirement, transferWarnings, selectPlannerJourneys, connectionSummary, STICKERS, evaluateRewards };
 }
 
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {

@@ -41,7 +41,6 @@ const html = fs.readFileSync(new URL('index.html', root), 'utf8');
 for (const id of ['marketSearch', 'cityFilter', 'travelFilter', 'distanceFilter', 'featureFilter', 'dateFilter', 'timelineBody', 'peopleList', 'stopResults', 'cardView', 'listView', 'connectionFrom', 'connectionTo', 'connectionMarket', 'connectionDate', 'connectionTime', 'connectionMode', 'searchConnections', 'connectionResults', 'savedConnections', 'clearSavedConnections', 'albumAreas', 'albumUnlockedCount', 'journalEntries', 'completionDialog', 'stickerDialog', 'unlockCelebration', 'reducedMotion', 'plannerPersonCount', 'plannerDate', 'plannerAvailability', 'plannerMarkets', 'plannerMarketSearch', 'plannerCityFilter', 'plannerTravelFilter', 'plannerFeatureFilter', 'plannerSortFilter', 'resetPlannerFilters', 'plannerSelectedMarket', 'plannerFilterSummary', 'plannerArrival', 'plannerReturnEnabled', 'plannerBudgetLevel', 'plannerOutbound', 'plannerReturn', 'plannerSummary', 'savePlannedTrip']) {
   assert.ok(html.includes(`id="${id}"`), `UI-Element fehlt: ${id}`);
 }
-assert.ok(html.includes('V4.0.2'), 'Versionshinweis fehlt');
 assert.ok(html.includes('Transitous'), 'Transitous-Hinweis fehlt');
 assert.ok(html.includes('Way to Winter Magic'), 'App-Name fehlt');
 
@@ -60,9 +59,36 @@ assert.ok(sw.includes("url.hostname === 'api.transitous.org'"), 'Transitous-API 
 assert.ok(!sw.includes('bahn.guru') && !sw.includes('transport.rest'), 'Alte Bahn-API ist noch im Service Worker enthalten');
 assert.ok(sw.includes("event.request.mode === 'navigate'"), 'Offline-Navigation-Fallback fehlt');
 
+const nav = html.match(/<nav class="tabs"[\s\S]*?<\/nav>/)?.[0] || '';
+assert.equal((nav.match(/data-view=/g) || []).length, 5, 'Hauptnavigation muss genau fünf Ziele enthalten');
+for (const item of ['home','markets','trip','wintermagic','settings']) assert.ok(nav.includes(`data-view="${item}"`), `Navigation fehlt: ${item}`);
+assert.ok(!nav.includes('data-view="timeline"') && !nav.includes('data-view="connections"'), 'Timeline oder Bahn ist noch in der Hauptnavigation');
+assert.ok(html.includes('data-tool-view="timeline"') && html.includes('data-tool-view="connections"'), 'Optionale Werkzeuge unter Mehr fehlen');
+assert.equal((nav.match(/assets\/artwork\/navigation\/nav-/g) || []).length, 10, 'Fünf Navigations-Artworks brauchen 1x- und 2x-Dateien');
+assert.ok(html.includes('assets/artwork/actions/action-trip-plan-320.webp') && html.includes('assets/artwork/actions/action-trip-plan-640.webp'), 'Zentrale Trip-Artwork-Schaltfläche fehlt');
+assert.equal((html.match(/class="assistant-art"/g) || []).length, 6, 'Sechs Planer-Kopfbilder fehlen');
+for (const step of ['people','date','market','config','transit','review']) assert.ok(html.includes(`assets/artwork/assistant/assistant-${step}-640.webp`) && html.includes(`assets/artwork/assistant/assistant-${step}-1200.webp`), `Planer-Artwork fehlt: ${step}`);
+for (const hero of ['desktop-1600','tablet-1200','mobile-720']) assert.ok(html.includes(`hero-winter-path-${hero}.webp`), `Hero-Quelle fehlt: ${hero}`);
+const artworkRoot = new URL('../assets/artwork/', import.meta.url);
+const artworkFiles = fs.readdirSync(artworkRoot, { recursive:true }).filter(file => file.endsWith('.webp'));
+assert.equal(artworkFiles.length, 41, 'Artwork-Dateisatz ist unvollständig');
+assert.equal(fs.readdirSync(artworkRoot, { recursive:true }).filter(file => file.endsWith('.svg')).length, 0, 'Neue Artworks dürfen keine SVG-Dateien enthalten');
+for (const file of artworkFiles) {
+  const relative = `./assets/artwork/${String(file).replaceAll('\\','/')}`;
+  const raster = fs.readFileSync(new URL(relative, root));
+  assert.ok(raster.length > 1_000, `Artwork verdächtig klein: ${relative}`);
+  assert.equal(raster.subarray(0, 4).toString('ascii'), 'RIFF', `Ungültiger WebP-Header: ${relative}`);
+  assert.equal(raster.subarray(8, 12).toString('ascii'), 'WEBP', `Ungültiges WebP-Format: ${relative}`);
+  assert.ok(sw.includes(relative), `Artwork fehlt im Offline-Cache: ${relative}`);
+}
+const artworkAppSource = fs.readFileSync(new URL('app.js', root), 'utf8');
+for (const category of ['castle','forest','oldtown','lights','industrial','city','harbor']) {
+  assert.ok(artworkAppSource.includes(`market-${category}`), `Markt-Artwork-Kategorie fehlt: ${category}`);
+}
+
 const appSource = fs.readFileSync(new URL('app.js', root), 'utf8');
 assert.ok(appSource.includes("const STORAGE_PREFIX = 'wtwm:v2:'"), 'Eigener Speicherbereich fehlt');
-assert.ok(appSource.includes("const VERSION = '4.0.2'"), 'JS-Version ist nicht aktuell');
+assert.ok(appSource.includes("const VERSION = '5.0.0'"), 'JS-Version ist nicht aktuell');
 assert.ok(appSource.includes("state.tripDraft.marketId = selected ? '' : marketId"), 'Marktauswahl kann nicht wieder aufgehoben werden');
 assert.ok(appSource.includes("S.set('plannerMarketFilters', state.plannerFilters)"), 'Planerfilter werden nicht lokal gespeichert');
 assert.ok(appSource.includes("const API = 'https://api.transitous.org/api'"), 'Transitous-Endpunkt fehlt');
@@ -87,6 +113,7 @@ globalThis.localStorage = {
 };
 const require = createRequire(import.meta.url);
 const logic = require(fileURLToPath(new URL('../app.js', import.meta.url)));
+assert.equal(new Set(markets.map(market => logic.marketCategory(market).file)).size, 7, 'Alle sieben Markt-Artwork-Kategorien müssen verwendet werden');
 assert.equal(logic.STICKERS.length, 16, 'Es müssen genau 16 Sticker vorhanden sein');
 assert.equal(new Set(logic.STICKERS.map(sticker => sticker.name)).size, 16, 'Stickernamen müssen eindeutig sein');
 assert.equal(new Set(logic.STICKERS.map(sticker => sticker.area)).size, 4, 'Album muss vier Bereiche haben');
@@ -240,4 +267,4 @@ assert.equal(logic.score(markets.find(market => market.id === 'steele')).toFixed
 assert.equal(logic.marketOpeningHours({}, '2026-12-05'), 'Noch nicht veröffentlicht – Marktlink prüfen');
 assert.ok(ics.includes('Namen: Alex (Ja)') && ics.includes('Ticketstatus: Nicht nötig'), 'Erweiterte ICS-Angaben fehlen');
 
-console.log(`V4.0.2 Smoke-/Logiktests bestanden: ${markets.length} Märkte, 6 Meilenstein-Medaillen, 10 freie Themen-Sticker mit 96 Grafikvarianten, Planerfilter und DB-Verbindungssuche geprüft.`);
+console.log(`V5.0.0 Smoke-/Logiktests bestanden: ${markets.length} Märkte, 6 Meilenstein-Medaillen, 10 freie Themen-Sticker mit 96 Grafikvarianten, Planerfilter und DB-Verbindungssuche geprüft.`);
