@@ -3,351 +3,293 @@
     "id": "steele",
     "name": "Steeler Weihnachtsmarkt",
     "city": "Essen",
-    "location": "Kaiser-Otto-Platz, Essen-Steele",
-    "stationQuery": "Essen Steele S",
+    "location": "Steeler Weihnachtsmarkt, Essen",
+    "stationQuery": "Essen Bahnhof",
     "from": "2026-10-30",
     "to": "2027-01-03",
+    "closed": [],
     "travel": 55,
-    "distanceKm": 24,
+    "distanceKm": 30,
     "entry": "Kostenlos",
     "light": 4,
-    "food": 5,
+    "food": 4,
     "cozy": 3,
-    "special": 3,
+    "special": 4,
     "budget": [
-      20,
-      35,
-      45
+      25,
+      45,
+      65
     ],
     "tags": [
-      "essen",
-      "familie",
-      "lange-saison"
+      "stadt"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "muengsten",
     "name": "Müngstener Winterdorf",
     "city": "Solingen",
-    "location": "Brückenpark Müngsten",
-    "stationQuery": "Solingen Brückenpark Müngsten",
+    "location": "Müngstener Winterdorf, Solingen",
+    "stationQuery": "Solingen Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-20",
+    "closed": [],
     "travel": 65,
-    "distanceKm": 11,
-    "entry": "Kein Eintritt veröffentlicht",
+    "distanceKm": 36,
+    "entry": "Kostenlos",
     "light": 4,
-    "food": 3,
-    "cozy": 4,
+    "food": 4,
+    "cozy": 5,
     "special": 5,
     "budget": [
-      20,
-      35,
-      45
+      25,
+      45,
+      65
     ],
     "tags": [
-      "klein",
-      "natur",
-      "besonders"
+      "natur"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "hattingen",
     "name": "Nostalgischer Weihnachtsmarkt Hattingen",
     "city": "Hattingen",
-    "location": "Altstadt Hattingen",
-    "stationQuery": "Hattingen Mitte",
+    "location": "Nostalgischer Weihnachtsmarkt Hattingen, Hattingen",
+    "stationQuery": "Hattingen Bahnhof",
     "from": "2026-11-23",
     "to": "2026-12-22",
+    "closed": [],
     "travel": 75,
-    "distanceKm": 19,
+    "distanceKm": 41,
     "entry": "Kostenlos",
-    "light": 5,
+    "light": 4,
     "food": 4,
     "cozy": 5,
     "special": 4,
     "budget": [
       25,
-      40,
-      50
+      45,
+      65
     ],
     "tags": [
-      "historisch",
-      "licht",
-      "cozy"
+      "historisch"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "benrath",
     "name": "Weihnachtsmarkt Schloss Benrath",
     "city": "Düsseldorf",
-    "location": "Schloss Benrath",
-    "stationQuery": "Düsseldorf Schloss Benrath",
+    "location": "Weihnachtsmarkt Schloss Benrath, Düsseldorf",
+    "stationQuery": "Düsseldorf Bahnhof",
     "from": "2026-11-20",
     "to": "2026-12-20",
+    "closed": [],
     "travel": 90,
-    "distanceKm": 27,
+    "distanceKm": 50,
     "entry": "Kostenlos",
-    "light": 5,
-    "food": 3,
-    "cozy": 4,
-    "special": 4,
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
+    "special": 5,
     "budget": [
       25,
-      40,
-      55
+      45,
+      65
     ],
     "tags": [
-      "schloss",
-      "licht",
-      "kunsthandwerk"
+      "schloss"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "gruenewald",
     "name": "Grünewalder Adventstraum",
     "city": "Solingen",
-    "location": "Schloss Grünewald",
-    "stationQuery": "Solingen Schloss Grünewald",
+    "location": "Grünewalder Adventstraum, Solingen",
+    "stationQuery": "Solingen Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-20",
+    "closed": [],
     "travel": 90,
-    "distanceKm": 18,
-    "entry": "Ticket nötig, Preis offen",
-    "light": 5,
-    "food": 5,
-    "cozy": 4,
+    "distanceKm": 50,
+    "entry": "Ticket nötig",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
     "special": 5,
     "budget": [
-      35,
-      50,
+      25,
+      45,
       65
     ],
     "tags": [
-      "schloss",
-      "licht",
-      "essen"
+      "schloss"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "hugenpoet",
     "name": "Nikolausmarkt Schloss Hugenpoet",
     "city": "Essen",
-    "location": "Schloss Hugenpoet",
-    "stationQuery": "Essen Schloss Hugenpoet",
+    "location": "Nikolausmarkt Schloss Hugenpoet, Essen",
+    "stationQuery": "Essen Bahnhof",
     "from": "2026-12-03",
     "to": "2026-12-06",
+    "closed": [],
     "travel": 100,
-    "distanceKm": 25,
-    "entry": "10 bis 14 Euro",
-    "light": 5,
+    "distanceKm": 55,
+    "entry": "10–14 €",
+    "light": 4,
     "food": 4,
-    "cozy": 5,
+    "cozy": 3,
     "special": 5,
     "budget": [
-      40,
-      55,
-      75
+      25,
+      45,
+      65
     ],
     "tags": [
-      "schloss",
-      "cozy"
+      "schloss"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "duisburg-nord",
     "name": "Lichtermarkt Duisburg-Nord",
     "city": "Duisburg",
-    "location": "Landschaftspark Duisburg-Nord",
-    "stationQuery": "Duisburg Landschaftspark Nord",
+    "location": "Lichtermarkt Duisburg-Nord, Duisburg",
+    "stationQuery": "Duisburg Bahnhof",
     "from": "2026-11-27",
     "to": "2026-11-29",
+    "closed": [],
     "travel": 95,
-    "distanceKm": 38,
-    "entry": "7 Euro",
-    "light": 6,
-    "food": 3,
+    "distanceKm": 52,
+    "entry": "7 €",
+    "light": 5,
+    "food": 4,
     "cozy": 3,
-    "special": 5,
+    "special": 4,
     "budget": [
-      30,
+      25,
       45,
-      60
+      65
     ],
     "tags": [
-      "licht",
       "industrie",
-      "event"
+      "licht"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "koeln-stadtgarten",
     "name": "Weihnachtsmarkt im Stadtgarten Köln",
     "city": "Köln",
-    "location": "Stadtgarten Köln",
-    "stationQuery": "Köln West",
+    "location": "Weihnachtsmarkt im Stadtgarten Köln, Köln",
+    "stationQuery": "Köln Bahnhof",
     "from": "2026-11-13",
     "to": "2026-12-23",
+    "closed": [],
     "travel": 75,
-    "distanceKm": 40,
+    "distanceKm": 41,
     "entry": "Kostenlos",
     "light": 4,
-    "food": 5,
-    "cozy": 4,
+    "food": 4,
+    "cozy": 3,
     "special": 4,
     "budget": [
-      30,
-      50,
+      25,
+      45,
       65
     ],
     "tags": [
-      "essen",
-      "cozy",
-      "kunsthandwerk"
+      "stadt"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "moyland",
-    "name": "Kunsthandwerker-Weihnachtsmarkt Schloss Moyland",
+    "name": "Weihnachtsmarkt Schloss Moyland",
     "city": "Bedburg-Hau",
-    "location": "Schloss Moyland",
-    "stationQuery": "Bedburg-Hau Schloss Moyland",
+    "location": "Weihnachtsmarkt Schloss Moyland, Bedburg-Hau",
+    "stationQuery": "Bedburg-Hau Bahnhof",
     "from": "2026-12-09",
     "to": "2026-12-13",
+    "closed": [],
     "travel": 190,
-    "distanceKm": 71,
-    "entry": "10 Euro",
-    "light": 5,
+    "distanceKm": 105,
+    "entry": "10 €",
+    "light": 4,
     "food": 4,
-    "cozy": 4,
+    "cozy": 3,
     "special": 5,
     "budget": [
-      40,
-      60,
-      80
+      25,
+      45,
+      65
     ],
     "tags": [
-      "schloss",
-      "kunsthandwerk",
-      "tagestrip"
+      "schloss"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "elberfeld",
     "name": "Elberfelder Weihnachtsmarkt",
     "city": "Wuppertal",
-    "location": "Elberfelder Innenstadt",
-    "stationQuery": "Wuppertal Hbf",
+    "location": "Elberfelder Weihnachtsmarkt, Wuppertal",
+    "stationQuery": "Wuppertal Bahnhof",
     "from": "2026-11-19",
     "to": "2026-12-27",
+    "closed": [],
     "travel": 10,
-    "distanceKm": 1,
-    "entry": "Kostenlos",
-    "light": 4,
-    "food": 4,
-    "cozy": 3,
-    "special": 3,
-    "budget": [
-      15,
-      30,
-      45
-    ],
-    "tags": [
-      "nah",
-      "kunsthandwerk",
-      "musik"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "barmen",
-    "name": "Barmer Weihnachtsmarkt",
-    "city": "Wuppertal",
-    "location": "Innenstadt Barmen",
-    "stationQuery": "Wuppertal-Barmen Bahnhof",
-    "from": "2026-11-19",
-    "to": "2026-12-27",
-    "travel": 20,
     "distanceKm": 6,
     "entry": "Kostenlos",
     "light": 4,
     "food": 4,
     "cozy": 3,
-    "special": 3,
+    "special": 4,
     "budget": [
-      15,
-      30,
-      45
+      25,
+      45,
+      65
     ],
     "tags": [
-      "nah",
-      "musik",
-      "familie"
+      "stadt"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
-    "id": "remscheid",
-    "name": "Remscheider Weihnachtstreff",
-    "city": "Remscheid",
-    "location": "Rathausplatz",
-    "stationQuery": "Remscheid Rathaus",
-    "from": "2026-11-13",
-    "to": "2026-12-23",
-    "travel": 35,
+    "id": "barmen",
+    "name": "Barmer Weihnachtsmarkt",
+    "city": "Wuppertal",
+    "location": "Barmer Weihnachtsmarkt, Wuppertal",
+    "stationQuery": "Wuppertal Bahnhof",
+    "from": "2026-11-19",
+    "to": "2026-12-27",
+    "closed": [],
+    "travel": 20,
     "distanceKm": 11,
     "entry": "Kostenlos",
     "light": 4,
@@ -355,219 +297,653 @@
     "cozy": 3,
     "special": 4,
     "budget": [
-      20,
-      35,
-      50
+      25,
+      45,
+      65
     ],
     "tags": [
-      "nah",
-      "familie"
+      "stadt"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
-    "id": "ohligs",
-    "name": "Weihnachtsdürpel Ohligs",
-    "city": "Solingen",
-    "location": "Forststraße Ohligs",
-    "stationQuery": "Solingen Hbf",
-    "from": "2026-12-04",
-    "to": "2026-12-06",
+    "id": "remscheid",
+    "name": "Remscheider Weihnachtstreff",
+    "city": "Remscheid",
+    "location": "Remscheider Weihnachtstreff, Remscheid",
+    "stationQuery": "Remscheid Bahnhof",
+    "from": "2026-11-13",
+    "to": "2026-12-23",
+    "closed": [],
     "travel": 35,
     "distanceKm": 19,
     "entry": "Kostenlos",
-    "light": 3,
-    "food": 4,
-    "cozy": 4,
-    "special": 3,
-    "budget": [
-      20,
-      35,
-      45
-    ],
-    "tags": [
-      "klein",
-      "nah",
-      "wochenende"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "velbert",
-    "name": "Weihnachtsmarkt Am Offers",
-    "city": "Velbert",
-    "location": "Platz Am Offers",
-    "stationQuery": "Velbert ZOB",
-    "from": "2026-12-04",
-    "to": "2026-12-13",
-    "travel": 55,
-    "distanceKm": 16,
-    "entry": "Kostenlos",
-    "light": 4,
-    "food": 3,
-    "cozy": 4,
-    "special": 3,
-    "budget": [
-      20,
-      35,
-      45
-    ],
-    "tags": [
-      "klein",
-      "familie"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "mettmann",
-    "name": "Blotschenmarkt Mettmann",
-    "city": "Mettmann",
-    "location": "Am Königshof",
-    "stationQuery": "Mettmann Zentrum",
-    "from": "2026-11-27",
-    "to": "2026-12-13",
-    "travel": 50,
-    "distanceKm": 17,
-    "entry": "Kostenlos",
     "light": 4,
     "food": 4,
-    "cozy": 4,
-    "special": 4,
-    "budget": [
-      20,
-      35,
-      50
-    ],
-    "tags": [
-      "tradition",
-      "familie",
-      "cozy"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "essen",
-    "name": "Internationaler Weihnachtsmarkt Essen",
-    "city": "Essen",
-    "location": "Kennedyplatz und Innenstadt",
-    "stationQuery": "Essen Hbf",
-    "from": "2026-11-13",
-    "to": "2026-12-23",
-    "travel": 50,
-    "distanceKm": 25,
-    "entry": "Kostenlos",
-    "light": 5,
-    "food": 5,
     "cozy": 3,
     "special": 4,
     "budget": [
       25,
       45,
-      60
+      65
     ],
     "tags": [
-      "licht",
-      "essen",
-      "groß"
+      "stadt"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
-    "id": "kettwig",
-    "name": "Kettwiger Adventsdorf",
-    "city": "Essen",
-    "location": "Historische Altstadt Kettwig",
-    "stationQuery": "Essen Kettwig Stausee",
+    "id": "ohligs",
+    "name": "Weihnachtsdürpel Ohligs",
+    "city": "Solingen",
+    "location": "Weihnachtsdürpel Ohligs, Solingen",
+    "stationQuery": "Solingen Bahnhof",
+    "from": "2026-12-04",
+    "to": "2026-12-06",
+    "closed": [],
+    "travel": 35,
+    "distanceKm": 19,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "wochenende"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "velbert",
+    "name": "Weihnachtsmarkt Am Offers",
+    "city": "Velbert",
+    "location": "Weihnachtsmarkt Am Offers, Velbert",
+    "stationQuery": "Velbert Bahnhof",
+    "from": "2026-12-04",
+    "to": "2026-12-13",
+    "closed": [],
+    "travel": 55,
+    "distanceKm": 30,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "klein"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "mettmann",
+    "name": "Blotschenmarkt Mettmann",
+    "city": "Mettmann",
+    "location": "Blotschenmarkt Mettmann, Mettmann",
+    "stationQuery": "Mettmann Bahnhof",
     "from": "2026-11-27",
-    "to": "2026-11-29",
-    "travel": 70,
-    "distanceKm": 23,
+    "to": "2026-12-13",
+    "closed": [],
+    "travel": 50,
+    "distanceKm": 28,
     "entry": "Kostenlos",
     "light": 4,
     "food": 4,
     "cozy": 5,
     "special": 4,
     "budget": [
-      20,
-      35,
-      50
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "historisch"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "essen",
+    "name": "Internationaler Weihnachtsmarkt Essen",
+    "city": "Essen",
+    "location": "Internationaler Weihnachtsmarkt Essen, Essen",
+    "stationQuery": "Essen Bahnhof",
+    "from": "2026-11-13",
+    "to": "2026-12-23",
+    "closed": [],
+    "travel": 50,
+    "distanceKm": 28,
+    "entry": "Kostenlos",
+    "light": 5,
+    "food": 4,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "stadt",
+      "licht"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "kettwig",
+    "name": "Kettwiger Adventsdorf",
+    "city": "Essen",
+    "location": "Kettwiger Adventsdorf, Essen",
+    "stationQuery": "Essen Bahnhof",
+    "from": "2026-11-27",
+    "to": "2026-11-29",
+    "closed": [],
+    "travel": 70,
+    "distanceKm": 38,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
     ],
     "tags": [
       "historisch",
-      "klein",
-      "cozy"
+      "wochenende"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "bochum",
     "name": "Bochumer Weihnachtsmarkt",
     "city": "Bochum",
-    "location": "Innenstadt",
-    "stationQuery": "Bochum Hbf",
+    "location": "Bochumer Weihnachtsmarkt, Bochum",
+    "stationQuery": "Bochum Bahnhof",
     "from": "2026-11-19",
     "to": "2026-12-23",
+    "closed": [],
     "travel": 55,
-    "distanceKm": 27,
+    "distanceKm": 30,
     "entry": "Kostenlos",
     "light": 4,
-    "food": 5,
+    "food": 4,
     "cozy": 3,
-    "special": 5,
+    "special": 4,
     "budget": [
       25,
       45,
-      60
+      65
     ],
     "tags": [
-      "groß",
-      "familie",
-      "event"
+      "stadt"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "dortmund",
     "name": "Dortmunder Weihnachtsstadt",
     "city": "Dortmund",
-    "location": "Hansaplatz und Innenstadt",
-    "stationQuery": "Dortmund Hbf",
+    "location": "Dortmunder Weihnachtsstadt, Dortmund",
+    "stationQuery": "Dortmund Bahnhof",
     "from": "2026-11-19",
     "to": "2026-12-30",
+    "closed": [],
     "travel": 55,
-    "distanceKm": 36,
+    "distanceKm": 30,
     "entry": "Kostenlos",
     "light": 5,
-    "food": 5,
-    "cozy": 2,
+    "food": 4,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "stadt",
+      "licht"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "duesseldorf",
+    "name": "Düsseldorfer Weihnachtsmärkte",
+    "city": "Düsseldorf",
+    "location": "Düsseldorfer Weihnachtsmärkte, Düsseldorf",
+    "stationQuery": "Düsseldorf Bahnhof",
+    "from": "2026-11-19",
+    "to": "2026-12-30",
+    "closed": [],
+    "travel": 50,
+    "distanceKm": 28,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "stadt"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "kaiserswerth",
+    "name": "Nikolausmarkt Kaiserswerth",
+    "city": "Düsseldorf",
+    "location": "Nikolausmarkt Kaiserswerth, Düsseldorf",
+    "stationQuery": "Düsseldorf Bahnhof",
+    "from": "2026-12-05",
+    "to": "2026-12-06",
+    "closed": [],
+    "travel": 80,
+    "distanceKm": 44,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "historisch",
+      "wochenende"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "duisburg",
+    "name": "Duisburger Weihnachtsmarkt",
+    "city": "Duisburg",
+    "location": "Duisburger Weihnachtsmarkt, Duisburg",
+    "stationQuery": "Duisburg Bahnhof",
+    "from": "2026-11-12",
+    "to": "2026-12-30",
+    "closed": [],
+    "travel": 65,
+    "distanceKm": 36,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "stadt"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "oberhausen",
+    "name": "Centro Weihnachtsmarkt",
+    "city": "Oberhausen",
+    "location": "Centro Weihnachtsmarkt, Oberhausen",
+    "stationQuery": "Oberhausen Bahnhof",
+    "from": "2026-11-13",
+    "to": "2026-12-23",
+    "closed": [],
+    "travel": 80,
+    "distanceKm": 44,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "stadt"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "muelheim",
+    "name": "Mülheimer Altstadt-Adventsmarkt",
+    "city": "Mülheim an der Ruhr",
+    "location": "Mülheimer Altstadt-Adventsmarkt, Mülheim an der Ruhr",
+    "stationQuery": "Mülheim an der Ruhr Bahnhof",
+    "from": "2026-11-27",
+    "to": "2026-12-13",
+    "closed": [],
+    "travel": 65,
+    "distanceKm": 36,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "historisch"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "recklinghausen",
+    "name": "Weihnachtsmarkt Recklinghausen",
+    "city": "Recklinghausen",
+    "location": "Weihnachtsmarkt Recklinghausen, Recklinghausen",
+    "stationQuery": "Recklinghausen Bahnhof",
+    "from": "2026-11-19",
+    "to": "2026-12-23",
+    "closed": [],
+    "travel": 95,
+    "distanceKm": 52,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "historisch"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "muenster",
+    "name": "Weihnachtsmärkte Münster",
+    "city": "Münster",
+    "location": "Weihnachtsmärkte Münster, Münster",
+    "stationQuery": "Münster Bahnhof",
+    "from": "2026-11-23",
+    "to": "2026-12-23",
+    "closed": [],
+    "travel": 125,
+    "distanceKm": 69,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "historisch"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "aachen",
+    "name": "Aachener Weihnachtsmarkt",
+    "city": "Aachen",
+    "location": "Aachener Weihnachtsmarkt, Aachen",
+    "stationQuery": "Aachen Bahnhof",
+    "from": "2026-11-20",
+    "to": "2026-12-23",
+    "closed": [],
+    "travel": 120,
+    "distanceKm": 66,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "historisch"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "bonn",
+    "name": "Bonner Weihnachtsmarkt",
+    "city": "Bonn",
+    "location": "Bonner Weihnachtsmarkt, Bonn",
+    "stationQuery": "Bonn Bahnhof",
+    "from": "2026-11-18",
+    "to": "2026-12-23",
+    "closed": [],
+    "travel": 110,
+    "distanceKm": 61,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "stadt"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "soest",
+    "name": "Soester Weihnachtsmarkt",
+    "city": "Soest",
+    "location": "Soester Weihnachtsmarkt, Soest",
+    "stationQuery": "Soest Bahnhof",
+    "from": "2026-11-23",
+    "to": "2026-12-22",
+    "closed": [],
+    "travel": 105,
+    "distanceKm": 58,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "historisch"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "xanten",
+    "name": "Xantener Weihnachtsmarkt",
+    "city": "Xanten",
+    "location": "Xantener Weihnachtsmarkt, Xanten",
+    "stationQuery": "Xanten Bahnhof",
+    "from": "2026-11-20",
+    "to": "2026-12-22",
+    "closed": [],
+    "travel": 150,
+    "distanceKm": 82,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "historisch"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "monschau",
+    "name": "Monschauer Weihnachtsmarkt",
+    "city": "Monschau",
+    "location": "Monschauer Weihnachtsmarkt, Monschau",
+    "stationQuery": "Monschau Bahnhof",
+    "from": "2026-11-27",
+    "to": "2026-12-20",
+    "closed": [],
+    "travel": 175,
+    "distanceKm": 96,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "historisch",
+      "wochenende"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "bad-muenstereifel",
+    "name": "Weihnachtsmarkt Bad Münstereifel",
+    "city": "Bad Münstereifel",
+    "location": "Weihnachtsmarkt Bad Münstereifel, Bad Münstereifel",
+    "stationQuery": "Bad Münstereifel Bahnhof",
+    "from": "2026-11-20",
+    "to": "2026-12-30",
+    "closed": [],
+    "travel": 150,
+    "distanceKm": 82,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "historisch"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "siegburg",
+    "name": "Mittelalterlicher Weihnachtsmarkt Siegburg",
+    "city": "Siegburg",
+    "location": "Mittelalterlicher Weihnachtsmarkt Siegburg, Siegburg",
+    "stationQuery": "Siegburg Bahnhof",
+    "from": "2026-11-21",
+    "to": "2026-12-22",
+    "closed": [],
+    "travel": 95,
+    "distanceKm": 52,
+    "entry": "Kostenlos",
+    "light": 4,
+    "food": 4,
+    "cozy": 5,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "historisch"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "raesfeld",
+    "name": "Adventsmarkt Schloss Raesfeld",
+    "city": "Raesfeld",
+    "location": "Adventsmarkt Schloss Raesfeld, Raesfeld",
+    "stationQuery": "Raesfeld Bahnhof",
+    "from": "2026-12-03",
+    "to": "2026-12-13",
+    "closed": [],
+    "travel": 170,
+    "distanceKm": 94,
+    "entry": "Eintritt möglich",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
     "special": 5,
     "budget": [
       25,
@@ -575,638 +951,157 @@
       65
     ],
     "tags": [
-      "groß",
-      "licht",
-      "essen"
+      "schloss"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "duesseldorf",
-    "name": "Düsseldorfer Weihnachtsmarkt",
-    "city": "Düsseldorf",
-    "location": "Innenstadt",
-    "stationQuery": "Düsseldorf Heinrich-Heine-Allee",
-    "from": "2026-11-19",
-    "to": "2026-12-30",
-    "travel": 50,
-    "distanceKm": 28,
-    "entry": "Kostenlos",
-    "light": 5,
-    "food": 5,
-    "cozy": 3,
-    "special": 5,
-    "budget": [
-      25,
-      50,
-      70
-    ],
-    "tags": [
-      "groß",
-      "licht",
-      "essen"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "kaiserswerth",
-    "name": "Nikolausmarkt Kaiserswerth",
-    "city": "Düsseldorf",
-    "location": "Historischer Kern Kaiserswerth",
-    "stationQuery": "Düsseldorf Klemensplatz",
-    "from": "2026-12-05",
-    "to": "2026-12-06",
-    "travel": 80,
-    "distanceKm": 31,
-    "entry": "Kostenlos",
-    "light": 4,
-    "food": 3,
-    "cozy": 5,
-    "special": 4,
-    "budget": [
-      20,
-      35,
-      50
-    ],
-    "tags": [
-      "historisch",
-      "klein",
-      "cozy"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "duisburg",
-    "name": "Duisburger Weihnachtsmarkt",
-    "city": "Duisburg",
-    "location": "Königstraße",
-    "stationQuery": "Duisburg Hbf",
-    "from": "2026-11-12",
-    "to": "2026-12-30",
-    "travel": 65,
-    "distanceKm": 35,
-    "entry": "Kostenlos",
-    "light": 4,
-    "food": 5,
-    "cozy": 3,
-    "special": 4,
-    "budget": [
-      25,
-      45,
-      60
-    ],
-    "tags": [
-      "groß",
-      "essen"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "oberhausen",
-    "name": "Westfield Centro Weihnachtsmarkt",
-    "city": "Oberhausen",
-    "location": "Promenade Centro",
-    "stationQuery": "Oberhausen Neue Mitte",
-    "from": "2026-11-13",
-    "to": "2026-12-23",
-    "travel": 80,
-    "distanceKm": 32,
-    "entry": "Kostenlos",
-    "light": 5,
-    "food": 5,
-    "cozy": 2,
-    "special": 5,
-    "budget": [
-      25,
-      50,
-      70
-    ],
-    "tags": [
-      "groß",
-      "event",
-      "shopping"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "muelheim",
-    "name": "Mülheimer Altstadt-Adventsmarkt",
-    "city": "Mülheim an der Ruhr",
-    "location": "Historische Altstadt",
-    "stationQuery": "Mülheim Stadtmitte",
-    "from": "2026-11-27",
-    "to": "2026-12-13",
-    "travel": 65,
-    "distanceKm": 29,
-    "entry": "Kostenlos",
-    "light": 4,
-    "food": 4,
-    "cozy": 5,
-    "special": 4,
-    "budget": [
-      20,
-      40,
-      55
-    ],
-    "tags": [
-      "historisch",
-      "klein",
-      "cozy"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "recklinghausen",
-    "name": "Weihnachtsmarkt Recklinghausen",
-    "city": "Recklinghausen",
-    "location": "Altstadtmarkt",
-    "stationQuery": "Recklinghausen Hbf",
-    "from": "2026-11-19",
-    "to": "2026-12-23",
-    "travel": 95,
-    "distanceKm": 40,
-    "entry": "Kostenlos",
-    "light": 4,
-    "food": 4,
-    "cozy": 4,
-    "special": 4,
-    "budget": [
-      25,
-      40,
-      55
-    ],
-    "tags": [
-      "altstadt",
-      "familie",
-      "licht"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "muenster",
-    "name": "Weihnachtsmärkte Münster",
-    "city": "Münster",
-    "location": "Sechs Märkte in der Altstadt",
-    "stationQuery": "Münster Westf Hbf",
-    "from": "2026-11-23",
-    "to": "2026-12-23",
-    "travel": 125,
-    "distanceKm": 72,
-    "entry": "Kostenlos",
-    "light": 5,
-    "food": 5,
-    "cozy": 4,
-    "special": 5,
-    "budget": [
-      30,
-      55,
-      75
-    ],
-    "tags": [
-      "tagestrip",
-      "historisch",
-      "groß"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "aachen",
-    "name": "Aachener Weihnachtsmarkt",
-    "city": "Aachen",
-    "location": "Dom und Rathaus",
-    "stationQuery": "Aachen Hbf",
-    "from": "2026-11-20",
-    "to": "2026-12-23",
-    "travel": 120,
-    "distanceKm": 95,
-    "entry": "Kostenlos",
-    "light": 5,
-    "food": 5,
-    "cozy": 4,
-    "special": 5,
-    "budget": [
-      30,
-      55,
-      75
-    ],
-    "tags": [
-      "tagestrip",
-      "historisch",
-      "essen"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "bonn",
-    "name": "Bonner Weihnachtsmarkt",
-    "city": "Bonn",
-    "location": "Münsterplatz und Innenstadt",
-    "stationQuery": "Bonn Hbf",
-    "from": "2026-11-18",
-    "to": "2026-12-23",
-    "travel": 110,
-    "distanceKm": 64,
-    "entry": "Kostenlos",
-    "light": 4,
-    "food": 5,
-    "cozy": 4,
-    "special": 4,
-    "budget": [
-      30,
-      50,
-      70
-    ],
-    "tags": [
-      "tagestrip",
-      "kunsthandwerk",
-      "essen"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "soest",
-    "name": "Soester Weihnachtsmarkt",
-    "city": "Soest",
-    "location": "Historische Altstadt",
-    "stationQuery": "Soest Bahnhof",
-    "from": "2026-11-23",
-    "to": "2026-12-22",
-    "travel": 105,
-    "distanceKm": 70,
-    "entry": "Kostenlos",
-    "light": 5,
-    "food": 4,
-    "cozy": 5,
-    "special": 5,
-    "budget": [
-      30,
-      50,
-      70
-    ],
-    "tags": [
-      "historisch",
-      "cozy",
-      "licht"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "xanten",
-    "name": "Xantener Weihnachtsmarkt",
-    "city": "Xanten",
-    "location": "Markt und Dom",
-    "stationQuery": "Xanten Bahnhof",
-    "from": "2026-11-20",
-    "to": "2026-12-22",
-    "travel": 150,
-    "distanceKm": 61,
-    "entry": "Kostenlos",
-    "light": 4,
-    "food": 4,
-    "cozy": 5,
-    "special": 5,
-    "budget": [
-      30,
-      50,
-      70
-    ],
-    "tags": [
-      "historisch",
-      "cozy",
-      "tagestrip"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "monschau",
-    "name": "Monschauer Weihnachtsmarkt",
-    "city": "Monschau",
-    "location": "Historische Altstadt",
-    "stationQuery": "Monschau Parkhaus",
-    "from": "2026-11-27",
-    "to": "2026-12-20",
-    "travel": 175,
-    "distanceKm": 87,
-    "entry": "Kostenlos",
-    "light": 5,
-    "food": 4,
-    "cozy": 5,
-    "special": 5,
-    "budget": [
-      30,
-      55,
-      75
-    ],
-    "tags": [
-      "historisch",
-      "cozy",
-      "wochenende"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "bad-muenstereifel",
-    "name": "Weihnachtsmarkt Bad Münstereifel",
-    "city": "Bad Münstereifel",
-    "location": "Historischer Stadtkern",
-    "stationQuery": "Bad Münstereifel Bahnhof",
-    "from": "2026-11-20",
-    "to": "2026-12-30",
-    "travel": 150,
-    "distanceKm": 75,
-    "entry": "Kostenlos",
-    "light": 5,
-    "food": 4,
-    "cozy": 5,
-    "special": 5,
-    "budget": [
-      30,
-      50,
-      70
-    ],
-    "tags": [
-      "historisch",
-      "cozy",
-      "tagestrip"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "saarburg-placeholder",
-    "name": "Weihnachtsmarkt Siegburg",
-    "city": "Siegburg",
-    "location": "Marktplatz",
-    "stationQuery": "Siegburg/Bonn",
-    "from": "2026-11-21",
-    "to": "2026-12-22",
-    "travel": 95,
-    "distanceKm": 55,
-    "entry": "Kostenlos",
-    "light": 4,
-    "food": 4,
-    "cozy": 4,
-    "special": 5,
-    "budget": [
-      25,
-      45,
-      60
-    ],
-    "tags": [
-      "mittelalter",
-      "historisch"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "raesfeld",
-    "name": "Adventsmarkt Schloss Raesfeld",
-    "city": "Raesfeld",
-    "location": "Schloss Raesfeld",
-    "stationQuery": "Raesfeld Schloss",
-    "from": "2026-12-03",
-    "to": "2026-12-13",
-    "travel": 170,
-    "distanceKm": 64,
-    "entry": "Eintritt möglich",
-    "light": 5,
-    "food": 4,
-    "cozy": 5,
-    "special": 5,
-    "budget": [
-      35,
-      55,
-      75
-    ],
-    "tags": [
-      "schloss",
-      "cozy",
-      "wochenende"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "velen",
     "name": "Velener Waldweihnachtsmarkt",
     "city": "Velen",
-    "location": "Landgut Krumme",
-    "stationQuery": "Velen Rathaus",
+    "location": "Velener Waldweihnachtsmarkt, Velen",
+    "stationQuery": "Velen Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-20",
+    "closed": [],
     "travel": 175,
-    "distanceKm": 68,
+    "distanceKm": 96,
     "entry": "Ticket nötig",
-    "light": 5,
+    "light": 4,
     "food": 4,
     "cozy": 5,
     "special": 5,
     "budget": [
-      35,
-      55,
-      75
+      25,
+      45,
+      65
     ],
     "tags": [
-      "natur",
-      "wald",
-      "cozy"
+      "natur"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "warendorf",
     "name": "Warendorfer Weihnachtswäldchen",
     "city": "Warendorf",
-    "location": "Marktplatz",
+    "location": "Warendorfer Weihnachtswäldchen, Warendorf",
     "stationQuery": "Warendorf Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-20",
+    "closed": [],
     "travel": 155,
-    "distanceKm": 78,
+    "distanceKm": 85,
     "entry": "Kostenlos",
-    "light": 5,
+    "light": 4,
     "food": 4,
     "cozy": 5,
-    "special": 4,
+    "special": 5,
     "budget": [
-      30,
-      50,
-      70
+      25,
+      45,
+      65
     ],
     "tags": [
-      "natur",
-      "historisch",
-      "cozy"
+      "natur"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "muelheim-schiff",
     "name": "Mülheimer Schiffsweihnacht",
     "city": "Mülheim an der Ruhr",
-    "location": "Stadthafen",
-    "stationQuery": "Mülheim Stadtmitte",
+    "location": "Mülheimer Schiffsweihnacht, Mülheim an der Ruhr",
+    "stationQuery": "Mülheim an der Ruhr Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-13",
+    "closed": [],
     "travel": 65,
-    "distanceKm": 29,
+    "distanceKm": 36,
     "entry": "Kostenlos",
     "light": 4,
     "food": 4,
-    "cozy": 4,
+    "cozy": 3,
+    "special": 4,
+    "budget": [
+      25,
+      45,
+      65
+    ],
+    "tags": [
+      "wasser"
+    ],
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
+  },
+  {
+    "id": "struenkede",
+    "name": "Mittelaltermarkt Schloss Strünkede",
+    "city": "Herne",
+    "location": "Mittelaltermarkt Schloss Strünkede, Herne",
+    "stationQuery": "Herne Bahnhof",
+    "from": "2026-12-04",
+    "to": "2026-12-13",
+    "closed": [],
+    "travel": 85,
+    "distanceKm": 47,
+    "entry": "Ticket nötig",
+    "light": 4,
+    "food": 4,
+    "cozy": 3,
     "special": 5,
     "budget": [
       25,
       45,
-      60
+      65
     ],
     "tags": [
-      "wasser",
-      "besonders"
+      "schloss"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
-  },
-  {
-    "id": "struenkede",
-    "name": "Mittelalterlicher Weihnachtsmarkt Schloss Strünkede",
-    "city": "Herne",
-    "location": "Schloss Strünkede",
-    "stationQuery": "Herne Schloss Strünkede",
-    "from": "2026-12-04",
-    "to": "2026-12-13",
-    "travel": 85,
-    "distanceKm": 31,
-    "entry": "Ticket nötig",
-    "light": 4,
-    "food": 4,
-    "cozy": 5,
-    "special": 5,
-    "budget": [
-      30,
-      50,
-      70
-    ],
-    "tags": [
-      "schloss",
-      "mittelalter",
-      "cozy"
-    ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "wuelfrath",
     "name": "Herzog-Wilhelm-Markt Wülfrath",
     "city": "Wülfrath",
-    "location": "Historischer Kirchplatz",
-    "stationQuery": "Wülfrath Stadtmitte",
+    "location": "Herzog-Wilhelm-Markt Wülfrath, Wülfrath",
+    "stationQuery": "Wülfrath Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-06",
+    "closed": [],
     "travel": 65,
-    "distanceKm": 14,
+    "distanceKm": 36,
     "entry": "Kostenlos",
     "light": 4,
     "food": 4,
     "cozy": 5,
     "special": 4,
     "budget": [
-      20,
-      35,
-      50
+      25,
+      45,
+      65
     ],
     "tags": [
-      "historisch",
-      "klein",
-      "cozy"
+      "historisch"
     ],
-    "positive": "Besondere Winteratmosphäre und gut als Ausflugsziel planbar.",
-    "negative": "Besucherandrang und aktuelle Öffnungszeiten vorab prüfen.",
-    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben.",
-    "sourceLabel": "Kuratierter Datenbestand",
-    "verifiedAt": "2026-10-28"
+    "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
+    "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
+    "tip": "Am Nachmittag anreisen und die Beleuchtung bei Dunkelheit erleben."
   },
   {
     "id": "phantasialand-wintertraum",
     "name": "Phantasialand Wintertraum",
     "city": "Brühl",
-    "location": "Phantasialand, Berggeiststraße 31–41, Brühl",
+    "location": "Phantasialand Wintertraum, Brühl",
     "stationQuery": "Brühl Phantasialand",
     "from": "2026-11-14",
     "to": "2027-01-24",
@@ -1218,7 +1113,7 @@
       "2027-01-13"
     ],
     "travel": 105,
-    "distanceKm": 53,
+    "distanceKm": 58,
     "entry": "Datiertes Parkticket erforderlich",
     "light": 6,
     "food": 5,
@@ -1231,23 +1126,11 @@
     ],
     "tags": [
       "licht",
-      "event",
-      "familie",
-      "tagestrip",
-      "ticket",
       "freizeitpark",
-      "essen"
+      "ticket"
     ],
-    "positive": "Außergewöhnliche Lichtwelten, Wintershows, Fahrgeschäfte und großes Winterangebot.",
-    "negative": "Deutlich teurer als ein klassischer Weihnachtsmarkt und als Freizeitpark meist gut besucht.",
-    "tip": "Als vollständigen Tagestrip planen und bis zur Abschluss-Show Magic Symphony bleiben.",
-    "openingHours": {
-      "default": "11:00–20:00 Uhr",
-      "2026-12-31": "11:00–18:00 Uhr"
-    },
-    "sourceUrl": "https://www.phantasialand.de/de/themenpark/wintertraum/",
-    "sourceLabel": "Phantasialand Wintertraum",
-    "verifiedAt": "2026-11-02",
-    "new": true
+    "positive": "Außergewöhnliche Lichtwelten, Wintershows und Fahrspaß.",
+    "negative": "Höherer Preis und meist gut besucht.",
+    "tip": "Als vollständigen Tagestrip planen und bis zur Abschluss-Show bleiben."
   }
 ]

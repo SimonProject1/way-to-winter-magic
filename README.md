@@ -1,11 +1,6 @@
-# Way to Winter Magic V5.5.1
+# Way to Winter Magic V5.6.1
 
-Installierbare Offline-PWA für Weihnachtsmarkt-Trips ab Wuppertal.
+Vollständige, geprüfte GitHub-Pages-PWA mit 40 Märkten und 17 Stickern.
 
-## Neu
-- Phantasialand Wintertraum als 40. Ziel
-- Timeline automatisch bis 24.01.2027
-- Brühl als Stadtfilter, Ticket-, Budget- und Transitous-Daten integriert
-
-## GitHub Pages
-Inhalt dieses Ordners in die Repository-Wurzel laden und unter Settings > Pages den main-Branch aktivieren.
+## Upload
+Den gesamten Inhalt des ZIP in die Repository-Wurzel hochladen und vorhandene Dateien ersetzen.
