@@ -1,4 +1,4 @@
-const VERSION='5.5.0',API='https://api.transitous.org/api',KEY='wtwm:v2:';
+const VERSION='5.5.1',API='https://api.transitous.org/api',KEY='wtwm:v2:';
 let markets=[],activeFilter='',albumFilter='all',selectedBudget=1,lastSavedTrip=null;
 const S={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(KEY+k))??d}catch{return d}},set:(k,v)=>localStorage.setItem(KEY+k,JSON.stringify(v))};
 const state={favorites:S.get('favorites',[]),trips:S.get('trips',[]),journal:S.get('journal',[]),rewardMeta:S.get('rewardMeta',{}),people:S.get('people',[]),settings:S.get('settings',{reduceMotion:false,marketView:'cards',defaultBudget:1})};
