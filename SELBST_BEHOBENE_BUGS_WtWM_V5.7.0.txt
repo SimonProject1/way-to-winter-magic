@@ -1,0 +1,14 @@
+WAY TO WINTER MAGIC V5.7.0 – MOBILE-UPGRADE
+
+1. Safe Areas oben und unten ergänzt.
+2. Untere Navigation überdeckt keine Inhalte mehr.
+3. Hero mobil verkleinert und lesbarer gemacht.
+4. 0/17-Stickerzähler vor ungewolltem Umbruch geschützt.
+5. Marktfilter mobil einklappbar gemacht.
+6. Marktkarten kompakter und Touchflächen vereinheitlicht.
+7. Planungsformular in sechs mobile Schritte aufgeteilt.
+8. Gesperrte Sticker auf Smartphones heller dargestellt.
+9. Backup-Aktionen untereinander angeordnet.
+10. Dialoge an die verfügbare mobile Höhe angepasst.
+11. index.html bereits vollständig verknüpft.
+12. sw.js bereits auf V5.7.0 und Runtime-Caching aktualisiert.
