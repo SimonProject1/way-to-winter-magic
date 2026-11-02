@@ -1,0 +1,76 @@
+WAY TO WINTER MAGIC V5.9.0 – TESTBERICHT
+
+AUTOMATISIERTE TESTS BESTANDEN
+
+A. Syntax und Dateien
+- app-core.js: Syntax geprüft
+- rewards.js: Syntax geprüft
+- app.js: Syntax geprüft
+- sw.js: Syntax geprüft
+- manifest.webmanifest: gültiges JSON
+- data/markets.json: gültiges JSON
+- styles.css: ausgeglichene Regelblöcke
+- ZIP: Integrität geprüft
+
+B. Bedienaktionen
+Alle 16 zentralen data-action-Routen sind im zentralen Event-Handler vorhanden:
+1. Navigation / Seitenwechsel
+2. Marktdetails
+3. Markt planen
+4. Favorit umschalten
+5. Schnellfilter
+6. Filter zurücksetzen
+7. Assistent zurück
+8. Assistent weiter
+9. Verbindung suchen
+10. Trip speichern
+11. Kalendereintrag laden
+12. Stickerdetails
+13. Trip als besucht markieren
+14. Trip löschen
+15. Datensicherung exportieren
+16. Dialog schließen
+
+Zusätzlich separat verdrahtet und geprüft:
+- Suchfeld
+- Stadtfilter
+- Fahrzeitfilter
+- Sortierung
+- Datumsauswahl
+- Marktauswahl
+- Budgetauswahl
+- Sicherungsimport
+
+C. Datenlogik
+- 41 Märkte vorhanden
+- Mirker Adventsbummel nur am 28.11.2026 geöffnet
+- Phantasialand Wintertraum vorhanden
+- Suche nach „Mirker“ liefert genau den Mirker Adventsbummel
+- Wuppertal-Stadtfilter liefert lokale Ergebnisse
+- Ticketfilter enthält Phantasialand
+- Planen aus Marktkarte setzt Markt und gültiges Startdatum
+
+D. Sticker
+- 18 Stickerdefinitionen
+- 18 Stickerordner
+- 6 Zustände pro Sticker
+- 108 transparente WebP-Dateien
+- keine Sticker-SVGs
+- Schlosszauber mit eigenem Schloss-Artwork
+- Wintertraum-Legende wird bei besuchtem Phantasialand-Trip freigeschaltet
+- Mirker Kiezzauber wird bei besuchtem Mirker-Trip freigeschaltet
+- ohne Besuch bleiben beide Spezial-Sticker gesperrt
+
+E. Oberfläche und Offline
+- 43 verwendete DOM-IDs vorhanden
+- alle data-target-Seiten vorhanden
+- 7 Marktkategorie-Artworks in 480 und 960 px vorhanden
+- App-Icons 192 und 512 px geprüft
+- Service-Worker-Core-Dateien vorhanden
+- Cache-Version: wtwm-v5.9.0
+- keine document.body.innerHTML-Neuerstellung
+- keine window.fetch-Manipulation
+- dynamische Buttons laufen über Event Delegation
+
+TESTGRENZE
+Ein echter Safari-/iOS- oder Chromium-Browser ist in der isolierten Build-Umgebung nicht installiert. Deshalb wurden die Bedienwege über Syntax-, DOM-, Routen-, Daten- und Pakettests validiert. Der erste GitHub-Pages-Smoke-Test auf dem echten iPhone bleibt als Veröffentlichungskontrolle sinnvoll.

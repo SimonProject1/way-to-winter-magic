@@ -3,7 +3,7 @@
     "id": "steele",
     "name": "Steeler Weihnachtsmarkt",
     "city": "Essen",
-    "location": "Steeler Weihnachtsmarkt, Essen",
+    "location": "Essen Zentrum",
     "stationQuery": "Essen Bahnhof",
     "from": "2026-10-30",
     "to": "2027-01-03",
@@ -21,7 +21,7 @@
       65
     ],
     "tags": [
-      "stadt"
+      "city"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -31,7 +31,7 @@
     "id": "muengsten",
     "name": "Müngstener Winterdorf",
     "city": "Solingen",
-    "location": "Müngstener Winterdorf, Solingen",
+    "location": "Solingen Zentrum",
     "stationQuery": "Solingen Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-20",
@@ -49,7 +49,7 @@
       65
     ],
     "tags": [
-      "natur"
+      "nature"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -59,7 +59,7 @@
     "id": "hattingen",
     "name": "Nostalgischer Weihnachtsmarkt Hattingen",
     "city": "Hattingen",
-    "location": "Nostalgischer Weihnachtsmarkt Hattingen, Hattingen",
+    "location": "Hattingen Zentrum",
     "stationQuery": "Hattingen Bahnhof",
     "from": "2026-11-23",
     "to": "2026-12-22",
@@ -77,7 +77,7 @@
       65
     ],
     "tags": [
-      "historisch"
+      "oldtown"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -87,7 +87,7 @@
     "id": "benrath",
     "name": "Weihnachtsmarkt Schloss Benrath",
     "city": "Düsseldorf",
-    "location": "Weihnachtsmarkt Schloss Benrath, Düsseldorf",
+    "location": "Düsseldorf Zentrum",
     "stationQuery": "Düsseldorf Bahnhof",
     "from": "2026-11-20",
     "to": "2026-12-20",
@@ -105,7 +105,7 @@
       65
     ],
     "tags": [
-      "schloss"
+      "castle"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -115,7 +115,7 @@
     "id": "gruenewald",
     "name": "Grünewalder Adventstraum",
     "city": "Solingen",
-    "location": "Grünewalder Adventstraum, Solingen",
+    "location": "Solingen Zentrum",
     "stationQuery": "Solingen Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-20",
@@ -133,7 +133,7 @@
       65
     ],
     "tags": [
-      "schloss"
+      "castle"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -143,7 +143,7 @@
     "id": "hugenpoet",
     "name": "Nikolausmarkt Schloss Hugenpoet",
     "city": "Essen",
-    "location": "Nikolausmarkt Schloss Hugenpoet, Essen",
+    "location": "Essen Zentrum",
     "stationQuery": "Essen Bahnhof",
     "from": "2026-12-03",
     "to": "2026-12-06",
@@ -161,7 +161,7 @@
       65
     ],
     "tags": [
-      "schloss"
+      "castle"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -171,7 +171,7 @@
     "id": "duisburg-nord",
     "name": "Lichtermarkt Duisburg-Nord",
     "city": "Duisburg",
-    "location": "Lichtermarkt Duisburg-Nord, Duisburg",
+    "location": "Duisburg Zentrum",
     "stationQuery": "Duisburg Bahnhof",
     "from": "2026-11-27",
     "to": "2026-11-29",
@@ -189,8 +189,8 @@
       65
     ],
     "tags": [
-      "industrie",
-      "licht"
+      "industrial",
+      "lights"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -200,7 +200,7 @@
     "id": "koeln-stadtgarten",
     "name": "Weihnachtsmarkt im Stadtgarten Köln",
     "city": "Köln",
-    "location": "Weihnachtsmarkt im Stadtgarten Köln, Köln",
+    "location": "Köln Zentrum",
     "stationQuery": "Köln Bahnhof",
     "from": "2026-11-13",
     "to": "2026-12-23",
@@ -218,7 +218,7 @@
       65
     ],
     "tags": [
-      "stadt"
+      "city"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -228,7 +228,7 @@
     "id": "moyland",
     "name": "Weihnachtsmarkt Schloss Moyland",
     "city": "Bedburg-Hau",
-    "location": "Weihnachtsmarkt Schloss Moyland, Bedburg-Hau",
+    "location": "Bedburg-Hau Zentrum",
     "stationQuery": "Bedburg-Hau Bahnhof",
     "from": "2026-12-09",
     "to": "2026-12-13",
@@ -246,7 +246,7 @@
       65
     ],
     "tags": [
-      "schloss"
+      "castle"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -256,7 +256,7 @@
     "id": "elberfeld",
     "name": "Elberfelder Weihnachtsmarkt",
     "city": "Wuppertal",
-    "location": "Elberfelder Weihnachtsmarkt, Wuppertal",
+    "location": "Wuppertal Zentrum",
     "stationQuery": "Wuppertal Bahnhof",
     "from": "2026-11-19",
     "to": "2026-12-27",
@@ -274,7 +274,7 @@
       65
     ],
     "tags": [
-      "stadt"
+      "city"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -284,7 +284,7 @@
     "id": "barmen",
     "name": "Barmer Weihnachtsmarkt",
     "city": "Wuppertal",
-    "location": "Barmer Weihnachtsmarkt, Wuppertal",
+    "location": "Wuppertal Zentrum",
     "stationQuery": "Wuppertal Bahnhof",
     "from": "2026-11-19",
     "to": "2026-12-27",
@@ -302,7 +302,7 @@
       65
     ],
     "tags": [
-      "stadt"
+      "city"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -312,7 +312,7 @@
     "id": "remscheid",
     "name": "Remscheider Weihnachtstreff",
     "city": "Remscheid",
-    "location": "Remscheider Weihnachtstreff, Remscheid",
+    "location": "Remscheid Zentrum",
     "stationQuery": "Remscheid Bahnhof",
     "from": "2026-11-13",
     "to": "2026-12-23",
@@ -330,7 +330,7 @@
       65
     ],
     "tags": [
-      "stadt"
+      "city"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -340,7 +340,7 @@
     "id": "ohligs",
     "name": "Weihnachtsdürpel Ohligs",
     "city": "Solingen",
-    "location": "Weihnachtsdürpel Ohligs, Solingen",
+    "location": "Solingen Zentrum",
     "stationQuery": "Solingen Bahnhof",
     "from": "2026-12-04",
     "to": "2026-12-06",
@@ -358,7 +358,7 @@
       65
     ],
     "tags": [
-      "wochenende"
+      "weekend"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -368,7 +368,7 @@
     "id": "velbert",
     "name": "Weihnachtsmarkt Am Offers",
     "city": "Velbert",
-    "location": "Weihnachtsmarkt Am Offers, Velbert",
+    "location": "Velbert Zentrum",
     "stationQuery": "Velbert Bahnhof",
     "from": "2026-12-04",
     "to": "2026-12-13",
@@ -386,7 +386,7 @@
       65
     ],
     "tags": [
-      "klein"
+      "small"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -396,7 +396,7 @@
     "id": "mettmann",
     "name": "Blotschenmarkt Mettmann",
     "city": "Mettmann",
-    "location": "Blotschenmarkt Mettmann, Mettmann",
+    "location": "Mettmann Zentrum",
     "stationQuery": "Mettmann Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-13",
@@ -414,7 +414,7 @@
       65
     ],
     "tags": [
-      "historisch"
+      "oldtown"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -424,7 +424,7 @@
     "id": "essen",
     "name": "Internationaler Weihnachtsmarkt Essen",
     "city": "Essen",
-    "location": "Internationaler Weihnachtsmarkt Essen, Essen",
+    "location": "Essen Zentrum",
     "stationQuery": "Essen Bahnhof",
     "from": "2026-11-13",
     "to": "2026-12-23",
@@ -442,8 +442,8 @@
       65
     ],
     "tags": [
-      "stadt",
-      "licht"
+      "city",
+      "lights"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -453,7 +453,7 @@
     "id": "kettwig",
     "name": "Kettwiger Adventsdorf",
     "city": "Essen",
-    "location": "Kettwiger Adventsdorf, Essen",
+    "location": "Essen Zentrum",
     "stationQuery": "Essen Bahnhof",
     "from": "2026-11-27",
     "to": "2026-11-29",
@@ -471,8 +471,8 @@
       65
     ],
     "tags": [
-      "historisch",
-      "wochenende"
+      "oldtown",
+      "weekend"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -482,7 +482,7 @@
     "id": "bochum",
     "name": "Bochumer Weihnachtsmarkt",
     "city": "Bochum",
-    "location": "Bochumer Weihnachtsmarkt, Bochum",
+    "location": "Bochum Zentrum",
     "stationQuery": "Bochum Bahnhof",
     "from": "2026-11-19",
     "to": "2026-12-23",
@@ -500,7 +500,7 @@
       65
     ],
     "tags": [
-      "stadt"
+      "city"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -510,7 +510,7 @@
     "id": "dortmund",
     "name": "Dortmunder Weihnachtsstadt",
     "city": "Dortmund",
-    "location": "Dortmunder Weihnachtsstadt, Dortmund",
+    "location": "Dortmund Zentrum",
     "stationQuery": "Dortmund Bahnhof",
     "from": "2026-11-19",
     "to": "2026-12-30",
@@ -528,8 +528,8 @@
       65
     ],
     "tags": [
-      "stadt",
-      "licht"
+      "city",
+      "lights"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -539,7 +539,7 @@
     "id": "duesseldorf",
     "name": "Düsseldorfer Weihnachtsmärkte",
     "city": "Düsseldorf",
-    "location": "Düsseldorfer Weihnachtsmärkte, Düsseldorf",
+    "location": "Düsseldorf Zentrum",
     "stationQuery": "Düsseldorf Bahnhof",
     "from": "2026-11-19",
     "to": "2026-12-30",
@@ -557,7 +557,7 @@
       65
     ],
     "tags": [
-      "stadt"
+      "city"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -567,7 +567,7 @@
     "id": "kaiserswerth",
     "name": "Nikolausmarkt Kaiserswerth",
     "city": "Düsseldorf",
-    "location": "Nikolausmarkt Kaiserswerth, Düsseldorf",
+    "location": "Düsseldorf Zentrum",
     "stationQuery": "Düsseldorf Bahnhof",
     "from": "2026-12-05",
     "to": "2026-12-06",
@@ -585,8 +585,8 @@
       65
     ],
     "tags": [
-      "historisch",
-      "wochenende"
+      "oldtown",
+      "weekend"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -596,7 +596,7 @@
     "id": "duisburg",
     "name": "Duisburger Weihnachtsmarkt",
     "city": "Duisburg",
-    "location": "Duisburger Weihnachtsmarkt, Duisburg",
+    "location": "Duisburg Zentrum",
     "stationQuery": "Duisburg Bahnhof",
     "from": "2026-11-12",
     "to": "2026-12-30",
@@ -614,7 +614,7 @@
       65
     ],
     "tags": [
-      "stadt"
+      "city"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -624,7 +624,7 @@
     "id": "oberhausen",
     "name": "Centro Weihnachtsmarkt",
     "city": "Oberhausen",
-    "location": "Centro Weihnachtsmarkt, Oberhausen",
+    "location": "Oberhausen Zentrum",
     "stationQuery": "Oberhausen Bahnhof",
     "from": "2026-11-13",
     "to": "2026-12-23",
@@ -642,7 +642,7 @@
       65
     ],
     "tags": [
-      "stadt"
+      "city"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -652,7 +652,7 @@
     "id": "muelheim",
     "name": "Mülheimer Altstadt-Adventsmarkt",
     "city": "Mülheim an der Ruhr",
-    "location": "Mülheimer Altstadt-Adventsmarkt, Mülheim an der Ruhr",
+    "location": "Mülheim an der Ruhr Zentrum",
     "stationQuery": "Mülheim an der Ruhr Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-13",
@@ -670,7 +670,7 @@
       65
     ],
     "tags": [
-      "historisch"
+      "oldtown"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -680,7 +680,7 @@
     "id": "recklinghausen",
     "name": "Weihnachtsmarkt Recklinghausen",
     "city": "Recklinghausen",
-    "location": "Weihnachtsmarkt Recklinghausen, Recklinghausen",
+    "location": "Recklinghausen Zentrum",
     "stationQuery": "Recklinghausen Bahnhof",
     "from": "2026-11-19",
     "to": "2026-12-23",
@@ -698,7 +698,7 @@
       65
     ],
     "tags": [
-      "historisch"
+      "oldtown"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -708,7 +708,7 @@
     "id": "muenster",
     "name": "Weihnachtsmärkte Münster",
     "city": "Münster",
-    "location": "Weihnachtsmärkte Münster, Münster",
+    "location": "Münster Zentrum",
     "stationQuery": "Münster Bahnhof",
     "from": "2026-11-23",
     "to": "2026-12-23",
@@ -726,7 +726,7 @@
       65
     ],
     "tags": [
-      "historisch"
+      "oldtown"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -736,7 +736,7 @@
     "id": "aachen",
     "name": "Aachener Weihnachtsmarkt",
     "city": "Aachen",
-    "location": "Aachener Weihnachtsmarkt, Aachen",
+    "location": "Aachen Zentrum",
     "stationQuery": "Aachen Bahnhof",
     "from": "2026-11-20",
     "to": "2026-12-23",
@@ -754,7 +754,7 @@
       65
     ],
     "tags": [
-      "historisch"
+      "oldtown"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -764,7 +764,7 @@
     "id": "bonn",
     "name": "Bonner Weihnachtsmarkt",
     "city": "Bonn",
-    "location": "Bonner Weihnachtsmarkt, Bonn",
+    "location": "Bonn Zentrum",
     "stationQuery": "Bonn Bahnhof",
     "from": "2026-11-18",
     "to": "2026-12-23",
@@ -782,7 +782,7 @@
       65
     ],
     "tags": [
-      "stadt"
+      "city"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -792,7 +792,7 @@
     "id": "soest",
     "name": "Soester Weihnachtsmarkt",
     "city": "Soest",
-    "location": "Soester Weihnachtsmarkt, Soest",
+    "location": "Soest Zentrum",
     "stationQuery": "Soest Bahnhof",
     "from": "2026-11-23",
     "to": "2026-12-22",
@@ -810,7 +810,7 @@
       65
     ],
     "tags": [
-      "historisch"
+      "oldtown"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -820,7 +820,7 @@
     "id": "xanten",
     "name": "Xantener Weihnachtsmarkt",
     "city": "Xanten",
-    "location": "Xantener Weihnachtsmarkt, Xanten",
+    "location": "Xanten Zentrum",
     "stationQuery": "Xanten Bahnhof",
     "from": "2026-11-20",
     "to": "2026-12-22",
@@ -838,7 +838,7 @@
       65
     ],
     "tags": [
-      "historisch"
+      "oldtown"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -848,7 +848,7 @@
     "id": "monschau",
     "name": "Monschauer Weihnachtsmarkt",
     "city": "Monschau",
-    "location": "Monschauer Weihnachtsmarkt, Monschau",
+    "location": "Monschau Zentrum",
     "stationQuery": "Monschau Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-20",
@@ -866,8 +866,8 @@
       65
     ],
     "tags": [
-      "historisch",
-      "wochenende"
+      "oldtown",
+      "weekend"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -877,7 +877,7 @@
     "id": "bad-muenstereifel",
     "name": "Weihnachtsmarkt Bad Münstereifel",
     "city": "Bad Münstereifel",
-    "location": "Weihnachtsmarkt Bad Münstereifel, Bad Münstereifel",
+    "location": "Bad Münstereifel Zentrum",
     "stationQuery": "Bad Münstereifel Bahnhof",
     "from": "2026-11-20",
     "to": "2026-12-30",
@@ -895,7 +895,7 @@
       65
     ],
     "tags": [
-      "historisch"
+      "oldtown"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -905,7 +905,7 @@
     "id": "siegburg",
     "name": "Mittelalterlicher Weihnachtsmarkt Siegburg",
     "city": "Siegburg",
-    "location": "Mittelalterlicher Weihnachtsmarkt Siegburg, Siegburg",
+    "location": "Siegburg Zentrum",
     "stationQuery": "Siegburg Bahnhof",
     "from": "2026-11-21",
     "to": "2026-12-22",
@@ -923,7 +923,7 @@
       65
     ],
     "tags": [
-      "historisch"
+      "oldtown"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -933,7 +933,7 @@
     "id": "raesfeld",
     "name": "Adventsmarkt Schloss Raesfeld",
     "city": "Raesfeld",
-    "location": "Adventsmarkt Schloss Raesfeld, Raesfeld",
+    "location": "Raesfeld Zentrum",
     "stationQuery": "Raesfeld Bahnhof",
     "from": "2026-12-03",
     "to": "2026-12-13",
@@ -951,7 +951,7 @@
       65
     ],
     "tags": [
-      "schloss"
+      "castle"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -961,7 +961,7 @@
     "id": "velen",
     "name": "Velener Waldweihnachtsmarkt",
     "city": "Velen",
-    "location": "Velener Waldweihnachtsmarkt, Velen",
+    "location": "Velen Zentrum",
     "stationQuery": "Velen Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-20",
@@ -979,7 +979,7 @@
       65
     ],
     "tags": [
-      "natur"
+      "nature"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -989,7 +989,7 @@
     "id": "warendorf",
     "name": "Warendorfer Weihnachtswäldchen",
     "city": "Warendorf",
-    "location": "Warendorfer Weihnachtswäldchen, Warendorf",
+    "location": "Warendorf Zentrum",
     "stationQuery": "Warendorf Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-20",
@@ -1007,7 +1007,7 @@
       65
     ],
     "tags": [
-      "natur"
+      "nature"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -1017,7 +1017,7 @@
     "id": "muelheim-schiff",
     "name": "Mülheimer Schiffsweihnacht",
     "city": "Mülheim an der Ruhr",
-    "location": "Mülheimer Schiffsweihnacht, Mülheim an der Ruhr",
+    "location": "Mülheim an der Ruhr Zentrum",
     "stationQuery": "Mülheim an der Ruhr Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-13",
@@ -1035,7 +1035,7 @@
       65
     ],
     "tags": [
-      "wasser"
+      "harbor"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -1045,7 +1045,7 @@
     "id": "struenkede",
     "name": "Mittelaltermarkt Schloss Strünkede",
     "city": "Herne",
-    "location": "Mittelaltermarkt Schloss Strünkede, Herne",
+    "location": "Herne Zentrum",
     "stationQuery": "Herne Bahnhof",
     "from": "2026-12-04",
     "to": "2026-12-13",
@@ -1063,7 +1063,7 @@
       65
     ],
     "tags": [
-      "schloss"
+      "castle"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -1073,7 +1073,7 @@
     "id": "wuelfrath",
     "name": "Herzog-Wilhelm-Markt Wülfrath",
     "city": "Wülfrath",
-    "location": "Herzog-Wilhelm-Markt Wülfrath, Wülfrath",
+    "location": "Wülfrath Zentrum",
     "stationQuery": "Wülfrath Bahnhof",
     "from": "2026-11-27",
     "to": "2026-12-06",
@@ -1091,7 +1091,7 @@
       65
     ],
     "tags": [
-      "historisch"
+      "oldtown"
     ],
     "positive": "Stimmungsvolles Winterziel mit eigenem Charakter.",
     "negative": "Besucherandrang und aktuelle Zeiten vorab prüfen.",
@@ -1101,7 +1101,7 @@
     "id": "phantasialand-wintertraum",
     "name": "Phantasialand Wintertraum",
     "city": "Brühl",
-    "location": "Phantasialand Wintertraum, Brühl",
+    "location": "Phantasialand, Brühl",
     "stationQuery": "Brühl Phantasialand",
     "from": "2026-11-14",
     "to": "2027-01-24",
@@ -1125,12 +1125,42 @@
       140
     ],
     "tags": [
-      "licht",
-      "freizeitpark",
+      "lights",
+      "themepark",
       "ticket"
     ],
     "positive": "Außergewöhnliche Lichtwelten, Wintershows und Fahrspaß.",
     "negative": "Höherer Preis und meist gut besucht.",
-    "tip": "Als vollständigen Tagestrip planen und bis zur Abschluss-Show bleiben."
+    "tip": "Als Tagestrip planen und bis zur Abschluss-Show bleiben."
+  },
+  {
+    "id": "mirker-adventsbummel",
+    "name": "3. Mirker Adventsbummel",
+    "city": "Wuppertal",
+    "location": "Mirker Quartier, zwischen Hochstraße und Mirker Bahnhof",
+    "stationQuery": "Wuppertal Mirker Bahnhof",
+    "from": "2026-11-28",
+    "to": "2026-11-28",
+    "closed": [],
+    "travel": 15,
+    "distanceKm": 8,
+    "entry": "Kein Eintrittspreis veröffentlicht",
+    "light": 3,
+    "food": 4,
+    "cozy": 5,
+    "special": 5,
+    "budget": [
+      15,
+      30,
+      50
+    ],
+    "tags": [
+      "small",
+      "craft",
+      "weekend"
+    ],
+    "positive": "Persönlicher Quartiersbummel mit Läden, Ateliers und Stempelaktion.",
+    "negative": "Nur am 28. November 2026 geöffnet.",
+    "tip": "Gegen 14 Uhr am Mirker Bahnhof starten und anschließend in der Weinerei ausklingen lassen."
   }
 ]

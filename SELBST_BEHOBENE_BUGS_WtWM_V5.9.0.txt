@@ -1,0 +1,16 @@
+WAY TO WINTER MAGIC V5.9.0 – VOLLSTÄNDIGER STABILITÄTS-NEUBAU
+
+1. App vollständig als eigenständiges Paket neu aufgebaut, keine alten Patches oder DOM-Manipulationen.
+2. Sämtliche Klicks über einen zentralen document-Event-Listener mit data-action verarbeitet.
+3. Dynamisch erzeugte Markt-, Sticker- und Tripbuttons funktionieren dadurch ohne nachträgliches Neuverdrahten.
+4. Navigation, Details, Planen, Favoriten, Filter, Reset, Assistent, Bahn, Speichern, Kalender, Sticker, Besucht, Löschen, Export, Import und Dialogschließen geprüft.
+5. Planen aus einer Marktkarte setzt automatisch ein gültiges Marktdatum und den gewählten Markt.
+6. Mirker Adventsbummel statisch als 41. Markt in markets.json integriert, keine Fetch-Manipulation mehr.
+7. Wintertraum-Legende und Mirker Kiezzauber statisch als 17. und 18. Sticker integriert.
+8. 18 Stickerordner mit insgesamt 108 transparenten WebP-Zuständen geprüft.
+9. Echtes Schlosszauber-Artwork und finale App-Icons integriert.
+10. Mobile Safe Areas, zweispaltige Markt-/Stickeransicht und sechsstufige Tripplanung integriert.
+11. Marktfilter, Öffnungslogik und Sondertermine getestet.
+12. Freischaltungen für Phantasialand und Mirker Adventsbummel automatisiert getestet.
+13. Service Worker auf V5.9.0 zurückgesetzt und ohne alte Cache-Abhängigkeit neu erstellt.
+14. HTML-Ziel-IDs, data-action-Routen, JavaScript-Syntax, Manifest, JSON, Assetpfade und ZIP-Integrität geprüft.

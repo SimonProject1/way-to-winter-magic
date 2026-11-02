@@ -1,0 +1,10 @@
+const assert=require('assert'),C=require('../app-core.js'),R=require('../rewards.js'),M=require('../data/markets.json');
+assert.strictEqual(M.length,41);assert(M.some(x=>x.id==='mirker-adventsbummel'));assert(M.some(x=>x.id==='phantasialand-wintertraum'));
+const mirker=M.find(x=>x.id==='mirker-adventsbummel');assert(C.isOpen(mirker,'2026-11-28'));assert(!C.isOpen(mirker,'2026-11-27'));assert(!C.isOpen(mirker,'2026-11-29'));
+assert(C.openMarkets(M,'2026-11-28').some(x=>x.id==='mirker-adventsbummel'));assert(!C.openMarkets(M,'2026-11-27').some(x=>x.id==='mirker-adventsbummel'));
+assert(C.filterMarkets(M,{query:'Mirker',maxTravel:999,sort:'score'}).length===1);assert(C.filterMarkets(M,{city:'Wuppertal',maxTravel:999}).length>=3);assert(C.filterMarkets(M,{filter:'ticket',maxTravel:999}).some(x=>x.id==='phantasialand-wintertraum'));
+assert.strictEqual(R.STICKERS.length,18);
+let r=R.evaluateRewards([{marketId:'phantasialand-wintertraum',status:'Besucht',date:'2026-12-10'}],[],M,{});assert(r.find(x=>x.id==='winter-dream-legend').unlocked);
+r=R.evaluateRewards([{marketId:'mirker-adventsbummel',status:'Besucht',date:'2026-11-28'}],[],M,{});assert(r.find(x=>x.id==='mirker-kiezzauber').unlocked);
+assert(!R.evaluateRewards([],[],M,{}).find(x=>x.id==='mirker-kiezzauber').unlocked);
+console.log('PASS core: 41 markets, one-day opening, filters, 18 rewards, special unlocks');
