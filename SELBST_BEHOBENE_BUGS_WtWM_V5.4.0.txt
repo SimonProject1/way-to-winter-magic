@@ -1,0 +1,12 @@
+WAY TO WINTER MAGIC V5.4.0 – SELBST BEHOBENE BUGS
+
+1. Projekt aus bekannter V5-Struktur vollständig rekonstruiert.
+2. Phantasialand Wintertraum als 40. Ziel in Markt-, Planungs- und ÖPNV-Daten ergänzt.
+3. Saisonende dynamisch auf 24.01.2027 erweitert.
+4. Brühl in Städtefilter ergänzt.
+5. Ticketpflicht und Wintertraum-Budget integriert.
+6. Sticker-Meisterziel von 39 auf 40 Märkte aktualisiert.
+7. 16 Stickerordner und 96 transparente WebP-Zustände geprüft.
+8. Artwork-App-Icons und responsive Artworks integriert.
+9. Service-Worker-Cache auf V5.4.0 erhöht.
+10. JavaScript, JSON, Manifest und ZIP-Struktur geprüft.
