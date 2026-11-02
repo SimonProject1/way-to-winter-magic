@@ -1,4 +1,4 @@
-# Way to Winter Magic V5.4.0
+# Way to Winter Magic V5.5.0
 
 Installierbare Offline-PWA für Weihnachtsmarkt-Trips ab Wuppertal.
 

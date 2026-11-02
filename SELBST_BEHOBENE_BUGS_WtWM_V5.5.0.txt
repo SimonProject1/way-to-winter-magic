@@ -1,0 +1,19 @@
+WAY TO WINTER MAGIC V5.5.0 – DESIGN-CLEANUP
+
+1. Navigation zeigt nur noch genau einen aktiven Bereich; Trip planen bleibt außerhalb der Planungsseite eine goldgerahmte Hauptaktion.
+2. Hero vollständig sichtbar, flacher und vertikal zentriert.
+3. Startseite von großen Statistikflächen auf kompakte Saisonstatus-Karten umgebaut.
+4. Leerer Tripzustand durch motivierende Aktionskarte ersetzt.
+5. Marktfilter unterhalb der Sticky-Navigation positioniert und kompakter organisiert.
+6. Marktkarten auf ein einheitliches 4/3/2-Raster mit fester Titelhöhe und klarer Aktionshierarchie umgestellt.
+7. Eintritt, Gesamtwertung und Einzelbewertungen optisch getrennt.
+8. Planungsseite um Personen-Chips, Marktaktivierung nach Datum, Budgetbeträge, Treffpunkt, Ticketstatus und Summary ergänzt.
+9. Kalenderexport erst nach dem Speichern aktiviert.
+10. Album in vier Kategorien unterteilt, 4/3/2-Raster, Fortschrittsbalken und Gesamtfortschritt ergänzt.
+11. Gesperrte Sticker heller und erkennbarer dargestellt.
+12. Name und Fortschritt bei Stickern sauber getrennt; fehlende Abstände repariert.
+13. Night Magic innerhalb einer einheitlichen Artwork-Kachel normalisiert.
+14. Mehr-Seite um Werkzeuge, Einstellungen, erklärten Backup-Bereich und App-Informationen erweitert.
+15. Leere Flächen und überhöhte Karten in allen Desktopansichten reduziert.
+16. Desktop-Radien, Schatten, Konturen, Typografie und Abstände in einem gemeinsamen Designsystem vereinheitlicht.
+17. Lokale Speicherung, Sicherung, Tagebuch, 40 Märkte, Transitous, ICS und 96 transparente Sticker-WebPs beibehalten.
