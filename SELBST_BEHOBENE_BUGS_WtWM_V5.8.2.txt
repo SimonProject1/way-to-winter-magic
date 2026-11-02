@@ -1,0 +1,9 @@
+WAY TO WINTER MAGIC V5.8.2 – BUTTON-FIX
+
+1. Ursache behoben: rewards.js ersetzte nach DOMContentLoaded den gesamten document.body über innerHTML.
+2. Dadurch verlorene Event-Listener für Navigation, Details, Planen, Filter, Album, Trips und Datensicherung bleiben jetzt erhalten.
+3. Versionsanzeige wird statisch in index.html geführt und nicht mehr nachträglich durch DOM-Neuaufbau verändert.
+4. Mirker-Marktinjektion und Freischaltlogik bleiben erhalten.
+5. Mobile-Assistentenlogik bleibt erhalten.
+6. Service-Worker-Cache auf V5.8.2 erhöht.
+7. JavaScript-Syntax, HTML IDs, Buttonziele, Cache-Dateien und ZIP-Integrität geprüft.
