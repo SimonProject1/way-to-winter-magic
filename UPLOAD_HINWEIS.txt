@@ -1,0 +1,22 @@
+WAY TO WINTER MAGIC V5.8.1 – KOMPLETTES UPDATE OHNE UNVERÄNDERTE ARTWORKS
+
+Den gesamten Inhalt dieses ZIP-Pakets in die GitHub-Repository-Wurzel hochladen und vorhandene gleichnamige Dateien ersetzen.
+
+Enthalten:
+- index.html
+- sw.js
+- manifest.webmanifest
+- rewards.js
+- mobile-v5.8.1.css
+- mobile-v5.8.1.js
+- neuer Stickerordner assets/stickers/themes/mirker-kiezzauber/
+
+Nicht erneut nötig, weil unverändert:
+- bestehende Hero-, Markt-, Assistenten- und Navigations-Artworks
+- bestehende 17 Sticker-Artworks
+- icons/
+- styles.css
+- app.js
+- data/markets.json
+
+Nach Deployment PWA löschen, Websitedaten leeren und neu installieren.

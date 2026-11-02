@@ -5,7 +5,7 @@ const MIRKER={id:"mirker-adventsbummel",name:"3. Mirker Adventsbummel",city:"Wup
 // Inject the one-day event into the existing markets.json response before app.js receives it.
 if(typeof window!=="undefined"){
  const nativeFetch=window.fetch.bind(window);window.fetch=async function(input,init){const response=await nativeFetch(input,init);const url=typeof input==='string'?input:input?.url||"";if(!/data\/markets\.json(?:\?|$)/.test(url))return response;try{const list=await response.clone().json();if(Array.isArray(list)&&!list.some(x=>x.id===MIRKER.id))list.push(MIRKER);return new Response(JSON.stringify(list),{status:response.status,statusText:response.statusText,headers:{"Content-Type":"application/json"}})}catch{return response}};
- const base="./assets/stickers/themes/mirker-kiezzauber/";if("caches"in window)caches.open("wtwm-v5.8.0-specials").then(c=>c.addAll(["small","unlocked","locked","new","large","share"].map(s=>base+s+".webp"))).catch(()=>{});
- document.addEventListener("DOMContentLoaded",()=>{setTimeout(()=>{document.querySelectorAll("b,strong").forEach(e=>{if(e.textContent.trim()==="40")e.textContent="41";if(e.textContent.includes("/ 17"))e.textContent=e.textContent.replace("/ 17","/ 18")});document.body.innerHTML=document.body.innerHTML.replace(/V5\.7\.\d/g,"V5.8.0")},400)});
+ const base="./assets/stickers/themes/mirker-kiezzauber/";if("caches"in window)caches.open("wtwm-v5.8.1-specials").then(c=>c.addAll(["small","unlocked","locked","new","large","share"].map(s=>base+s+".webp"))).catch(()=>{});
+ document.addEventListener("DOMContentLoaded",()=>{setTimeout(()=>{document.querySelectorAll("b,strong").forEach(e=>{if(e.textContent.trim()==="40")e.textContent="41";if(e.textContent.includes("/ 17"))e.textContent=e.textContent.replace("/ 17","/ 18")});document.body.innerHTML=document.body.innerHTML.replace(/V5\.7\.\d/g,"V5.8.1")},400)});
 }
 return{AREAS,STICKERS,evaluateRewards};}));

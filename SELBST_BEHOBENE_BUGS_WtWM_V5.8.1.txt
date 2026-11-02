@@ -1,0 +1,10 @@
+WAY TO WINTER MAGIC V5.8.1
+
+1. Mobile V5.7 und Mirker V5.8 in ein einziges Upload-Paket zusammengeführt.
+2. index.html auf 41 Märkte, 18 Sticker und V5.8.1 aktualisiert.
+3. Mobile-Dateien vollständig verknüpft.
+4. Service Worker auf Cache V5.8.1 aktualisiert.
+5. Mirker-Sticker in Offline-Cache aufgenommen.
+6. Manifest auf 41 Ziele und 18 Sticker aktualisiert.
+7. Mirker Adventsbummel und Freischaltlogik geprüft.
+8. Sechs transparente Stickerdateien geprüft.

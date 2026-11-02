@@ -1,13 +1,1 @@
-const CACHE='wtwm-v5.7.0';
-const CORE=['./','index.html','styles.css','mobile-v5.7.0.css','app.js','mobile-v5.7.0.js','rewards.js','manifest.webmanifest','data/markets.json','icons/icon-192.png','icons/icon-512.png'];
-self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
-self.addEventListener('fetch',event=>{
- if(event.request.method!=='GET')return;
- const url=new URL(event.request.url);
- if(url.hostname.includes('transitous'))return;
- event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request).then(response=>{
-   if(response&&response.ok&&url.origin===self.location.origin){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));}
-   return response;
- }).catch(()=>event.request.mode==='navigate'?caches.match('index.html'):undefined)));
-});
+const CACHE='wtwm-v5.8.1';const CORE=['./','index.html','styles.css','mobile-v5.8.1.css','app.js','mobile-v5.8.1.js','rewards.js','manifest.webmanifest','data/markets.json','icons/icon-192.png','icons/icon-512.png','assets/stickers/themes/mirker-kiezzauber/small.webp','assets/stickers/themes/mirker-kiezzauber/unlocked.webp','assets/stickers/themes/mirker-kiezzauber/locked.webp','assets/stickers/themes/mirker-kiezzauber/new.webp','assets/stickers/themes/mirker-kiezzauber/large.webp','assets/stickers/themes/mirker-kiezzauber/share.webp'];self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.hostname.includes('transitous'))return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(x=>{if(x.ok&&u.origin===self.location.origin)caches.open(CACHE).then(c=>c.put(e.request,x.clone()));return x}).catch(()=>e.request.mode==='navigate'?caches.match('index.html'):undefined)))});
